@@ -1,3 +1,7 @@
+body {
+    font-family: 'Roboto Slab', serif;
+}
+
 .main-wrapper {
     height: 100vh;
 }
@@ -16,7 +20,15 @@
 }
 
 .buttons .btn {
-    padding: none;
-    border: 50px solid transparent;
-    border-radius: 50rem;
+    /* padding: 0; */
+    border: 0;
+    border-radius: 60rem;
+    background: darkorange;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px black;
+
+    height: 150px;
+    width: 150px;
 }
