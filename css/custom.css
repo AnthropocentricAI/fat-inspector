@@ -1,0 +1,22 @@
+.main-wrapper {
+    height: 100vh;
+}
+
+.section {
+    height: 100%;
+}
+
+.buttons {
+    border-right: 1px solid gray;
+    height: 100%;
+}
+
+.buttons .row {
+    height: 33%;
+}
+
+.buttons .btn {
+    padding: none;
+    border: 50px solid transparent;
+    border-radius: 50rem;
+}
