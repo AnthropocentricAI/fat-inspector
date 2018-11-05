@@ -2,6 +2,25 @@ body {
     font-family: 'Roboto Slab', serif;
 }
 
+#wrapper {
+    height: 100vh;
+}
+
+#content {
+    display: grid;
+    grid-template: 1fr / 20% 1fr;
+    height: 100%;
+}
+
+#left {
+    grid-area: 1 / 1 / 2 / 2;
+    border-right: 1px solid lightgray;
+}
+
+#right {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
 .main-wrapper {
     height: 100vh;
 }
