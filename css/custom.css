@@ -8,7 +8,7 @@ body {
 
 #content {
     display: grid;
-    grid-template: 1fr / 20% 1fr;
+    grid-template: 1fr / 10% 1fr;
     height: 100%;
 }
 
@@ -19,6 +19,24 @@ body {
 
 #right {
     grid-area: 1 / 2 / 2 / 3;
+}
+
+#left #btncont {
+    display: grid;
+    /* grid-template: 1fr / repeat(auto-fit, 1fr); */
+    grid-template-rows: repeat(3, 1fr);
+    height: 100%;
+    justify-items: center;
+    align-items: center;
+}
+
+#left .btn {
+    height: 150px;
+    width: 150px;
+    border-radius: 150px;
+    text-align: center;
+    vertical-align: bottom;
+    background-color: orange;
 }
 
 .main-wrapper {
