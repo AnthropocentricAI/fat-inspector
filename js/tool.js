@@ -44,7 +44,7 @@ var cy = cytoscape({
 function addChildNode(parent) {
     let newNode = {
         group: 'nodes',
-        data: { id: parent.id() + ' ' + Math.floor(Math.random() * 1000) }
+        data: { id: parent.id() + '-' + Math.floor(Math.random() * 1000) }
     }
     cy.add([newNode,
         { group: 'edges', data: { source: parent.id(), target: newNode.data.id }}
@@ -59,3 +59,27 @@ cy.on('tap', 'node', function(e) {
 cy.on('add remove', function(e) {
     cy.layout({ name: 'dagre', animate: true, animationDuration: 200 }).run();
 });
+
+cy.on('mouseover', 'node', function(e){
+    let targetNode = e.target;
+    targetNode.popper({
+        content: () => {
+          let div = document.createElement('div');
+          div.id = targetNode.id();
+          div.innerHTML = 'Popper content';
+      
+          document.body.appendChild(div);
+      
+          return div;
+        },
+        popper: {} // my popper options here
+      });
+})
+
+cy.on('mouseout', 'node', function(e){
+    let targetNode = e.target;
+    let div = document.getElementById(targetNode.id());
+    if (div) {
+        div.remove();
+    }
+})
