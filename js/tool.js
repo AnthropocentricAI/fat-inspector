@@ -45,6 +45,17 @@ function addChildNode(parent) {
     ]);
 }
 
+function removeChildNode(node) {
+    let children = getChildren(node);
+    children.forEach(removeChildNode);
+    cy.remove(node);
+}
+
+function getChildren(node) {
+    let outEdges = cy.edges('[source="' + node.id() + '"]');
+    return outEdges.targets();
+}
+
 function displayTooltip(node) {
     node.popper({
         content: function() {
@@ -97,4 +108,9 @@ cy.on('mouseout', 'node', function(e) {
     let targetNode = e.target;
     targetNode.unselect();
     removeTooltips();
+})
+
+cy.on('cxttap', 'node', function(e){
+    let targetNode = e.target;
+    removeChildNode(targetNode);
 })
