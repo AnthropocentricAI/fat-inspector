@@ -3,28 +3,22 @@ var cy = cytoscape({
     elements: [
         {
             data: { id: 'D' }
-        },
-        {
-            data: { id: 'E' }
-        },
-        {
-            data: { id: 'F' }
         }
     ],
 
     style: cytoscape.stylesheet().selector('node').css({
-        'background-color': '#DDDDDD',
-        'border-width': '2px',
-        'border-color': '#555555',
+        'background-color': '#eeeeee',
+        'border-width': '5px',
+        'border-color': '#333333',
         'padding': '50px',
         'label': 'data(id)',
         'text-valign': 'center',
         'text-wrap': 'wrap',
         'text-max-width': '100px'
     }).selector('node:selected').css({
-        'border-color': '#ff8c00'
+        'border-color': '#ffa500'
     }).selector('node:unselected').css({
-        'border-color': '#555555'
+        'border-color': '#333333'
     }).selector('edge').css({
         'width': 3,
         'line-color': '#ccc',
@@ -51,35 +45,56 @@ function addChildNode(parent) {
     ]);
 }
 
+function displayTooltip(node) {
+    node.popper({
+        content: function() {
+            let div = document.createElement('div');
+            div.className = 'node-tooltip'
+            
+            let title = document.createElement('h3');
+            title.className = 'node-tooltip-title';
+            title.innerText = node.id();
+
+            let inner = document.createElement('p');
+            inner.className = 'node-tooltip-description'
+            inner.innerHTML = 'This is a test description for a node.'
+            div.appendChild(title);
+            div.appendChild(inner);
+            
+            document.body.appendChild(div);
+            return div;
+        },
+        popper: {
+            placement: 'bottom'
+        } // my popper options here
+    });
+}
+
+function removeTooltips() {
+    let divs = document.getElementsByClassName('node-tooltip');
+    for (let x of divs) {
+        x.remove();
+    }
+}
+
 cy.on('tap', 'node', function(e) {
     let targetNode = e.target;
     addChildNode(targetNode);
 });
 
 cy.on('add remove', function(e) {
+    removeTooltips();
     cy.layout({ name: 'dagre', animate: true, animationDuration: 200 }).run();
 });
 
 cy.on('mouseover', 'node', function(e){
     let targetNode = e.target;
-    targetNode.popper({
-        content: () => {
-          let div = document.createElement('div');
-          div.id = targetNode.id();
-          div.innerHTML = 'Popper content';
-      
-          document.body.appendChild(div);
-      
-          return div;
-        },
-        popper: {} // my popper options here
-      });
+    targetNode.select();
+    displayTooltip(targetNode);
 })
 
-cy.on('mouseout', 'node', function(e){
+cy.on('mouseout', 'node', function(e) {
     let targetNode = e.target;
-    let div = document.getElementById(targetNode.id());
-    if (div) {
-        div.remove();
-    }
+    targetNode.unselect();
+    removeTooltips();
 })
