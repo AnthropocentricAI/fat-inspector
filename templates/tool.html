@@ -6,7 +6,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href="css/custom.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 
         <!-- fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
@@ -71,11 +71,11 @@
         
         <script src="js/index.js"></script>
     </body>
-    <script src="js/dagre.min.js"></script>
-    <script src="js/cytoscape.min.js"></script>
-    <script src="js/cytoscape-dagre.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/cytoscape-popper.js"></script>
-    <script src="js/tool.js"></script>
+    <script src="{{ url_for('static', filename='js/dagre.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cytoscape.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cytoscape-dagre.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cytoscape-popper.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tool.js') }}"></script>
     
 </html>
