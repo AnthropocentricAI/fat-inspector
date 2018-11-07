@@ -50,12 +50,20 @@ body {
 
 #right #analysisbtn {
     grid-area: 2 / 2 / 3 / 3;
+    background: transparent;
     justify-items: center;
     align-items: center;
-    background: darkorange;
     height: 100%;
     width: 100%;
     z-index: 1;
+}
+
+#right #analysisbtn .triangle-right {
+	width: 0;
+	height: 0;
+	border-top: 100px solid transparent;
+	border-left: 50px solid #555;
+    border-bottom: 100px solid transparent;
 }
 
 #left .btn {
