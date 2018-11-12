@@ -1,3 +1,6 @@
+# with thanks to:
+# https://circleci.com/docs/2.0/project-walkthrough/
+
 version: 2
 jobs:
   build:
@@ -25,3 +28,13 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
             - "venv"
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            mkdir test-reports
+            pytest --junitxml=test-reports/junit.xml
+      - store_artifacts:
+          path: test-reports/
+      - store_test_results:
+          path: test-reports/
