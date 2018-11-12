@@ -39,6 +39,8 @@ jobs:
       - store_test_results:
           path: test-reports/
   deploy:
+    machine:
+      enabled: true
     steps:
       - checkout
       - run:
