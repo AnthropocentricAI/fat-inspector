@@ -1,1 +1,1 @@
-web: python server.py
+web: flask db upgrade; flask run
