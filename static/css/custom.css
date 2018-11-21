@@ -32,7 +32,7 @@ body {
 }
 
 .headerbtn:hover {
-  color: darkorange;
+  color: orange;
 }
 
 #left {
@@ -104,8 +104,10 @@ body {
 .switch:hover {
   width: 5em;
   height: 5em;
-  background-color: orange;
+  background-color: darkorange;
   line-height: 5em;
+  transition: background 0.15s, width 0.15s, height 0.15s, border-radius 0.15s,
+    line-height 0.15s;
 }
 
 #left .btn {
