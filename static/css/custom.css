@@ -60,6 +60,18 @@ body {
   height: 100%;
 }
 
+#displaycont__new {
+  display: flex;
+  grid-area: 1 / 1 / 4 / 3;
+  background: orangered;
+}
+
+#displaycont__new__cont {
+  display: block;
+  margin: auto;
+  width: 10em;
+}
+
 #left #btncont {
   display: grid;
   grid-template-rows: 8em repeat(3, 1fr);
