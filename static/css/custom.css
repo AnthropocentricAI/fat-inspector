@@ -20,6 +20,10 @@ body {
   display: flex;
 }
 
+#header img {
+  margin: 0 1em 0 1em;
+}
+
 .headerbtn {
   display: inline-block;
   width: auto;
