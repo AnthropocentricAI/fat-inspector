@@ -6,6 +6,9 @@ var prediction = document.getElementById("predictions");
 var toanalysis = document.getElementById("analysisbtn");
 var screen1 = document.getElementById("right");
 var screen2 = document.getElementById("right2");
+
+var popup = document.getElementById("displaycont__new");
+
 var clicked = 0;
 var page = 0;
 
@@ -43,4 +46,12 @@ function hidelayer(clicked) {
   model.style.visibility = clicked == 0 || clicked == 2 ? "hidden" : "visible";
   prediction.style.visibility =
     clicked == 0 || clicked == 1 ? "hidden" : "visible";
+}
+
+function displayPopUp() {
+  popup.style.visibility = "block";
+}
+
+function hidePopUp() {
+  popup.style.visibility = "none";
 }
