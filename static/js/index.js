@@ -7,12 +7,28 @@ var toanalysis = document.getElementById("analysisbtn");
 var screen1 = document.getElementById("right");
 var screen2 = document.getElementById("right2");
 
-var popup = document.getElementById("displaycont__new");
+var newData = document.getElementById("displaycont__new");
 
 var clicked = 0;
 var page = 0;
 
-hidelayer(clicked);
+window.onload = function() {
+  displayLayer('data')
+}
+
+var LayerEnum = Object.freeze(
+  {'data' : data,
+   'model' : model,
+   'prediction' : prediction,
+   'newData' : newData}
+)
+
+// hide all layers apart from one w/ id
+function displayLayer(id) {
+  for (x in LayerEnum) {
+    LayerEnum[x].style.visibility = x == id ? 'visible' : 'hidden';
+  }
+}
 
 for (let button of buttons) {
   button.addEventListener("click", movecursor);
@@ -20,38 +36,18 @@ for (let button of buttons) {
 
 function movecursor(e) {
   var name = e.target.innerHTML;
-  if (name === "DATA") {
-    // cursor.style.top = "0";
-    clicked = 0;
+  switch(name) {
+    case 'DATA':
+      displayLayer('data')
+      break;
+    case 'MODEL':
+      displayLayer('model')
+      break;
+    case 'PREDICTION':
+      displayLayer('prediction')
+      break;
+    case 'dunno':
+      displayLayer('newData')
+      break;
   }
-  if (name === "MODEL") {
-    // cursor.style.top = "33%";
-    clicked = 1;
-  }
-  if (name === "PREDICTION") {
-    // cursor.style.top = "67%";
-    clicked = 2;
-  }
-
-  hidelayer(clicked);
-}
-
-function swap(page) {
-  screen1.style.visibility = page == 1 ? "hidden" : "visible";
-  screen2.style.visibility = page == 0 ? "hidden" : "visible";
-}
-
-function hidelayer(clicked) {
-  data.style.visibility = clicked == 1 || clicked == 2 ? "hidden" : "visible";
-  model.style.visibility = clicked == 0 || clicked == 2 ? "hidden" : "visible";
-  prediction.style.visibility =
-    clicked == 0 || clicked == 1 ? "hidden" : "visible";
-}
-
-function displayPopUp() {
-  popup.style.visibility = "block";
-}
-
-function hidePopUp() {
-  popup.style.visibility = "none";
 }
