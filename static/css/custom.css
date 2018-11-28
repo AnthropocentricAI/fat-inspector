@@ -35,17 +35,24 @@ body {
   color: orange;
 }
 
-.dropdownbtn {
+.dropdowncontent {
   display: none;
-  position: absolute;
+  position: relative;
   background-color: #f9f9f9;
   min-width: 160px;
+  height: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
   z-index: 1;
 }
 
-.headerbtn:hover .dropdownbtn {
+.dropdownbtn {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+#currentset:hover .dropdowncontent {
   display: block;
 }
 
