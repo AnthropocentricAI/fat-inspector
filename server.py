@@ -1,7 +1,10 @@
 from flask import Flask
 from flask import render_template
+from flask.ext.scss import scss
 
 app = Flask(__name__)
+app.testing = True
+Scss(app, static_dir='static', asset_dir='static/scss')
 
 @app.route('/')
 def index():
