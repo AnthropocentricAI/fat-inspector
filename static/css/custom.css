@@ -20,9 +20,9 @@ body {
   display: flex;
 }
 
-#header img {
+/* #header img {
   margin: 0 1em 0 1em;
-}
+} */
 
 .headerbtn {
   display: inline-block;
@@ -42,7 +42,7 @@ body {
 
 .dropdowncontent {
   display: none;
-  position: relative;
+  position: fixed;
   background-color: #f9f9f9;
   width: auto;
   height: auto;
@@ -89,13 +89,14 @@ body {
 #displaycont__new {
   /* display: none; */
   grid-area: 1 / 1 / 4 / 3;
-  background: orangered;
+  background: darkorange;
 }
 
 #displaycont__new__cont {
   display: block;
   margin: auto;
   width: 10em;
+  text-align: center;
 }
 
 #left #btncont {
