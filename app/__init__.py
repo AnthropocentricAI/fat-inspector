@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sassutils.wsgi import SassMiddleware
 
-app = Flask(__name__, static_folder='/static')
+app = Flask(__name__)
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'app': ('static/sass', 'static/css', 'static/css')
 })
