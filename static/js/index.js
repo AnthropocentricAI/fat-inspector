@@ -1,46 +1,42 @@
-var buttons = document.getElementsByClassName("btn");
 var cursor = document.getElementById("cursor");
-var data = document.getElementById("data");
-var model = document.getElementById("model");
-var prediction = document.getElementById("predictions");
 var toanalysis = document.getElementById("analysisbtn");
 var screen1 = document.getElementById("right");
 var screen2 = document.getElementById("right2");
+
+var data = document.getElementById("data");
+var model = document.getElementById("model");
+var prediction = document.getElementById("predictions");
+var newData = document.getElementById("displaycont__new");
+
 var clicked = 0;
-var page = 0;
 
-hidelayer(clicked);
-
-for (let button of buttons) {
-  button.addEventListener("click", movecursor);
+window.onload = function() {
+  var buttons = document.getElementsByClassName("btn");
+  for (let button of buttons)
+    button.addEventListener("click", movecursor);
+  
+  displayLayer('data')
 }
 
+/*
+ *  LAYER SWITCHING FUNC.
+*/
+var layer = '';
+var LayerEnum = Object.freeze(
+  {'data' : data,
+   'model' : model,
+   'prediction' : prediction,
+   'newData' : newData}
+)
+// hide all layers apart from one w/ id
+function displayLayer(id) {
+  for (x in LayerEnum)
+    LayerEnum[x].style.visibility = x == id ? 'visible' : 'hidden';
+  layer = id
+}
+// switch on button press
 function movecursor(e) {
-  var name = e.target.innerHTML;
-  if (name === "DATA") {
-    // cursor.style.top = "0";
-    clicked = 0;
-  }
-  if (name === "MODEL") {
-    // cursor.style.top = "33%";
-    clicked = 1;
-  }
-  if (name === "PREDICTION") {
-    // cursor.style.top = "67%";
-    clicked = 2;
-  }
-
-  hidelayer(clicked);
-}
-
-function swap(page) {
-  screen1.style.visibility = page == 1 ? "hidden" : "visible";
-  screen2.style.visibility = page == 0 ? "hidden" : "visible";
-}
-
-function hidelayer(clicked) {
-  data.style.visibility = clicked == 1 || clicked == 2 ? "hidden" : "visible";
-  model.style.visibility = clicked == 0 || clicked == 2 ? "hidden" : "visible";
-  prediction.style.visibility =
-    clicked == 0 || clicked == 1 ? "hidden" : "visible";
+  var name = e.target.innerHTML.toLowerCase();
+  if (name in LayerEnum)
+    displayLayer(name)
 }
