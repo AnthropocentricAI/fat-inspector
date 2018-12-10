@@ -1,10 +1,11 @@
 from flask import Flask
 from flask import render_template
-from flask.ext.scss import scss
+from sassutils.wsgi import SassMiddleware
 
 app = Flask(__name__)
-app.testing = True
-Scss(app, static_dir='static', asset_dir='static/scss')
+app.wsgi_app = SassMiddleware(app.wsgi_app, {
+    'app' : ('static/scss', 'static/css', '/static/css')
+})
 
 @app.route('/')
 def index():
