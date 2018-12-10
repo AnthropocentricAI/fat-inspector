@@ -12,6 +12,7 @@ var clicked = 0;
 
 window.onload = function() {
   var buttons = document.getElementsByClassName("btn");
+  console.log(buttons)
   for (let button of buttons)
     button.addEventListener("click", movecursor);
   
@@ -26,7 +27,7 @@ var LayerEnum = Object.freeze(
   {'data' : data,
    'model' : model,
    'prediction' : prediction,
-   'newData' : newData}
+   'new dataset' : newData}
 )
 // hide all layers apart from one w/ id
 function displayLayer(id) {
