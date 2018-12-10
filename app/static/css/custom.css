@@ -52,9 +52,13 @@ body {
 
 .dropdownbtn {
   color: black;
-  padding: 12px 16px;
+  padding: 4px 4px;
   text-decoration: none;
   display: block;
+}
+
+.dropdownbtn:hover {
+  color: orange;
 }
 
 #currentset:hover .dropdowncontent {
