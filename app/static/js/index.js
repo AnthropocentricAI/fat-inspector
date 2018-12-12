@@ -9,18 +9,19 @@ var prediction = document.getElementById("predictions");
 var newData = document.getElementById("displaycont__new");
 var workflow = document.getElementById("workflow");
 var inspector = document.getElementById("inspector");
+var uploadname = document.getElementById("name");
 
 var clicked = 0;
-var workflowbtn = true;
-var inspectorbtn = false;
 
 window.onload = function() {
   var buttons = document.getElementsByClassName("btn");
   console.log(buttons);
   for (let button of buttons) button.addEventListener("click", movecursor);
 
-  displayLayer("data");
-  inspectorswitch("workflow");
+  displayLayer("new dataset");
+
+  workflow.addEventListener("click", workflowswitch);
+  inspector.addEventListener("click", inspectorswitch);
 };
 
 /*
@@ -45,4 +46,27 @@ function movecursor(e) {
   if (name in LayerEnum) displayLayer(name);
 }
 
-function inspectorswitch(id) {}
+function workflowswitch() {
+  if (workflow.classList.contains("off")) {
+    inspector.classList.remove("on");
+    inspector.classList.add("off");
+    workflow.classList.remove("off");
+    workflow.classList.add("on");
+  }
+}
+function inspectorswitch() {
+  if (inspector.classList.contains("off")) {
+    workflow.classList.remove("on");
+    workflow.classList.add("off");
+    inspector.classList.remove("off");
+    inspector.classList.add("on");
+  }
+}
+
+var uploadbtn = document.getElementById("uploadbtn");
+uploadbtn.addEventListener("click", upload);
+
+function upload() {
+  document.getElementById("setname").innerHTML = uploadname.value;
+  displayLayer("data");
+}

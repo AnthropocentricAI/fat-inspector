@@ -153,6 +153,15 @@ body {
     line-height 0.15s;
 }
 
+.switch.on {
+  width: 5em;
+  height: 5em;
+  background-color: darkorange;
+  line-height: 5em;
+  transition: background 0.15s, width 0.15s, height 0.15s, border-radius 0.15s,
+    line-height 0.15s;
+}
+
 #left .btn {
   z-index: 1;
   height: 9em;
