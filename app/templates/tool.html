@@ -34,11 +34,11 @@
           <!-- <img src="static/assets/gear.svg" width="30px"/> -->
           <!-- </br> -->
           <div class="headerbtn" id="currentset">
-            FAT
+            <div id="setname">FAT</div>
             <div class="dropdowncontent">
               <div class="dropdownbtn" id="save">Save</div>
-              <div class="dropdownbtn" id="switchdataset">Switch Workspace</div>
-              <div class="dropdownbtn" id="rename">Rename Workspace</div>
+              <div class="dropdownbtn" id="switchdataset">Switch Dataset</div>
+              <div class="dropdownbtn" id="rename">Rename Dataset</div>
               <div class="dropdownbtn" id="delete">Remove Current Dataset</div>
             </div>
           </div>
@@ -50,10 +50,10 @@
           <div id="btncont">
             <div id="inspectorworkflow">
               <div class="inspectorworkflow__section">
-                <div class="switch" id="workflow">Workflow</div>
+                <div class="switch on" id="workflow">Workflow</div>
               </div>
               <div class="inspectorworkflow__section">
-                <div class="switch" id="inspector">Inspector</div>
+                <div class="switch off" id="inspector">Inspector</div>
               </div>
             </div>
             <div class="btn">DATA</div>
@@ -74,8 +74,17 @@
               <div id="predictions" class="layer">predictions are cool</div>
               <div id="displaycont__new">
                 <div id="displaycont__new__cont">
-                  <h1>Create a new graph</h1>
-                  <button>Upload</button>
+                  <h1>
+                    Welcome to FAT-Forensics' web tool designed for use in
+                    analysing the fairness of AI systems <br />
+                  </h1>
+                  <h2>To begin, upload your dataset and start your workflow</h2>
+                  <form>
+                    Name your dataset:<br />
+                    <input type="text" name="name" id="name" /><br />
+                  </form>
+                  <br />
+                  <button id="uploadbtn">Upload</button>
                   <p id="uploadmessage">Upload your dataset</p>
                 </div>
               </div>
