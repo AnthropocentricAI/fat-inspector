@@ -2,11 +2,12 @@
 
 Frontend stuff goes here
 
-note for liam :)
-
 ## Running
 
 ```
-export FLASK_APP=app/server.py
-flask run
+$ npm install
+$ webpack start
+$ export FLASK_APP=app/server.py
+$ export DATABASE_URL=<url>
+$ flask run
 ```
