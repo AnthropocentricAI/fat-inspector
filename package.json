@@ -1,0 +1,38 @@
+{
+  "name": "fat-inspector",
+  "version": "1.0.0",
+  "description": "An application to evaluate the Fairness, Accountability and Transparency of ML algorithms.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnthropocentricAI/fat-inspector.git"
+  },
+  "author": "liamdalg, Nenivar, greggnurick, jzdglo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AnthropocentricAI/fat-inspector/issues"
+  },
+  "homepage": "https://github.com/AnthropocentricAI/fat-inspector#readme",
+  "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.0.5",
+    "cytoscape": "^3.4.0",
+    "cytoscape-dagre": "^2.2.2",
+    "cytoscape-popper": "^1.0.2",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
+  }
+}
