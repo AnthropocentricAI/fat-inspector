@@ -1,5 +1,7 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, JSON, ForeignKey, LargeBinary
+
+db = SQLAlchemy()
 
 class Dataset(db.Model):
     id = Column(Integer, primary_key=True)
