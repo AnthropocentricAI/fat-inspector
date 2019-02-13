@@ -2,10 +2,21 @@
 
 Run this with `flask run`; flask will auto-detect and run the create_app function.
 """
-
-
 from app.config import config
 from flask import Flask
+import os, importlib
+
+
+def load_blueprints(app):
+    """Load the blueprints for the application from the './blueprints' folder.
+
+    :param app: current application
+    """
+    for file in os.listdir(os.path.join(os.path.dirname(__file__), 'blueprints')):
+        # if it's a python file (excluding '__init__.py') then import its blueprint
+        if file.endswith('.py') and file != '__init__.py':
+            route = importlib.import_module('app.blueprints.' + file[:-3])
+            app.register_blueprint(route.bp)
 
 
 # TODO: make config more dynamic (i.e. you can pick from env)
@@ -17,9 +28,6 @@ def create_app(cfg='development'):
     from app.models import db
     db.init_app(app)
 
-    # register blueprint routes
-    from app import dataset, graph
-    app.register_blueprint(dataset.bp)
-    app.register_blueprint(graph.bp)
+    load_blueprints(app)
 
     return app

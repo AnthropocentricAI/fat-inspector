@@ -1,6 +1,4 @@
 """Dataset blueprint module for routes to modify datasets."""
-
-
 from flask import render_template, request, abort
 from flask.blueprints import Blueprint
 
