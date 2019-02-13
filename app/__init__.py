@@ -4,7 +4,8 @@ Run this with `flask run`; flask will auto-detect and run the create_app functio
 """
 from app.config import config
 from flask import Flask
-import os, importlib
+import os
+import importlib
 
 
 def load_blueprints(app):
@@ -19,11 +20,9 @@ def load_blueprints(app):
             app.register_blueprint(route.bp)
 
 
-# TODO: make config more dynamic (i.e. you can pick from env)
-def create_app(cfg='development'):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config.get(cfg))
-
+    app.config.from_object(config.get(os.getenv('FLASK_CONFIG') or 'default'))
     # register db
     from app.models import db
     db.init_app(app)
