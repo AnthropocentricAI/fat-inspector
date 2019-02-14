@@ -29,4 +29,9 @@ def create_app():
 
     load_blueprints(app)
 
+    @app.cli.command()
+    def init():
+        db.drop_all()
+        db.create_all()
+
     return app
