@@ -1,25 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, JSON, ForeignKey, LargeBinary
+from sqlalchemy import Column, Integer, String, JSON,orm
+import os
 
 
 db = SQLAlchemy()
-
-
-class Dataset(db.Model):
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    path = Column(String, nullable=False)
-
-    def __repr__(self):
-        return '''<Dataset '{}' id#{}>'''.format(self.name, self.id)
 
 
 class Graph(db.Model):
     id = Column(Integer, primary_key=True)
     type = Column(Integer, nullable=False)
     name = Column(String, nullable=False)
-    dataset_id = Column(Integer, ForeignKey('dataset.id'))
+    path = Column(String, nullable=False)
     data = Column(JSON, nullable=False)
+
+    def __init__(self, **kwargs):
+        super(Graph, self).__init__(**kwargs)
+        if not os.path.exists(self.path):
+            raise IOError('Dataset file path does not exist.')
+        if not self.path.endswith('.csv'):
+            raise ValueError('Datasets must be a .csv file.')
 
     def __repr__(self):
         return '''<Graph '{}' type: {} id#{} dataset_id#{}>'''.format(self.name, 

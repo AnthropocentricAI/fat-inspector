@@ -34,31 +34,26 @@ class TestDatabase:
         # just do nothing to check that the setup/teardown methods work correctly
         pass
 
-    def test_insert_dataset(self):
-        d = models.Dataset(name='test_insert_dataset', path='')
-        db.session.add(d)
-        db.session.commit()
-
-    def test_insert_dataset_utf8(self):
-        d = models.Dataset(name='test_insert_dataset_база_данных', path='')
-        db.session.add(d)
-        db.session.commit()
-
-    def test_fetch_dataset(self):
-        d = models.Dataset(id=0, name='test_fetch_dataset', path='')
-        db.session.add(d)
-        db.session.commit()
-        fetched = models.Dataset.query.get(0)
-        assert fetched == d
-
-    def test_null_dataset(self):
-        d = models.Dataset()
-        with pytest.raises(sqlalchemy.exc.IntegrityError):
-            db.session.add(d)
-            db.session.commit()
-
     def test_null_graph(self):
-        g = models.Graph()
+        g = models.Graph(path='assets/test.csv')
         with pytest.raises(sqlalchemy.exc.IntegrityError):
             db.session.add(g)
             db.session.commit()
+
+    def test_invalid_path(self):
+        with pytest.raises(IOError):
+            _ = models.Graph(type=0, name='test_invalid_path', path='invalid_path.csv', data={})
+
+    def test_non_csv_path(self):
+        with pytest.raises(ValueError):
+            _ = models.Graph(type=0, name='test_non_csv_path', path='assets/not_csv.txt', data={})
+
+    def test_valid_csv_path(self):
+        g = models.Graph(type=0, name='test_valid_csv_path', path='assets/test.csv', data={})
+        db.session.add(g)
+        db.session.commit()
+
+    def test_utf8_string(self):
+        g = models.Graph(type=0, name='test_utf8_string_база_данных', path='assets/test.csv', data={})
+        db.session.add(g)
+        db.session.commit()
