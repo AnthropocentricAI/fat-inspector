@@ -2,8 +2,9 @@
 from flask import current_app, render_template, request, abort, escape, send_file
 from flask.blueprints import Blueprint
 from app import utilities as util
-import fatd.holders
+from app import models
 import os
+
 
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
@@ -19,9 +20,8 @@ def view(name):
     name = util.normalise_path_to_file(name) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-        data = fatd.holders.csv_loader(file_path)
-        target = data.target[:10]
-        return str(data.data[:10]) + '<br/>' + str(target[:10])
+        dataset = models.Dataset.from_path(file_path)
+        return escape(dataset)
     except IOError as e:
         print(e)
         abort(400, 'Invalid dataset name.')
