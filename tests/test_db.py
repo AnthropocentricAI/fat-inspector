@@ -35,17 +35,17 @@ class TestDatabase:
         pass
 
     def test_insert_dataset(self):
-        d = models.Dataset(name='test_insert_dataset', data=b'')
+        d = models.Dataset(name='test_insert_dataset', path='')
         db.session.add(d)
         db.session.commit()
 
     def test_insert_dataset_utf8(self):
-        d = models.Dataset(name='test_insert_dataset_база_данных', data=b'')
+        d = models.Dataset(name='test_insert_dataset_база_данных', path='')
         db.session.add(d)
         db.session.commit()
 
     def test_fetch_dataset(self):
-        d = models.Dataset(id=0, name='test_fetch_dataset', data=b'')
+        d = models.Dataset(id=0, name='test_fetch_dataset', path='')
         db.session.add(d)
         db.session.commit()
         fetched = models.Dataset.query.get(0)

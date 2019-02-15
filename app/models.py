@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class Dataset(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    data = Column(LargeBinary, nullable=False)
+    path = Column(String, nullable=False)
 
     def __repr__(self):
         return '''<Dataset '{}' id#{}>'''.format(self.name, self.id)

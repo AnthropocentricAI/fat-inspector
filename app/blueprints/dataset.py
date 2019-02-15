@@ -1,17 +1,31 @@
 """Dataset blueprint module for routes to modify datasets."""
-from flask import render_template, request, abort, escape, send_file
+from flask import current_app, render_template, request, abort, escape, send_file
 from flask.blueprints import Blueprint
-from app import models
-from app.models import db
-import io
+from app import utilities as util
+import fatd.holders
+import os
 
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
 
-@bp.route('/<name>')
+@bp.route('/view')
+def view_all():
+    files = [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
+    return render_template('dataset_view.html', files=files)
+
+
+@bp.route('/<name>/view')
 def view(name):
-    dataset = models.Dataset.query.filter_by(name=name).first()
-    return escape(str(dataset))
+    name = util.normalise_path_to_file(name) + '.csv'
+    try:
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+        data = fatd.holders.csv_loader(file_path)
+        target = data.target[:10]
+        return str(data.data[:10]) + '<br/>' + str(target[:10])
+    except IOError as e:
+        print(e)
+        abort(400, 'Invalid dataset name.')
+
 
 # TODO: implement placeholder routes
 @bp.route('/upload', methods=['POST'])
@@ -19,32 +33,33 @@ def upload():
     if 'csv_file' not in request.files or 'name' not in request.form:
         abort(400, 'Invalid request arguments.\n\tcsv_file: <bytes>\n\tname: <str>')
     csv_bytes = request.files.get('csv_file').read()
-    name = request.form.get('name')
-    dataset = models.Dataset(name=name, data=csv_bytes)
-    db.session.add(dataset)
-    db.session.commit()
-    return 'Success'
+    name = util.normalise_path_to_file(request.form.get('name')) + '.csv'
+    try:
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+        with open(file_path, 'wb') as f:
+            f.write(csv_bytes)
+        return 'Success'
+    except IOError as e:
+        print(e)
+        abort(400, 'Dataset already exists or an error occurred when attempting to save the dataset.')
 
 
-@bp.route('/rename', methods=['POST'])
-def rename():
-    if 'old_name' not in request.form or 'new_name' not in request.form:
-        abort(400, 'Invalid request arguments.\n\told_name: <str>\n\tnew_name: <str>')
-    old_name = request.form.get('old_name')
-    new_name = request.form.get('new_name')
-    models.Dataset.query.filter_by(name=old_name).update(dict(name=new_name))
-    db.session.commit()
-    return 'Success'
+@bp.route('/<name>/rename', methods=['POST'])
+def rename(name):
+    abort(500, 'Not implemented yet!')
 
-@bp.route('/download')
-def download():
-    if 'name' not in request.args:
-        abort(400, 'Invalid request arguments.\n\tname: <str>')
-    name = request.args.get('name')
-    dataset = models.Dataset.query.filter_by(name=name).first()
-    return send_file(io.BytesIO(dataset.data),
-                     as_attachment=True,
-                     attachment_filename=name + '.csv',
-                     mimetype='text/csv')
+
+@bp.route('/<name>/download')
+def download(name):
+    name = util.normalise_path_to_file(name) + '.csv'
+    file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+    try:
+        return send_file(file_path,
+                         as_attachment=True,
+                         attachment_filename=name,
+                         mimetype='text/csv')
+    except IOError as e:
+        print(e)
+        abort(400, 'Invalid dataset name.')
 
 
