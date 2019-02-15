@@ -1,5 +1,9 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, JSON, ForeignKey, LargeBinary
+
+
+db = SQLAlchemy()
+
 
 class Dataset(db.Model):
     id = Column(Integer, primary_key=True)
@@ -9,8 +13,9 @@ class Dataset(db.Model):
     def __repr__(self):
         return '''<Dataset '{}' id#{}>'''.format(self.name, self.id)
 
+
 class Graph(db.Model):
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     type = Column(Integer, nullable=False)
     name = Column(String, nullable=False)
     dataset_id = Column(Integer, ForeignKey('dataset.id'))
