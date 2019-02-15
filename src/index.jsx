@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import Topbar from "./topbar/Topbar.jsx";
 
 const App = () => (
-    <div>
-        <h2>hahahaha</h2>
-    </div>
+  <div>
+    <Topbar />
+  </div>
 );
 
-
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
