@@ -207,3 +207,7 @@ body {
 .layer {
   grid-area: 1 / 1 / 2 / 2;
 }
+
+.popup_cont {
+  background-color: black;
+}

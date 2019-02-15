@@ -9,3 +9,7 @@ bp = Blueprint('tool', __name__)
 @bp.route('/')
 def index():
     return 'yes!'
+
+@bp.route('/react')
+def react():
+    return render_template('index.html')
