@@ -7,8 +7,9 @@ export default class Popup extends React.Component {
 
     render() {
         return (
-            <div className="Popup_cont">
-                <h1>Title</h1>
+            <div className="popup_cont">
+                <img className="popup_close" src="assets/gear.svg"></img>
+                <h1 className="popup_title">Title</h1>
                 <p>Words.</p>
             </div>
         );
