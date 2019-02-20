@@ -34,4 +34,9 @@ def create_app():
         db.drop_all()
         db.create_all()
 
+    try:
+        os.mkdir(app.config['ASSETS_DIR'])
+    except OSError:
+        pass
+
     return app
