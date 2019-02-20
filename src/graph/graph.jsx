@@ -1,11 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import Topbar from "./topbar/Topbar.jsx";
-//import Graph from './graph/graph.jsx'
-
-
-//
-//import React from "react";
 import { Graph } from 'react-d3-graph';
  
 // graph payload (with minimalist structure)
@@ -65,28 +58,17 @@ const onMouseOutLink = function(source, target) {
     window.alert(`Mouse out link between ${source} and ${target}`);
 };
  
-
-//
-
-const App = () => (
-  <div>
-    <p>Words</p>
-    <Topbar />
-    <Graph
-      id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-      data={data}
-      config={myConfig}
-      onClickNode={onClickNode}
-      onRightClickNode={onRightClickNode}
-      onClickGraph={onClickGraph}
-      onClickLink={onClickLink}
-      onRightClickLink={onRightClickLink}
-      onMouseOverNode={onMouseOverNode}
-      onMouseOutNode={onMouseOutNode}
-      onMouseOverLink={onMouseOverLink}
-      onMouseOutLink={onMouseOutLink}
-    />;
-  </div>
-);
-
-ReactDOM.render(<App />, document.getElementById("root"));
+<Graph
+    id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
+    data={data}
+    config={myConfig}
+    onClickNode={onClickNode}
+    onRightClickNode={onRightClickNode}
+    onClickGraph={onClickGraph}
+    onClickLink={onClickLink}
+    onRightClickLink={onRightClickLink}
+    onMouseOverNode={onMouseOverNode}
+    onMouseOutNode={onMouseOutNode}
+    onMouseOverLink={onMouseOverLink}
+    onMouseOutLink={onMouseOutLink}
+/>;
