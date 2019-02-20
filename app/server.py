@@ -3,9 +3,10 @@ import json
 from app import models
 from app import create_app
 from flask import render_template, request, abort
-from app import db
+#from app import db
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+#app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app()
 
 @app.route('/')
 def index():
