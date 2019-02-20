@@ -20,6 +20,7 @@ module.exports = {
         // loaders: [ 'style-loader', 'css-loader', 'sass-loader' ], // compiles Sass to CSS, using Node Sass by default
         use: [
           //process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
+          "style-loader",
           MiniCssExtractPlugin.loader,
           "css-loader",
           "sass-loader"
