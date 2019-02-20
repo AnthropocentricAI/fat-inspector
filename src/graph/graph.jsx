@@ -1,7 +1,7 @@
 import React from "react";
 import { Graph } from 'react-d3-graph';
- 
-// cheers https://github.com/danielcaldas/react-d3-graph/blob/master/sandbox/Sandbox.jsx
+import defaultConfig from './config'
+
 export default class Tool extends React.Component {
     constructor(props) {
         super(props);
@@ -11,33 +11,37 @@ export default class Tool extends React.Component {
             links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
         };
 
-        const config = {
-            nodeHighlightBehavior: true,
-            node: {
-                color: 'lightgreen',
-                size: 120,
-                highlightStrokeColor: 'blue'
-            },
-            link: {
-                highlightColor: 'lightblue'
-            }
-        };
+        const config = defaultConfig;
 
         this.state = {
             config,
             data
         }
+        this.onClickNode = this.onClickNode.bind(this);
+    }
+
+    onClickNode(id) {
+        // TODO: Render popup
+        let newId = id + Math.floor(Math.random() * 20)
+        this.setState({
+            data: {
+                nodes: [...this.state.data.nodes, { id: newId }],
+                links: [...this.state.data.links, { source: id, target: newId }]
+            }
+        });
     }
 
     render() {
         const graphProps = {
             id: 'graph',
             data: this.state.data,
-            config: this.state.config
+            config: this.state.config,
+            onClickNode: this.onClickNode,
         }
 
         return (
             <div>
+                <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
             </div>
         );

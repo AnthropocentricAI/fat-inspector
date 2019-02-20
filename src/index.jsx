@@ -7,7 +7,7 @@ const App = () => (
   <div>
     <p>Words</p>
     <Topbar />
-    <Tool />
+    <Tool dataset='iris'/>
   </div>
 );
 
