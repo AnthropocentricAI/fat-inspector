@@ -27,17 +27,22 @@
     "@babel/preset-react": "^7.0.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.0.5",
+    "css-loader": "^2.1.0",
     "cytoscape": "^3.4.0",
     "cytoscape-dagre": "^2.2.2",
     "cytoscape-popper": "^1.0.2",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "reactstrap": "^7.1.0",
+    "style-loader": "^0.23.1",
     "themify-icons": "^1.0.0",
-    "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.3.0"
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "webpack": "^4.29.5"
   }
 }
