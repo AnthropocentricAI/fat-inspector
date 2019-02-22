@@ -1,0 +1,28 @@
+.popup_cont {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    margin: auto;
+
+    background-color: grey;
+    width: 40%;
+    height: 100px;
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+}
+.popup_close {
+    float: right;
+    margin: 0 1em 1em 1em;
+}
+.popup_title {
+    float: left;
+    margin: 0 1em 1em 1em;
+}
+.popup_desc {
+    float: left;
+    margin: 0 1em 0 1em;
+}
+.popup_form {
+    margin: auto;
+}

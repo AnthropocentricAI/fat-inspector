@@ -11,9 +11,12 @@ const App = () => (
         <h2>hahahaha</h2>
         {/* <Popup title="Title" desc="Description."></Popup>
         <PopupForm></PopupForm> */}
-        <PopupYesNo title="Title" form={ PopupForm }>
+        <Popup title="title" desc="desc">
+            <PopupForm></PopupForm>
+        </Popup>
+        {/* <PopupYesNo title="Title" form={ PopupForm }>
             <p>dsjaidjasio</p>
-        </PopupYesNo>
+        </PopupYesNo> */}
     </div>
 );
 
