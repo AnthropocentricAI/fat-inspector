@@ -8,22 +8,27 @@ from flask import render_template, request, abort
 #app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 app = create_app()
 
+
 @app.route('/')
 def index():
     return 'Hello world!'
+
 
 @app.route('/tool')
 def tool():
     return render_template('tool.html')
 
+
 @app.route('/react')
 def react():
     return render_template('index.html')
+
 
 @app.cli.command()
 def init():
     db.drop_all()
     db.create_all()
+
 
 @app.route('/uploadDataset', methods=['POST'])
 def handle_upload_dataset():
@@ -36,6 +41,7 @@ def handle_upload_dataset():
     db.session.add(x)
     db.session.commit()
     return 'Success'
+
 
 if __name__ == "__main__":
     app.run()

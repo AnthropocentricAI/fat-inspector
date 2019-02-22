@@ -22,7 +22,7 @@ class Topbar extends PureComponent {
       <div className="topbar">
         <div className="topbar__wrapper">
           {buttonnames.map(button => (
-            <TopbarButton name={button.name} />
+            <TopbarButton key={button.name} name={button.name} />
           ))}
         </div>
       </div>

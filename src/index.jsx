@@ -6,9 +6,9 @@ import Sidebar from "./sidebar/Sidebar.jsx";
 //import '/scss/app.scss';
 
 const App = () => (
-  <div>
+  <div className="mainwrapper">
     <Topbar />
-    <Sidebar />
+    {/* <Inspectbutton /> */}
   </div>
 );
 
