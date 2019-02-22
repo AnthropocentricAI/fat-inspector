@@ -4,6 +4,7 @@ from flask import render_template, request, abort, jsonify
 from flask.blueprints import Blueprint
 import fatd.transform.data.columns
 
+funcs = {f.__name__: f for _, f in fatd.transform.data.columns.__dict__.items() if callable(f)}
 
 # all routes in here are accessible through '/graph/<route>'
 bp = Blueprint('graph', __name__, url_prefix='/graph')
@@ -27,5 +28,11 @@ def download():
 
 @bp.route('/functions')
 def fetch_functions():
-    func_names = [f.__name__ for _, f in fatd.transform.data.columns.__dict__.items() if callable(f)]
-    return jsonify({ 'functions': func_names})
+    return jsonify({'functions': list(funcs.keys())})
+
+
+@bp.route('/execute')
+def execute():
+    if not request.is_json():
+        abort(400, 'Request should be JSON.')
+    data = request.json

@@ -45,7 +45,7 @@ export default class Tool extends React.Component {
 
     onClickNode(id) {
         // TODO: Render popup
-        let newId = id + Math.floor(Math.random() * 20);
+        let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
             data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
