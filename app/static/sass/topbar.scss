@@ -1,0 +1,27 @@
+.topbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  height: 50px;
+  z-index: 101;
+  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+  left: 0;
+}
+
+.topbar__wrapper {
+  position: relative;
+  display: flex;
+  height: 60px;
+}
+
+.topbarbutton {
+  font-size: 100%;
+  margin: 100;
+  background-color: #911800;
+  flex-grow: 1;
+  color: #eaeaea;
+
+  &:hover {
+    background-color: #e8dab2;
+  }
+}
