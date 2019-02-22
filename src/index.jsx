@@ -9,14 +9,9 @@ import PopupYesNo from './popup.jsx';
 const App = () => (
     <div>
         <h2>hahahaha</h2>
-        {/* <Popup title="Title" desc="Description."></Popup>
-        <PopupForm></PopupForm> */}
         <Popup title="title" desc="desc">
             <PopupForm></PopupForm>
         </Popup>
-        {/* <PopupYesNo title="Title" form={ PopupForm }>
-            <p>dsjaidjasio</p>
-        </PopupYesNo> */}
     </div>
 );
 
