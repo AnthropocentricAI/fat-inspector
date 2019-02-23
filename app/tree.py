@@ -12,9 +12,9 @@ NodeData = Union[Data, Models, Predictions, np.ndarray]
 
 class Node:
 
-    def __init__(self, f: Callable[[NodeData], Any], data: NodeData):
+    def __init__(self, f: Union[None, Callable[[NodeData], Any]]):
         self.f = f
-        self.data = data
+        self.data = None
         self.dirty = False
 
     def apply(self):
@@ -29,9 +29,19 @@ class Tree:
     """Wrapper class for D3 nodes and links."""
 
     def __init__(self, nodes: [dict], links: [dict], data: NodeData):
+        """Creates a tree of Nodes from a D3 graph.
+
+        Note that the data is stored in the root ONLY until Tree.compute()
+        is called to propagate the transformed data down the tree.
+
+        :param nodes: List of D3 nodes as {'id': <id>, 'f': <function>}.
+        :param links: List of D3 links as {'source': <source>, 'target': <target>}
+        :param data: Data which is stored in each node.
+        """
         # assuming that the first node is the root!!
         self.root = nodes[0]['id']
-        self.nodes = {n['id']: Node(n.get('f'), data) for n in nodes}
+        self.nodes = {n['id']: Node(n.get('f')) for n in nodes}
+        self.nodes[self.root].data = data
         self.children = {key: [] for key in self.nodes}
         for link in links:
             source = link['source']
