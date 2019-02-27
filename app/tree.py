@@ -46,7 +46,7 @@ class Tree:
    until Tree.compute() is called: the data is propagated down the tree as functions are applied.
 
    Args:
-       nodes: a D3-style node dict of the form { 'id': '<id>' } (other node data may be present).
+       nodes: a D3-style node dict of the form { 'id': '<id>', 'f': <function> }.
        links: a D3-style links dict of the form { 'source': '<source_node>', 'target': 'target_node' }.
        data: the data which the tree represents.
 
