@@ -36,14 +36,22 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/dev.txt
-      - run: 
-          name: Install node dependencies
-          command: |
-            npm build
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
             - "venv"
+      - run: 
+          name: Install node dependencies
+          command: npm install
+      - restore_cache: 
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Build source files
+          command: npm build
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
       - run:
           name: Run tests
           command: |
