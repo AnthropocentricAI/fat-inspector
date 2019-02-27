@@ -8,17 +8,29 @@ from fatd.holders.predictions import Predictions
 
 
 NodeData = Union[Data, Models, Predictions, np.ndarray]
+NodeFunction = Union[None, Callable[[NodeData], Any]]
 
 
 class Node:
+    """Encapsulates a piece of data with a function to be applied to it.
 
-    def __init__(self, f: Union[None, Callable[[NodeData], Any]]):
+    Attributes:
+        f: function to be applied to `data`. May be null if nothing should happen.
+        data: the data stored in the node.
+        dirty: a bool representing whether the function has already been applied.
+    """
+
+    f: NodeFunction
+    data: NodeData
+    dirty: bool
+
+    def __init__(self, f: NodeFunction):
         self.f = f
         self.data = None
         self.dirty = False
 
     def apply(self):
-        """Apply the node's function to its data."""
+        """Apply the node's function to its data. If self.dirty then it is skipped."""
         if self.f is None or self.dirty:
             return
         self.data = self.f(self.data)
