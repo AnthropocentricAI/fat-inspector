@@ -57,7 +57,7 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-reports
-            pytest --junitxml=test-reports/junit.xml
+            pytest --junitxml=test-reports/junit.xml --ignore-glob='node_modules/*'
       - store_artifacts:
           path: test-reports/
       - store_test_results:
