@@ -1,6 +1,6 @@
 .topbar {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   height: 50px;
   z-index: 101;
@@ -17,11 +17,11 @@
 .topbarbutton {
   font-size: 100%;
   margin: 100;
-  background-color: maroon;
+  background-color: #911800;
   flex-grow: 1;
-  color: whitesmoke;
+  color: #eaeaea;
 
   &:hover {
-    background-color: darkslategray;
+    background-color: #e8dab2;
   }
 }

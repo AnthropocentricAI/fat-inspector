@@ -3,7 +3,24 @@ import TopbarButton from "./topbarbutton.jsx";
 
 const buttonnames = [
   {
-    name: "EDIT DATASET"
+    name: "EDIT DATASET",
+    dropdowns: [
+      {
+        name: "Save"
+      },
+      {
+        name: "Export"
+      },
+      {
+        name: "Rename"
+      },
+      {
+        name: "Duplicate"
+      },
+      {
+        name: "Import"
+      }
+    ]
   },
   {
     name: "NEW DATASET"
@@ -22,7 +39,11 @@ class Topbar extends PureComponent {
       <div className="topbar">
         <div className="topbar__wrapper">
           {buttonnames.map(button => (
-            <TopbarButton name={button.name} />
+            <TopbarButton
+              key={button.name}
+              name={button.name}
+              dropdowns={button.dropdowns}
+            />
           ))}
         </div>
       </div>
