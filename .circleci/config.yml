@@ -17,7 +17,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.2-stretch-browsers
+      - image: circleci/python:3.6.8-stretch-node-browsers
         environment:
           FLASK_CONFIG: testing
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
@@ -40,12 +40,24 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
             - "venv"
+      - run: 
+          name: Install node dependencies
+          command: npm install
+      - restore_cache: 
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Build source files
+          command: npm build
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
       - run:
           name: Run tests
           command: |
             . venv/bin/activate
             mkdir test-reports
-            pytest --junitxml=test-reports/junit.xml
+            pytest --junitxml=test-reports/junit.xml --ignore=node_modules
       - store_artifacts:
           path: test-reports/
       - store_test_results:
