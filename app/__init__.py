@@ -21,7 +21,7 @@ def load_blueprints(app):
 
 
 def create_app():
-    app = Flask(__name__, static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'))
+    app = Flask(__name__)
     app.config.from_object(config.get(os.getenv('FLASK_CONFIG') or 'default'))
     # register db
     from app.models import db
