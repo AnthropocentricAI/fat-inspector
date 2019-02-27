@@ -1,6 +1,8 @@
 import React from "react";
 import { Graph } from 'react-d3-graph';
 import defaultConfig from './config'
+import Popup from '../popup.jsx'
+import PopupForm from '../popup_form.jsx'
 
 export default class Tool extends React.Component {
     constructor(props) {
@@ -12,10 +14,12 @@ export default class Tool extends React.Component {
         };
 
         const config = defaultConfig;
+        const nodeClicked = false;
 
         this.state = {
             config,
-            data
+            data,
+            nodeClicked
         };
         this.onClickNode = this.onClickNode.bind(this);
     }
@@ -52,6 +56,9 @@ export default class Tool extends React.Component {
             data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
+            },
+            nodeClicked: {
+                id: newId
             }
         });
     }
@@ -68,6 +75,12 @@ export default class Tool extends React.Component {
             <div>
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
+
+                { this.state.nodeClicked &&
+                    <Popup>
+                        <PopupForm></PopupForm>
+                    </Popup>
+                }
             </div>
         );
     }
