@@ -22,25 +22,27 @@ export default class Tool extends React.Component {
 
     componentWillMount() {
         // on load, ask the server for the list of node functions
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', '/graph/functions', true);
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    let funcs = JSON.parse(xhr.response);
-                    this.setState({
-                        ...this.state,
-                        ...funcs,
-                    });
-                    console.log(`Received functions ${JSON.stringify(funcs)}...`);
-                    console.log(this.state)
-                } else {
-                    console.error(xhr.statusText);
-                    // TODO: err popup
-                }
-            }
-        }.bind(this);
-        xhr.send();
+        fetch('/graph/functions')
+            .then(
+                function(response) {
+                    if (response.status !== 200) {
+                        console.log('Status code not 200: ' + response.status);
+                        return;
+                    }
+
+                    response.json().then(function(data) {
+                        this.setState({
+                            ...this.state,
+                            ...data,
+                        });
+                        console.log(`Received functions ${JSON.stringify(data)}...`);
+                        console.log(this.state);
+                    }.bind(this));
+                }.bind(this)
+            )
+            .catch(function(err) {
+                console.log('Fetch error: ', err);
+            }.bind(this))
     }
 
     onClickNode(id) {
