@@ -17,7 +17,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.2-stretch-browsers-node
+      - image: circleci/python:3.6.2-stretch-node-browsers
         environment:
           FLASK_CONFIG: testing
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
