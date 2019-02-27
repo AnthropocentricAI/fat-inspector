@@ -27,11 +27,11 @@
     "@babel/preset-react": "^7.0.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.0.5",
-    "cytoscape": "^3.4.0",
-    "cytoscape-dagre": "^2.2.2",
-    "cytoscape-popper": "^1.0.2",
+    "d3": "^5.9.1",
     "react": "^16.8.1",
+    "react-d3-graph": "^2.0.0-rc2",
     "react-dom": "^16.8.1",
+<<<<<<< HEAD
     "webpack-cli": "^3.2.3"
   },
   "devDependencies": {
@@ -40,5 +40,14 @@
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.3"
+=======
+    "reactstrap": "^7.1.0",
+    "themify-icons": "^1.0.0",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.0"
+>>>>>>> 0648753d12a3ba6ab14ab76d7ed50c32dd59f16b
   }
 }

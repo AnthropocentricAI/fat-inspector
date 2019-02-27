@@ -3,3 +3,5 @@ pytest==3.10.0
 Flask-SQLAlchemy==2.3.2
 psycopg2-binary==2.7.6.1
 libsass==0.16.1
+numpy==1.16.1
+git+git://github.com/AnthropocentricAI/fat-dummy@dev#fatd

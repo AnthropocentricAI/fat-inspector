@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from './popup.jsx'
@@ -16,3 +17,19 @@ const App = () => (
 );
 
 ReactDOM.render(<App/>, document.getElementById('root'));
+=======
+import React from "react";
+import ReactDOM from "react-dom";
+import Topbar from "./topbar/Topbar.jsx";
+import Tool from './graph/graph.jsx'
+ 
+const App = () => (
+  <div>
+    <p>Words</p>
+    <Topbar />
+    <Tool dataset='iris'/>
+  </div>
+);
+
+ReactDOM.render(<App />, document.getElementById("root"));
+>>>>>>> 0648753d12a3ba6ab14ab76d7ed50c32dd59f16b

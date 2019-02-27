@@ -16,6 +16,10 @@ def index():
 def tool():
     return render_template('tool.html')
 
+@app.route('/react')
+def react():
+    return render_template('index.html')
+
 @app.cli.command()
 def init():
     db.drop_all()
