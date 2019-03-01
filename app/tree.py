@@ -1,5 +1,6 @@
 """"""
 
+import pickle
 import numpy as np
 from typing import Union, Callable, Any, Dict, List
 from fatd.holders.data import Data
@@ -90,3 +91,10 @@ class Tree:
                 # pass the parent node's data to the child, and add it to the list to be traversed next
                 self.node_of(child_id).data = current_node.data
                 next_nodes.append(child_id)
+
+    def save(self, path: str):
+        pickle.dump(self, open(path, 'wb'))
+
+    @staticmethod
+    def load(path: str) -> 'Tree':
+        return pickle.load(open(path, 'rb'))
