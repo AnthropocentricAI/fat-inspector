@@ -1,8 +1,12 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Graph } from 'react-d3-graph';
 import defaultConfig from './config'
 import Popup from '../popup.jsx'
 import PopupForm from '../popup_form.jsx'
+import Popover from 'react-bootstrap/Popover'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Button from 'react-bootstrap/Button'
 
 export default class Tool extends React.Component {
     constructor(props) {
@@ -49,8 +53,24 @@ export default class Tool extends React.Component {
             }.bind(this))
     }
 
+    addPopup(id) {
+        let nodeElement = document.getElementById(id);
+
+        const toApp = (
+            <div>
+                words
+            </div>
+        )
+        nodeElement.appendChild(
+            toApp
+        );
+    }
+    
     onClickNode(id) {
         // TODO: Render popup
+
+        //this.addPopup(id);
+
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
             data: {
@@ -58,10 +78,18 @@ export default class Tool extends React.Component {
                 links: [...this.state.data.links, { source: id, target: newId }]
             },
             nodeClicked: {
-                id: newId
+                id: id
             }
         });
     }
+
+    /* popover(x, y) {
+        return (
+            <Popover id="popover-basic" title="Popover right" style="transform: translate3d(300px, 300px, 0px);">
+                And here's some <strong>amazing</strong> content. It's very engaging. right?
+            </Popover>
+        )
+    }; */
 
     render() {
         const graphProps = {
@@ -71,17 +99,47 @@ export default class Tool extends React.Component {
             onClickNode: this.onClickNode,
         };
 
+        let popover = (
+            <Popover id="popover-basic" title="Popover right">
+              And here's some <strong>amazing</strong> content. It's very engaging. right?
+            </Popover>
+        );
+
+        let nodePos = this.state.nodeClicked ? document.getElementById(this.state.nodeClicked.id).getBoundingClientRect() : 0;
+        console.log(nodePos);
+
+        const Modal = ({children}) => {
+            return ReactDOM.createPortal(
+                children,
+                document.getElementById(this.state.nodeClicked.id)
+            );
+        };
+
         return (
             <div>
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
 
                 { this.state.nodeClicked &&
-                    <Popup>
-                        <PopupForm></PopupForm>
-                    </Popup>
+                    <Modal>
+                        <foreignObject x="30" y="-15" width="200" height="200">
+                            <Popover id="popover-basic" title="Popover right">
+                                And here's some <strong>amazing</strong> content. It's very engaging. right?
+                            </Popover>
+                        </foreignObject>
+                    </Modal>
                 }
+
+                <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+                    <Button variant="primary">Hover me</Button>
+                </OverlayTrigger>
+                {/* console.log(document.getElementById(id).getBoundingClientRect()); */}
+                {/* style="transform: translate3d(0px, 5330px, 0px);" */}
+
             </div>
         );
     }
 }
+
+// falafel place on thursday
+// judge stuff on asda order
