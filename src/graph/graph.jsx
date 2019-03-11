@@ -15,7 +15,7 @@ export default class Tool extends React.Component {
             links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
         };
 
-        // action called onClick
+        // action called on onClick
         // TODO: pass this into comp.?
         const nodeOptions = [
             {
@@ -78,10 +78,10 @@ export default class Tool extends React.Component {
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
             // create new random node
-/*             data: {
+            /*data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
-            }, */
+            },*/
             // open popup
             nodeClicked: {
                 id: id
@@ -122,6 +122,7 @@ export default class Tool extends React.Component {
                         <foreignObject x="30" y="-15" width="200" height="200">
                             <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
                                 <Nav className="flex-column">
+                                    {/* create options */}
                                     {this.state.nodeOptions.map(opt => (
                                         <Nav.Item>
                                             <Nav.Link className="node_popover_nav_link">
