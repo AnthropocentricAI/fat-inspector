@@ -25,7 +25,9 @@ export default class Tool extends React.Component {
             data,
             nodeClicked
         };
+
         this.onClickNode = this.onClickNode.bind(this);
+        this.onClickGraph = this.onClickGraph.bind(this);
     }
 
     componentWillMount() {
@@ -83,6 +85,10 @@ export default class Tool extends React.Component {
         });
     }
 
+    onClickGraph() {
+        if (this.state.nodeClicked) this.setState({ nodeClicked: null });
+    }
+
     /* popover(x, y) {
         return (
             <Popover id="popover-basic" title="Popover right" style="transform: translate3d(300px, 300px, 0px);">
@@ -97,6 +103,7 @@ export default class Tool extends React.Component {
             data: this.state.data,
             config: this.state.config,
             onClickNode: this.onClickNode,
+            onClickGraph: this.onClickGraph
         };
 
         let popover = (
@@ -123,7 +130,7 @@ export default class Tool extends React.Component {
                 { this.state.nodeClicked &&
                     <Modal>
                         <foreignObject x="30" y="-15" width="200" height="200">
-                            <Popover id="popover-basic" title="Popover right">
+                            <Popover id="popover-basic" title={this.state.nodeClicked.id}>
                                 And here's some <strong>amazing</strong> content. It's very engaging. right?
                             </Popover>
                         </foreignObject>
@@ -140,6 +147,3 @@ export default class Tool extends React.Component {
         );
     }
 }
-
-// falafel place on thursday
-// judge stuff on asda order
