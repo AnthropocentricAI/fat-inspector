@@ -8,6 +8,8 @@ import Popover from 'react-bootstrap/Popover'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Button from 'react-bootstrap/Button'
 
+import Nav from 'react-bootstrap/Nav'
+
 export default class Tool extends React.Component {
     constructor(props) {
         super(props);
@@ -75,10 +77,10 @@ export default class Tool extends React.Component {
 
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
-            data: {
+/*             data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
-            },
+            }, */
             nodeClicked: {
                 id: id
             }
@@ -131,7 +133,20 @@ export default class Tool extends React.Component {
                     <Modal>
                         <foreignObject x="30" y="-15" width="200" height="200">
                             <Popover id="popover-basic" title={this.state.nodeClicked.id}>
-                                And here's some <strong>amazing</strong> content. It's very engaging. right?
+                                <Nav class="flex-column">
+                                    <Nav.Item>
+                                        <Nav.Link className="wordswordswords">
+                                            <img src="assets/inspect" width="16px" height="16px" />
+                                            words
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item>
+                                        <Nav.Link class="wordswordswords">
+                                            <img src="assets/inspect" width="16px" height="16px" />
+                                            words
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                </Nav>
                             </Popover>
                         </foreignObject>
                     </Modal>
@@ -147,3 +162,7 @@ export default class Tool extends React.Component {
         );
     }
 }
+
+// inspect
+// convert to model
+// edit (rename/desc)
