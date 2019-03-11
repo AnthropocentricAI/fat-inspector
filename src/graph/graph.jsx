@@ -2,11 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Graph } from 'react-d3-graph';
 import defaultConfig from './config'
-import Popup from '../popup.jsx'
-import PopupForm from '../popup_form.jsx'
 import Popover from 'react-bootstrap/Popover'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import Button from 'react-bootstrap/Button'
 
 import Nav from 'react-bootstrap/Nav'
 
@@ -19,13 +15,34 @@ export default class Tool extends React.Component {
             links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
         };
 
+        // action called onClick
+        // TODO: pass this into comp.?
+        const nodeOptions = [
+            {
+                name: 'Inspect',
+                icon: 'static/assets/inspect.svg',
+                action: {}
+            },
+            {
+                name: 'Convert to Model',
+                icon: 'static/assets/right_arrow.svg',
+                action: {}
+            },
+            {
+                name: 'Edit',
+                icon: 'static/assets/pencil.svg',
+                action: {}
+            }
+        ]
+
         const config = defaultConfig;
         const nodeClicked = false;
 
         this.state = {
             config,
             data,
-            nodeClicked
+            nodeClicked,
+            nodeOptions
         };
 
         this.onClickNode = this.onClickNode.bind(this);
@@ -56,31 +73,16 @@ export default class Tool extends React.Component {
                 console.log('Fetch error: ', err);
             }.bind(this))
     }
-
-    addPopup(id) {
-        let nodeElement = document.getElementById(id);
-
-        const toApp = (
-            <div>
-                words
-            </div>
-        )
-        nodeElement.appendChild(
-            toApp
-        );
-    }
     
     onClickNode(id) {
-        // TODO: Render popup
-
-        //this.addPopup(id);
-
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
+            // create new random node
 /*             data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
             }, */
+            // open popup
             nodeClicked: {
                 id: id
             }
@@ -88,16 +90,9 @@ export default class Tool extends React.Component {
     }
 
     onClickGraph() {
+        // deselect popup if open
         if (this.state.nodeClicked) this.setState({ nodeClicked: null });
     }
-
-    /* popover(x, y) {
-        return (
-            <Popover id="popover-basic" title="Popover right" style="transform: translate3d(300px, 300px, 0px);">
-                And here's some <strong>amazing</strong> content. It's very engaging. right?
-            </Popover>
-        )
-    }; */
 
     render() {
         const graphProps = {
@@ -108,15 +103,7 @@ export default class Tool extends React.Component {
             onClickGraph: this.onClickGraph
         };
 
-        let popover = (
-            <Popover id="popover-basic" title="Popover right">
-              And here's some <strong>amazing</strong> content. It's very engaging. right?
-            </Popover>
-        );
-
-        let nodePos = this.state.nodeClicked ? document.getElementById(this.state.nodeClicked.id).getBoundingClientRect() : 0;
-        console.log(nodePos);
-
+        // portal from children of node element
         const Modal = ({children}) => {
             return ReactDOM.createPortal(
                 children,
@@ -129,40 +116,26 @@ export default class Tool extends React.Component {
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
 
+                {/* display popup */}
                 { this.state.nodeClicked &&
                     <Modal>
                         <foreignObject x="30" y="-15" width="200" height="200">
-                            <Popover id="popover-basic" title={this.state.nodeClicked.id}>
-                                <Nav class="flex-column">
-                                    <Nav.Item>
-                                        <Nav.Link className="wordswordswords">
-                                            <img src="assets/inspect" width="16px" height="16px" />
-                                            words
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link class="wordswordswords">
-                                            <img src="assets/inspect" width="16px" height="16px" />
-                                            words
-                                        </Nav.Link>
-                                    </Nav.Item>
+                            <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
+                                <Nav className="flex-column">
+                                    {this.state.nodeOptions.map(opt => (
+                                        <Nav.Item>
+                                            <Nav.Link className="node_popover_nav_link">
+                                            <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px"/>
+                                                { opt.name }
+                                            </Nav.Link>
+                                        </Nav.Item>
+                                    ))}
                                 </Nav>
                             </Popover>
                         </foreignObject>
                     </Modal>
                 }
-
-                <OverlayTrigger trigger="click" placement="right" overlay={popover}>
-                    <Button variant="primary">Hover me</Button>
-                </OverlayTrigger>
-                {/* console.log(document.getElementById(id).getBoundingClientRect()); */}
-                {/* style="transform: translate3d(0px, 5330px, 0px);" */}
-
             </div>
         );
     }
 }
-
-// inspect
-// convert to model
-// edit (rename/desc)

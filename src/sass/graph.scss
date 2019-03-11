@@ -1,13 +1,6 @@
-.graph_nodedetails {
-    &_nav_link {
-        display: inline;
-    }
-}
-
-.popover-body {
-    .nav-item {
-        .nav-link {
-            display: inline;
-        }
+.node_popover {
+    &_nav {
+        &_img { margin-right: 10px; }
+        &_link { display: inline !important; }
     }
 }
