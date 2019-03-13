@@ -1,5 +1,5 @@
 """Dataset blueprint module for routes to modify datasets."""
-from flask import current_app, render_template, request, abort, escape, send_file
+from flask import current_app, render_template, request, abort, escape, send_file, jsonify
 from flask.blueprints import Blueprint
 from app import utilities as util
 from app import models
@@ -12,7 +12,7 @@ bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 @bp.route('/view')
 def view_all():
     files = [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
-    return render_template('dataset_view.html', files=files)
+    return jsonify(sorted(files))
 
 
 @bp.route('/<name>/view')
