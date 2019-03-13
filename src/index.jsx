@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import Topbar from "./topbar/Topbar.jsx";
 import Tool from './graph/graph.jsx';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import FileFacade from './fileFacade.jsx';
+import Button from 'react-bootstrap/Button';
 
 // const App = () => (
 //     <div>
@@ -22,6 +23,13 @@ class App extends React.Component {
         this.state = {datasets: []}
     }
 
+    openUploadModal() {
+        alert('TODO');
+    }
+
+    openGraph() {
+        alert('TODO');
+    }
 
     componentWillMount() {
         // on load, ask the server for a list of datasets
@@ -41,6 +49,7 @@ class App extends React.Component {
                         console.log(this.state);
                     }.bind(this))
                 }.bind(this),
+
                 function failure(err) {
                     console.error(err);
                 }.bind(this)
@@ -49,35 +58,43 @@ class App extends React.Component {
 
     render() {
         return (
-            <div className='datasetForm'>
+            <div className='form-main'>
                 <Form>
-                    <h4 className='datasetFormHeader'>Choose from an existing dataset...</h4>
+                    <div className="form-label-wrapper">
+                        <Form.Label>Dataset</Form.Label>
+                    </div>
                     <Row>
-                        <Col md={12}>
-                            <Form.Control as='select' placeholder='Dataset Name...'>
-                                <option disabled selected hidden>Select a dataset...</option>
-                                {
-                                    this.state.datasets.map(d => (
-                                        <option key={d}>{d}</option>
-                                    ))
-                                }
-                            </Form.Control>
-                        </Col>
+                        <Form.Control as='select' placeholder='Dataset Name...'>
+                            <option disabled selected hidden>Select a dataset...</option>
+                            {
+                                this.state.datasets.map(d => (
+                                    <option key={d}>{d}</option>
+                                ))
+                            }
+                        </Form.Control>
                     </Row>
-                    { /* upload file */}
-                    <h4 className='datasetFormHeader'>or, upload your own!</h4>
+                    <div className="form-label-wrapper">
+                        <Form.Label>Graph</Form.Label>
+                    </div>
                     <Row>
-                        <Col md={10}>
-                            <Form.Control placeholder='name'/>
-                        </Col>
-                        <Col md={2}>
-                            <div className='fileButtonWrapper'>
-                                <Form.Label className='uploadLabel'>
-                                    <Form.Control type='file'/>
-                                    <span className='fakeFileButton'>Browse</span>
-                                </Form.Label>
-                            </div>
-                        </Col>
+                        <Form.Control as='select' placeholder='Dataset Name...'>
+                            <option disabled selected hidden>Select a graph...</option>
+                            {
+                                this.state.datasets.map(d => (
+                                    <option key={d}>{d}</option>
+                                ))
+                            }
+                        </Form.Control>
+                    </Row>
+                    <Row>
+                        <div className="form-wrapper-centre">
+                            <Button onClick={this.openGraph.bind(this)} variant='primary'>
+                                Open Graph
+                            </Button>
+                            <Button onClick={this.openUploadModal.bind(this)} variant='link'>
+                        Upload Custom Dataset
+                    </Button>
+                        </div>
                     </Row>
                 </Form>
             </div>

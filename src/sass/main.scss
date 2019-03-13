@@ -191,25 +191,34 @@ label.uploadLabel input[type='file'] {
     display: none;
 }
 
-.fakeFileButton {
+.file-facade-button {
     @extend .btn;
-    @extend .btn-primary;
+    @extend .btn-outline-primary;
     cursor: pointer;
 }
 
-.fileButtonWrapper {
-    text-align: center;
+.file-facade-name {
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
-.datasetFormHeader {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-.datasetForm {
-    width: 60%;
+.form-main {
+    width: 40%;
     position: absolute;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.form-label-wrapper {
+    width: 100%;
+    margin: 1em 0 0.5em 0;
+    box-shadow: 0px -1px 0px #DDDDDD inset;
+    > label {
+        margin: 0;
+    }
+}
+
+.form-wrapper-centre {
+    margin: 2% auto;
 }
