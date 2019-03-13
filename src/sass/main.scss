@@ -1,12 +1,14 @@
 @import 'popup';
 @import 'topbar';
 @import 'sidebar';
+@import '~bootstrap/scss/bootstrap';
+
 .mainwrapper {
     background-color: #C0D6DF;
 }
 
 body {
-    background-color: #578396;
+    // background-color: #578396;
 }
 
 .topbar {
@@ -183,4 +185,31 @@ body {
     background-color: #965050;
     transition: background 0.5s, width 0.5s, height 0.5s, line-height 0.25s;
     border: solid 2px grey;
+}
+
+label.uploadLabel input[type='file'] {
+    display: none;
+}
+
+.fakeFileButton {
+    @extend .btn;
+    @extend .btn-primary;
+    cursor: pointer;
+}
+
+.fileButtonWrapper {
+    text-align: center;
+}
+
+.datasetFormHeader {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.datasetForm {
+    width: 60%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
