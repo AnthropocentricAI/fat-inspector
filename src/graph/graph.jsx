@@ -2,9 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Graph } from 'react-d3-graph';
 import defaultConfig from './config'
-import Popover from 'react-bootstrap/Popover'
 
+import Popover from 'react-bootstrap/Popover'
 import Nav from 'react-bootstrap/Nav'
+import NodeModalEdit from './node_modal_edit.jsx'
 
 export default class Tool extends React.Component {
     constructor(props) {
@@ -16,22 +17,24 @@ export default class Tool extends React.Component {
         };
 
         // action called on onClick
-        // TODO: pass this into comp.?
         const nodeOptions = [
             {
                 name: 'Inspect',
                 icon: 'static/assets/inspect.svg',
-                action: {}
+                action: () => {}
+
             },
             {
                 name: 'Convert to Model',
                 icon: 'static/assets/right_arrow.svg',
-                action: {}
+                action: () => {}
             },
             {
                 name: 'Edit',
                 icon: 'static/assets/pencil.svg',
-                action: {}
+                action: () => {
+                    this.setState({ 'edit': true });
+                }
             }
         ]
 
@@ -42,7 +45,8 @@ export default class Tool extends React.Component {
             config,
             data,
             nodeClicked,
-            nodeOptions
+            nodeOptions,
+            edit: false
         };
 
         this.onClickNode = this.onClickNode.bind(this);
@@ -104,7 +108,7 @@ export default class Tool extends React.Component {
         };
 
         // portal from children of node element
-        const Modal = ({children}) => {
+        const Portal = ({children}) => {
             return ReactDOM.createPortal(
                 children,
                 document.getElementById(this.state.nodeClicked.id)
@@ -116,25 +120,29 @@ export default class Tool extends React.Component {
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
 
+                <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) }></NodeModalEdit>
+
                 {/* display popup */}
                 { this.state.nodeClicked &&
-                    <Modal>
-                        <foreignObject x="30" y="-15" width="200" height="200">
-                            <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
-                                <Nav className="flex-column">
-                                    {/* create options */}
-                                    {this.state.nodeOptions.map(opt => (
-                                        <Nav.Item>
-                                            <Nav.Link className="node_popover_nav_link">
-                                            <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px"/>
-                                                { opt.name }
-                                            </Nav.Link>
-                                        </Nav.Item>
-                                    ))}
-                                </Nav>
-                            </Popover>
-                        </foreignObject>
-                    </Modal>
+                <Portal>
+                    <foreignObject x="30" y="-15" width="200" height="200">
+                        <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
+                            <Nav className="flex-column">
+                                {/* desc */}
+                                <p>Example description</p>
+                                {/* create options */}
+                                {this.state.nodeOptions.map(opt => (
+                                    <Nav.Item key={ opt.name } onClick={ opt.action }>
+                                        <Nav.Link className="node_popover_nav_link">
+                                        <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px" />
+                                            { opt.name }
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                ))}
+                            </Nav>
+                        </Popover>
+                    </foreignObject>
+                </Portal>
                 }
             </div>
         );
