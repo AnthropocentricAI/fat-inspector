@@ -1,13 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Topbar from "./topbar/Topbar.jsx";
-import Tool from './graph/graph.jsx';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import FileFacade from './fileFacade.jsx';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import UploadData from './forms/upload-data.jsx';
 
 // const App = () => (
 //     <div>
@@ -21,7 +19,7 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { datasets: [], uploadModal: false }
+        this.state = {datasets: [], uploadModal: false}
     }
 
     openUploadModal() {
@@ -71,45 +69,45 @@ class App extends React.Component {
         return (
             <div>
                 <div className='form-main'>
-                <Form>
-                    <div className="form-label-wrapper">
-                        <Form.Label>Dataset</Form.Label>
-                    </div>
-                    <Row>
-                        <Form.Control as='select' placeholder='Dataset Name...'>
-                            <option disabled selected hidden>Select a dataset...</option>
-                            {
-                                this.state.datasets.map(d => (
-                                    <option key={d}>{d}</option>
-                                ))
-                            }
-                        </Form.Control>
-                    </Row>
-                    <div className="form-label-wrapper">
-                        <Form.Label>Graph</Form.Label>
-                    </div>
-                    <Row>
-                        <Form.Control as='select' placeholder='Dataset Name...'>
-                            <option disabled selected hidden>Select a graph...</option>
-                            {
-                                this.state.datasets.map(d => (
-                                    <option key={d}>{d}</option>
-                                ))
-                            }
-                        </Form.Control>
-                    </Row>
-                    <Row>
-                        <div className="form-wrapper-centre">
-                            <Button onClick={this.openGraph.bind(this)} variant='primary'>
-                                Open Graph
-                            </Button>
-                            <Button onClick={this.openUploadModal.bind(this)} variant='link'>
-                                Upload Custom
-                            </Button>
+                    <Form>
+                        <div className="form-label-wrapper">
+                            <Form.Label>Dataset</Form.Label>
                         </div>
-                    </Row>
-                </Form>
-            </div>
+                        <Row>
+                            <Form.Control as='select' placeholder='Dataset Name...'>
+                                <option disabled selected hidden>Select a dataset...</option>
+                                {
+                                    this.state.datasets.map(d => (
+                                        <option key={d}>{d}</option>
+                                    ))
+                                }
+                            </Form.Control>
+                        </Row>
+                        <div className="form-label-wrapper">
+                            <Form.Label>Graph</Form.Label>
+                        </div>
+                        <Row>
+                            <Form.Control as='select' placeholder='Dataset Name...'>
+                                <option disabled selected hidden>Select a graph...</option>
+                                {
+                                    this.state.datasets.map(d => (
+                                        <option key={d}>{d}</option>
+                                    ))
+                                }
+                            </Form.Control>
+                        </Row>
+                        <Row>
+                            <div className="form-wrapper-centre">
+                                <Button onClick={this.openGraph.bind(this)} variant='primary'>
+                                    Open Graph
+                                </Button>
+                                <Button onClick={this.openUploadModal.bind(this)} variant='link'>
+                                    Upload Custom
+                                </Button>
+                            </div>
+                        </Row>
+                    </Form>
+                </div>
                 <Modal show={this.state.uploadModal}
                        onHide={this.closeUploadModal.bind(this)}
                        centered
@@ -118,44 +116,7 @@ class App extends React.Component {
                         <Modal.Title>Upload Dataset/Graph</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form>
-                            <div className='form-label-wrapper'>
-                                <Form.Label>Dataset</Form.Label>
-                            </div>
-                            <Row>
-                                <Col md={7}>
-                                    <Form.Control placeholder='dataset name'/>
-                                </Col>
-                                <Col md={3}>
-                                    <FileFacade accept='.csv'>
-                                        Browse
-                                    </FileFacade>
-                                </Col>
-                                <Col md={2}>
-                                    <Button className='btn btn-secondary'>
-                                        Upload
-                                    </Button>
-                                </Col>
-                            </Row>
-                            <div className='form-label-wrapper'>
-                                <Form.Label>Graph</Form.Label>
-                            </div>
-                            <Row>
-                                <Col md={7}>
-                                    <Form.Control placeholder='graph name'/>
-                                </Col>
-                                <Col md={3}>
-                                    <FileFacade accept='.json'>
-                                        Browse
-                                    </FileFacade>
-                                </Col>
-                                <Col md={2}>
-                                    <Button className='btn btn-secondary'>
-                                        Upload
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Form>
+                        <UploadData/>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant='primary' onClick={this.closeUploadModal.bind(this)}>

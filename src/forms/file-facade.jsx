@@ -27,6 +27,7 @@ export default class FileFacade extends React.Component {
                 <Form.Label>
                     <Form.Control onChange={this.updateSelectedFile.bind(this)}
                                   style={{display: 'none'}}
+                                  name={this.props.inputName || ''}
                                   type='file'
                                   accept={this.props.accept}/>
                     <span className='file-facade-button'>{this.props.children}</span>

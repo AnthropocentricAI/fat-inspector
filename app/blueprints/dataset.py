@@ -9,10 +9,13 @@ import os
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
 
+def list_datasets():
+    return [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
+
+
 @bp.route('/view')
 def view_all():
-    files = [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
-    return jsonify(sorted(files))
+    return jsonify(sorted(list_datasets()))
 
 
 @bp.route('/<name>/view')
@@ -30,10 +33,10 @@ def view(name):
 # TODO: implement placeholder routes
 @bp.route('/upload', methods=['POST'])
 def upload():
-    if 'csv_file' not in request.files or 'name' not in request.form:
-        abort(400, 'Invalid request arguments.\n\tcsv_file: <bytes>\n\tname: <str>')
-    csv_bytes = request.files.get('csv_file').read()
-    name = util.normalise_path_to_file(request.form.get('name')) + '.csv'
+    if 'dataset_file' not in request.files or 'dataset_name' not in request.form:
+        abort(400, 'Invalid request arguments.\n\tdataset_file: <bytes>\n\tdataset_name: <str>')
+    csv_bytes = request.files.get('dataset_file').read()
+    name = util.normalise_path_to_file(request.form.get('dataset_name')) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
         with open(file_path, 'wb') as f:
