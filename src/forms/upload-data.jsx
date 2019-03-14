@@ -4,17 +4,36 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FileFacade from './file-facade.jsx';
 import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
+import Alert from 'react-bootstrap/Alert';
 
 export default class UploadData extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            displayError: false,
+            errorMessage: ''
+        }
     }
 
-    displayMessage(m) {
+    processResponse(m) {
         // placeholder
-        console.log(m);
-        m.text().then(t => console.log(t));
+        if (m.status !== 200) {
+            m.text().then(e => {
+                this.displayErrorMessage(e);
+            })
+        } else {
+            m.text().then(s => console.log(s));
+        }
+    }
+
+    displayErrorMessage(message) {
+        this.setState({
+            ...this.state,
+            displayError: true,
+            errorMessage: message
+        })
     }
 
     onSubmitDataset(e) {
@@ -25,7 +44,10 @@ export default class UploadData extends React.Component {
         fetch('dataset/upload', {
             method: 'POST',
             body: formData,
-        }).then(r => this.displayMessage(r), e => this.displayMessage(e));
+        }).then(r => this.processResponse(r), e => {
+                e.text().then(m => this.displayErrorMessage(m))
+            }
+        )
     }
 
     onSubmitGraph(e) {
@@ -78,6 +100,16 @@ export default class UploadData extends React.Component {
                         </Col>
                     </Row>
                 </Form>
+                <Collapse in={this.state.displayError}>
+                    <div>
+                        <Alert className='request-error' variant='danger'>
+                            <Alert.Heading>Upload Error</Alert.Heading>
+                            <p>
+                                {this.state.errorMessage}
+                            </p>
+                        </Alert>
+                    </div>
+                </Collapse>
             </div>
         )
     }

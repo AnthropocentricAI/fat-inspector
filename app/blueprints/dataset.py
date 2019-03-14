@@ -39,7 +39,7 @@ def upload():
     name = util.normalise_path_to_file(request.form.get('dataset_name')) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-        with open(file_path, 'wb') as f:
+        with open(file_path, 'xb') as f:
             f.write(csv_bytes)
         return 'Success'
     except IOError as e:

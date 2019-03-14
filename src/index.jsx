@@ -118,11 +118,6 @@ class App extends React.Component {
                     <Modal.Body>
                         <UploadData/>
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant='primary' onClick={this.closeUploadModal.bind(this)}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
                 </Modal>
             </div>
         )
