@@ -2,10 +2,14 @@
 
 Run this with `flask run`; flask will auto-detect and run the create_app function.
 """
-from app.config import config
-from flask import Flask
-import os
 import importlib
+import os
+
+from flask import Flask
+from flask import jsonify
+
+from app import exceptions
+from app.config import config
 
 
 def load_blueprints(app):
@@ -33,6 +37,12 @@ def create_app():
     def init():
         db.drop_all()
         db.create_all()
+
+    @app.errorhandler(exceptions.APIArgumentError)
+    def handle_api_error(err: exceptions.APIArgumentError):
+        response = jsonify(err.to_dict())
+        response.status_code = err.status_code
+        return response
 
     try:
         os.mkdir(app.config['ASSETS_DIR'])

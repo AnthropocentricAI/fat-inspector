@@ -1,10 +1,12 @@
 """Dataset blueprint module for routes to modify datasets."""
-from flask import current_app, render_template, request, abort, escape, send_file, jsonify
-from flask.blueprints import Blueprint
-from app import utilities as util
-from app import models
 import os
 
+from flask import current_app, request, abort, escape, send_file, jsonify
+from flask.blueprints import Blueprint
+
+from app.exceptions import APIArgumentError
+from app import models
+from app import utilities as util
 
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
@@ -34,17 +36,20 @@ def view(name):
 @bp.route('/upload', methods=['POST'])
 def upload():
     if 'dataset_file' not in request.files or 'dataset_name' not in request.form:
-        abort(400, 'Invalid request arguments.\n\tdataset_file: <bytes>\n\tdataset_name: <str>')
-    csv_bytes = request.files.get('dataset_file').read()
+        raise APIArgumentError('Invalid request arguments.\n\tdataset_file: <bytes>\n\tdataset_name: <str>')
+
+    file = request.files.get('dataset_file')
+    csv_bytes = file.read()
     name = util.normalise_path_to_file(request.form.get('dataset_name')) + '.csv'
+
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
         with open(file_path, 'xb') as f:
             f.write(csv_bytes)
-        return 'Success'
+        return jsonify({'message': f'Successfully uploaded dataset {file.filename} as {name}.'})
     except IOError as e:
         print(e)
-        abort(400, 'Dataset already exists or an error occurred when attempting to save the dataset.')
+        raise APIArgumentError(f'{name} already exists, or an error occurred when attempting to save the dataset.')
 
 
 @bp.route('/<name>/rename', methods=['POST'])
@@ -64,5 +69,3 @@ def download(name):
     except IOError as e:
         print(e)
         abort(400, 'Invalid dataset name.')
-
-
