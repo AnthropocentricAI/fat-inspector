@@ -12,28 +12,26 @@ export default class UploadData extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            displayError: false,
+            error: false,
+            displayPopup: false,
             errorMessage: ''
         }
     }
 
-    processResponse(m) {
-        // placeholder
-        if (m.status !== 200) {
-            m.text().then(e => {
-                this.displayErrorMessage(e);
-            })
-        } else {
-            m.text().then(s => console.log(s));
-        }
-    }
-
-    displayErrorMessage(message) {
-        this.setState({
+    displayResponse(message) {
+        message.text().then(t => {
+            this.setState({
+                ...this.state,
+                // if status is not 200 display error popup rather than success
+                error: message.status !== 200,
+                displayPopup: true,
+                responseMessage: JSON.parse(t)
+            });
+        });
+        setTimeout(() => this.setState({
             ...this.state,
-            displayError: true,
-            errorMessage: message
-        })
+            displayPopup: false
+        }), 2500);
     }
 
     onSubmitDataset(e) {
@@ -44,10 +42,7 @@ export default class UploadData extends React.Component {
         fetch('dataset/upload', {
             method: 'POST',
             body: formData,
-        }).then(r => this.processResponse(r), e => {
-                e.text().then(m => this.displayErrorMessage(m))
-            }
-        )
+        }).then(r => this.displayResponse(r), e => this.displayResponse(e));
     }
 
     onSubmitGraph(e) {
@@ -100,14 +95,15 @@ export default class UploadData extends React.Component {
                         </Col>
                     </Row>
                 </Form>
-                <Collapse in={this.state.displayError}>
+                <Collapse in={this.state.displayPopup}>
                     <div>
-                        <Alert className='request-error' variant='danger'>
-                            <Alert.Heading>Upload Error</Alert.Heading>
-                            <p>
-                                {this.state.errorMessage}
-                            </p>
-                        </Alert>
+                        {
+                            this.state.responseMessage ?
+                            <Alert className='response-alert'
+                                   variant={this.state.error ? 'danger' : 'success'}>
+                                <span className='response-body'>{this.state.responseMessage.message}</span>
+                            </Alert> : null
+                        }
                     </div>
                 </Collapse>
             </div>
