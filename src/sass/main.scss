@@ -193,7 +193,7 @@ label.uploadLabel input[type='file'] {
 
 .file-facade-button {
     @extend .btn;
-    @extend .btn-outline-primary;
+    @extend .btn-light;
     cursor: pointer;
 }
 
@@ -203,7 +203,7 @@ label.uploadLabel input[type='file'] {
 }
 
 .form-main {
-    width: 40%;
+    width: 50%;
     position: absolute;
     top: 40%;
     left: 50%;

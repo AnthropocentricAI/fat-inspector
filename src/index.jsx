@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FileFacade from './fileFacade.jsx';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 // const App = () => (
 //     <div>
@@ -20,11 +21,21 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {datasets: []}
+        this.state = { datasets: [], uploadModal: false }
     }
 
     openUploadModal() {
-        alert('TODO');
+        this.setState({
+            ...this.state,
+            uploadModal: true
+        })
+    }
+
+    closeUploadModal() {
+        this.setState({
+            ...this.state,
+            uploadModal: false
+        })
     }
 
     openGraph() {
@@ -58,7 +69,8 @@ class App extends React.Component {
 
     render() {
         return (
-            <div className='form-main'>
+            <div>
+                <div className='form-main'>
                 <Form>
                     <div className="form-label-wrapper">
                         <Form.Label>Dataset</Form.Label>
@@ -92,11 +104,65 @@ class App extends React.Component {
                                 Open Graph
                             </Button>
                             <Button onClick={this.openUploadModal.bind(this)} variant='link'>
-                        Upload Custom Dataset
-                    </Button>
+                                Upload Custom
+                            </Button>
                         </div>
                     </Row>
                 </Form>
+            </div>
+                <Modal show={this.state.uploadModal}
+                       onHide={this.closeUploadModal.bind(this)}
+                       centered
+                       size='lg'>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Upload Dataset/Graph</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <div className='form-label-wrapper'>
+                                <Form.Label>Dataset</Form.Label>
+                            </div>
+                            <Row>
+                                <Col md={7}>
+                                    <Form.Control placeholder='dataset name'/>
+                                </Col>
+                                <Col md={3}>
+                                    <FileFacade accept='.csv'>
+                                        Browse
+                                    </FileFacade>
+                                </Col>
+                                <Col md={2}>
+                                    <Button className='btn btn-secondary'>
+                                        Upload
+                                    </Button>
+                                </Col>
+                            </Row>
+                            <div className='form-label-wrapper'>
+                                <Form.Label>Graph</Form.Label>
+                            </div>
+                            <Row>
+                                <Col md={7}>
+                                    <Form.Control placeholder='graph name'/>
+                                </Col>
+                                <Col md={3}>
+                                    <FileFacade accept='.json'>
+                                        Browse
+                                    </FileFacade>
+                                </Col>
+                                <Col md={2}>
+                                    <Button className='btn btn-secondary'>
+                                        Upload
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant='primary' onClick={this.closeUploadModal.bind(this)}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }
