@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Graph } from 'react-d3-graph';
-import defaultConfig from './config'
-import Popover from 'react-bootstrap/Popover'
+import defaultConfig from './config';
+import Popover from 'react-bootstrap/Popover';
 
 import Nav from 'react-bootstrap/Nav'
 
