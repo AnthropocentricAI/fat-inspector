@@ -43,12 +43,12 @@ export default class Tool extends React.Component {
         ]
 
         const config = defaultConfig;
-        const nodeClicked = false;
+        const nodeClickedId = false;
 
         this.state = {
             config,
             data,
-            nodeClicked,
+            nodeClickedId,
             nodeOptions,
             edit: false
         };
@@ -56,6 +56,8 @@ export default class Tool extends React.Component {
         this.onClickNode = this.onClickNode.bind(this);
         this.onClickGraph = this.onClickGraph.bind(this);
         this.renameNode = this.renameNode.bind(this);
+        this.getNodeData = this.getNodeData.bind(this);
+        this.getNameOfNode = this.getNameOfNode.bind(this);
     }
 
     componentWillMount() {
@@ -92,15 +94,13 @@ export default class Tool extends React.Component {
                 links: [...this.state.data.links, { source: id, target: newId }]
             }, */
             // open popup
-            nodeClicked: {
-                id: id
-            }
+            nodeClickedId: id
         });
     }
 
     onClickGraph() {
         // deselect popup if open
-        if (this.state.nodeClicked) this.setState({ nodeClicked: null });
+        if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
     }
 
     renameNode(nodeId, name) {
@@ -110,6 +110,18 @@ export default class Tool extends React.Component {
                 links: this.state.data.links
             }
         });
+    }
+
+    // gets data in payload for a given node
+    // gross but the only way :(
+    getNodeData(nodeId) {
+        for (let x of this.state.data.nodes) if (x.id == nodeId) return x;
+        return null;
+    }
+
+    getNameOfNode(node) {
+        console.log(node, 'label' in node ? node.label : node.id);
+        return 'label' in node ? node.label : node.id;
     }
 
     render() {
@@ -125,25 +137,27 @@ export default class Tool extends React.Component {
         const Portal = ({children}) => {
             return ReactDOM.createPortal(
                 children,
-                document.getElementById(this.state.nodeClicked.id)
+                document.getElementById(this.state.nodeClickedId)
             );
         };
+
+        const node = this.getNodeData(this.state.nodeClickedId);
 
         return (
             <div>
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
 
-                { this.state.nodeClicked &&
-                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ this.state.nodeClicked } rename={ this.renameNode }></NodeModalEdit>
+                { node &&
+                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ node } rename={ this.renameNode }></NodeModalEdit>
                 }
 
                 {/* display popup */}
                 {/* TODO: add delete */}
-                { this.state.nodeClicked &&
+                { node &&
                 <Portal>
                     <foreignObject x="30" y="-15" width="200" height="200">
-                        <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
+                        <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
                             <Nav className="flex-column">
                                 {/* desc */}
                                 <p>Example description</p>
