@@ -51,8 +51,8 @@ export default class FileChooser extends React.Component {
         e.preventDefault();
         let formData = new FormData(e.target);
         let dataset = formData.get('dataset');
-        let graph = this.state.newGraphChecked ? null : formData.get('graph');
-        this.props.onOpenGraph(dataset, graph);
+        let graph = this.state.newGraphChecked ? formData.get('graphName') : formData.get('graph');
+        this.props.onOpenGraph(dataset, graph, this.state.newGraphChecked);
     }
 
     updateIsChecked(e) {
@@ -89,12 +89,15 @@ export default class FileChooser extends React.Component {
                             <option selected disabled hidden>Select a graph...</option>
                             // TODO: add server side graphs
                         </Form.Control>
+                        <Form.Check label='Create a new graph'
+                                    name='newGraphCheck'
+                                    onChange={this.updateIsChecked.bind(this)}/>
+                        <Form.Control name='graphName'
+                                      placeholder='New graph name...'
+                                      disabled={!this.state.newGraphChecked}/>
                         <div className="form-wrapper-parent">
                             <div className="form-wrapper-centre">
-                                <Form.Check inline
-                                            label='Create a new graph'
-                                            name='newGraphCheck'
-                                            onChange={this.updateIsChecked.bind(this)}/>
+
                                 <Button type='submit' variant='primary'>
                                     Open Graph
                                 </Button>

@@ -27,7 +27,7 @@ def download():
 
 @bp.route('/functions')
 def fetch_functions():
-    return jsonify({'functions': 'TODO'})
+    return jsonify(['TODO'])
 
 
 @bp.route('/execute', methods=['POST'])

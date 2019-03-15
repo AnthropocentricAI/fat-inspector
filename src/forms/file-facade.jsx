@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
+import PropTypes from 'prop-types';
 
 /**
  * Wraps up a file input form control in a label to allow for button styling.
@@ -37,3 +38,7 @@ export default class FileFacade extends React.Component {
         )
     }
 }
+
+FileFacade.propTypes = {
+    inputName: PropTypes.string
+};

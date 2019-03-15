@@ -3,50 +3,55 @@ import { Graph } from 'react-d3-graph';
 import defaultConfig from './config'
 import Popup from '../popup.jsx'
 import PopupForm from '../popup_form.jsx'
+import PropTypes from 'prop-types';
 
 export default class Tool extends React.Component {
     constructor(props) {
         super(props);
-
-        const data = {
-            nodes: [{ id: 'Harry' }, { id: 'Sally' }, { id: 'Alice' }],
-            links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
-        };
 
         const config = defaultConfig;
         const nodeClicked = false;
 
         this.state = {
             config,
-            data,
             nodeClicked
         };
         this.onClickNode = this.onClickNode.bind(this);
     }
 
-    componentWillMount() {
-        // on load, ask the server for the list of node functions
-        fetch('/graph/functions')
-            .then(
-                function(response) {
-                    if (response.status !== 200) {
-                        console.log('Status code not 200: ' + response.status);
-                        return;
-                    }
+    fetchFunctions() {
+        // on load, ask the server for a the list of node functions
+        fetch('/graph/functions').then(r => {
+            if (r.status !== 200) {
+                console.error('Error when attempting to fetch functions!');
+            }
+            r.json().then(data => {
+                this.setState({
+                    ...this.state,
+                    functions: data
+                });
+                console.log(data);
+            });
+        }, e => console.error(e));
+    }
 
-                    response.json().then(function(data) {
-                        this.setState({
-                            ...this.state,
-                            ...data,
-                        });
-                        console.log(`Received functions ${JSON.stringify(data)}...`);
-                        console.log(this.state);
-                    }.bind(this));
-                }.bind(this)
-            )
-            .catch(function(err) {
-                console.log('Fetch error: ', err);
-            }.bind(this))
+    populateGraph() {
+        if (this.props.isNew) {
+            this.setState({
+                ...this.state,
+                data: {
+                    nodes: [{id: 'root'}],
+                    links: []
+                }
+            })
+        } else {
+            // TODO: fetch graph
+        }
+    }
+
+    componentWillMount() {
+        this.fetchFunctions();
+        this.populateGraph();
     }
 
     onClickNode(id) {
@@ -73,7 +78,8 @@ export default class Tool extends React.Component {
 
         return (
             <div>
-                <h1>Dataset: { this.props.dataset }</h1>
+                <h3>Dataset: { this.props.dataset }</h3>
+                <h3>Graph: { this.props.graph }</h3>
                 <Graph ref="graph" {...graphProps} />
 
                 { this.state.nodeClicked &&
@@ -85,3 +91,9 @@ export default class Tool extends React.Component {
         );
     }
 }
+
+Tool.propTypes = {
+    dataset: PropTypes.string.isRequired,
+    graph: PropTypes.string.isRequired,
+    isNew: PropTypes.bool.isRequired
+};

@@ -19,13 +19,13 @@ export default class UploadData extends React.Component {
     }
 
     displayResponse(message) {
-        message.text().then(t => {
+        message.json().then(data => {
             this.setState({
                 ...this.state,
                 // if status is not 200 display error popup rather than success
                 error: message.status !== 200,
                 displayPopup: true,
-                responseMessage: JSON.parse(t)
+                responseMessage: data
             });
         });
         setTimeout(() => this.setState({
