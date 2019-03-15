@@ -202,7 +202,7 @@ label.uploadLabel input[type='file'] {
     margin-right: 1em;
 }
 
-.form-main {
+.file-chooser-wrapper {
     width: 50%;
     position: absolute;
     top: 40%;
@@ -220,7 +220,11 @@ label.uploadLabel input[type='file'] {
 }
 
 .form-wrapper-centre {
-    margin: 2% auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
 
 .response-alert {
