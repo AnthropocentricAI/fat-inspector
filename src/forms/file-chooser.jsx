@@ -3,13 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import UploadData from './upload-data.jsx';
+import PropTypes from 'prop-types';
 
 export default class FileChooser extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             datasets: [],
-            uploadModal: false
+            uploadModal: false,
+            newGraphChecked: false
         };
     }
 
@@ -25,10 +27,6 @@ export default class FileChooser extends React.Component {
             ...this.state,
             uploadModal: false
         });
-    }
-
-    openGraph() {
-        alert('TODO')
     }
 
     fetchDatasets() {
@@ -48,6 +46,22 @@ export default class FileChooser extends React.Component {
         }, e => console.error(e));
     }
 
+    openGraph(e) {
+        // this feels wrong
+        e.preventDefault();
+        let formData = new FormData(e.target);
+        let dataset = formData.get('dataset');
+        let graph = this.state.newGraphChecked ? null : formData.get('graph');
+        this.props.onOpenGraph(dataset, graph);
+    }
+
+    updateIsChecked(e) {
+        this.setState({
+            ...this.state,
+            newGraphChecked: e.target.checked
+        })
+    }
+
     componentWillMount() {
         // on load, ask the server for a list of datasets
         // TODO: add graph fetching too
@@ -58,11 +72,11 @@ export default class FileChooser extends React.Component {
         return (
             <div>
                 <div className='file-chooser-wrapper'>
-                    <Form>
+                    <Form onSubmit={this.openGraph.bind(this)}>
                         <div className="form-label-wrapper">
                             <Form.Label>Dataset</Form.Label>
                         </div>
-                        <Form.Control as='select'>
+                        <Form.Control name='dataset' as='select'>
                             <option disabled selected hidden>Select a dataset...</option>
                             {
                                 this.state.datasets.map(d => <option key={d}>{d}</option>)
@@ -71,13 +85,17 @@ export default class FileChooser extends React.Component {
                         <div className="form-label-wrapper">
                             <Form.Label>Graph</Form.Label>
                         </div>
-                        <Form.Control as='select'>
-                            <option selected value='new-graph'>Create new graph</option>
+                        <Form.Control name='graph' as='select' disabled={this.state.newGraphChecked}>
+                            <option selected disabled hidden>Select a graph...</option>
                             // TODO: add server side graphs
                         </Form.Control>
                         <div className="form-wrapper-parent">
                             <div className="form-wrapper-centre">
-                                <Button onClick={this.openGraph.bind(this)} variant='primary'>
+                                <Form.Check inline
+                                            label='Create a new graph'
+                                            name='newGraphCheck'
+                                            onChange={this.updateIsChecked.bind(this)}/>
+                                <Button type='submit' variant='primary'>
                                     Open Graph
                                 </Button>
                                 <Button onClick={this.openUploadModal.bind(this)} variant='link'>
@@ -102,3 +120,7 @@ export default class FileChooser extends React.Component {
         )
     }
 }
+
+FileChooser.propTypes = {
+    onOpenGraph: PropTypes.func
+};
