@@ -12,7 +12,7 @@ export default class Tool extends React.Component {
         super(props);
 
         const data = {
-            nodes: [{ id: 'Harry' }, { id: 'Sally' }, { id: 'Alice' }],
+            nodes: [{ id: 'Harry', label: 'harrylabel' }, { id: 'Sally' }, { id: 'Alice' }],
             links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
         };
 
@@ -22,7 +22,6 @@ export default class Tool extends React.Component {
                 name: 'Inspect',
                 icon: 'static/assets/inspect.svg',
                 action: () => {}
-
             },
             {
                 name: 'Convert to Model',
@@ -35,6 +34,11 @@ export default class Tool extends React.Component {
                 action: () => {
                     this.setState({ 'edit': true });
                 }
+            },
+            {
+                name: 'Apply Function',
+                icon: '',
+                action: () => {}
             }
         ]
 
@@ -51,6 +55,7 @@ export default class Tool extends React.Component {
 
         this.onClickNode = this.onClickNode.bind(this);
         this.onClickGraph = this.onClickGraph.bind(this);
+        this.renameNode = this.renameNode.bind(this);
     }
 
     componentWillMount() {
@@ -58,7 +63,7 @@ export default class Tool extends React.Component {
         fetch('/graph/functions')
             .then(
                 function(response) {
-                    if (response.status !== 200) {
+                if (response.statuconfigs !== 200) {
                         console.log('Status code not 200: ' + response.status);
                         return;
                     }
@@ -82,10 +87,10 @@ export default class Tool extends React.Component {
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
             // create new random node
-            /*data: {
+            /* data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
-            },*/
+            }, */
             // open popup
             nodeClicked: {
                 id: id
@@ -96,6 +101,15 @@ export default class Tool extends React.Component {
     onClickGraph() {
         // deselect popup if open
         if (this.state.nodeClicked) this.setState({ nodeClicked: null });
+    }
+
+    renameNode(nodeId, name) {
+        this.setState({
+            data: {
+                nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, label: name} : x),
+                links: this.state.data.links
+            }
+        });
     }
 
     render() {
@@ -120,9 +134,12 @@ export default class Tool extends React.Component {
                 <h1>Dataset: { this.props.dataset }</h1>
                 <Graph ref="graph" {...graphProps} />
 
-                <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) }></NodeModalEdit>
+                { this.state.nodeClicked &&
+                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ this.state.nodeClicked } rename={ this.renameNode }></NodeModalEdit>
+                }
 
                 {/* display popup */}
+                {/* TODO: add delete */}
                 { this.state.nodeClicked &&
                 <Portal>
                     <foreignObject x="30" y="-15" width="200" height="200">

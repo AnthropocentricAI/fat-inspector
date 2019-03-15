@@ -1,20 +1,42 @@
 import React from "react";
 
 import Modal from 'react-bootstrap/Modal'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 
-export default class NodeModalEdit extends React.Component {
+export default class NodeModalEdit extends React.Component {    
+    submitSave(e) {
+        e.preventDefault();
+        let data = new FormData(e.target);
+        this.props.rename(this.props.node.id, data.get('name'));
+    }
+
     render() {
         return (
             <Modal show={ this.props.show } onHide={ this.props.onClose }>
                 <Modal.Header>
-                    <Modal.Title>Edit </Modal.Title>
+                    <Modal.Title>Edit { this.props.node.id }</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    body
-                </Modal.Body>
-                <Modal.Footer>
-                    footer
-                </Modal.Footer>
+                {/* TODO: include validation */}
+                <Form onSubmit={ (e) => this.submitSave(e) }>
+                    <Modal.Body>
+                        <Form.Group controlId="">
+                            <Form.Label>Name:</Form.Label>
+                            <Form.Control name="name" placeholder={ this.props.node.id }></Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="">
+
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={ this.props.onClose }>
+                            Close
+                        </Button>
+                        <Button variant="primary" type="submit">
+                            Save
+                        </Button>
+                    </Modal.Footer>
+                </Form>
             </Modal>
         );
     }

@@ -17,6 +17,7 @@ module.exports = {
         highlightStrokeColor: '#4F6D7A',
         mouseCursor: 'pointer',
         renderLabel: true,
+        labelProperty: 'label',
         symbolType: 'circle'
     },
     link: {
