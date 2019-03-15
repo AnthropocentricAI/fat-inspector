@@ -442,3 +442,4 @@ Temporary Items
 # End of https://www.gitignore.io/api/node,flask,reactnative,visualstudiocode
 
 app/static/js/bundle.js
+app/static/css
