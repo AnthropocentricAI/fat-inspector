@@ -4,3 +4,11 @@
         &_link { display: inline !important; }
     }
 }
+
+svg[name="svg-container-graph"] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100% !important;
+    width: 100% !important;
+}
