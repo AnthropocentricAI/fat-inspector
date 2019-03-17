@@ -9,13 +9,14 @@ export default class NodeModalEdit extends React.Component {
         e.preventDefault();
         let data = new FormData(e.target);
         this.props.rename(this.props.node.id, data.get('name'));
+        this.props.onClose();
     }
 
     render() {
         return (
             <Modal show={ this.props.show } onHide={ this.props.onClose }>
                 <Modal.Header>
-                    <Modal.Title>Edit { this.props.node.id }</Modal.Title>
+                    <Modal.Title>Edit { 'label' in this.props.node ? this.props.node.label : this.props.node.id }</Modal.Title>
                 </Modal.Header>
                 {/* TODO: include validation */}
                 <Form onSubmit={ (e) => this.submitSave(e) }>

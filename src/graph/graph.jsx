@@ -120,7 +120,6 @@ export default class Tool extends React.Component {
     }
 
     getNameOfNode(node) {
-        console.log(node, 'label' in node ? node.label : node.id);
         return 'label' in node ? node.label : node.id;
     }
 
