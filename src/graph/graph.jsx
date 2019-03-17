@@ -12,7 +12,7 @@ export default class Tool extends React.Component {
         super(props);
 
         const data = {
-            nodes: [{ id: 'Harry', label: 'harrylabel' }, { id: 'Sally' }, { id: 'Alice' }],
+            nodes: [{ id: 'Harry', label: 'harrylabel', desc: 'words' }, { id: 'Sally' }, { id: 'Alice' }],
             links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }]
         };
 
@@ -56,6 +56,7 @@ export default class Tool extends React.Component {
         this.onClickNode = this.onClickNode.bind(this);
         this.onClickGraph = this.onClickGraph.bind(this);
         this.renameNode = this.renameNode.bind(this);
+        this.redescNode = this.redescNode.bind(this);
         this.getNodeData = this.getNodeData.bind(this);
         this.getNameOfNode = this.getNameOfNode.bind(this);
     }
@@ -112,6 +113,15 @@ export default class Tool extends React.Component {
         });
     }
 
+    redescNode(nodeId, desc) {
+        this.setState({
+            data: {
+                nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, desc: desc} : x),
+                links: this.state.data.links
+            }
+        });
+    }
+
     // gets data in payload for a given node
     // gross but the only way :(
     getNodeData(nodeId) {
@@ -148,7 +158,7 @@ export default class Tool extends React.Component {
                 <Graph ref="graph" {...graphProps} />
 
                 { node &&
-                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ node } rename={ this.renameNode }></NodeModalEdit>
+                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ node } rename={ this.renameNode } redesc={ this.redescNode }></NodeModalEdit>
                 }
 
                 {/* display popup */}
@@ -159,7 +169,9 @@ export default class Tool extends React.Component {
                         <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
                             <Nav className="flex-column">
                                 {/* desc */}
-                                <p>Example description</p>
+                                { node.desc &&
+                                    <p>{ node.desc }</p>
+                                }
                                 {/* create options */}
                                 {this.state.nodeOptions.map(opt => (
                                     <Nav.Item key={ opt.name } onClick={ opt.action }>

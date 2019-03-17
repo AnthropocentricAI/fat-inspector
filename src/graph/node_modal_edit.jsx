@@ -8,7 +8,10 @@ export default class NodeModalEdit extends React.Component {
     submitSave(e) {
         e.preventDefault();
         let data = new FormData(e.target);
-        this.props.rename(this.props.node.id, data.get('name'));
+        if(data.get('name') !== '')
+            this.props.rename(this.props.node.id, data.get('name'));
+        if(data.get('desc') !== '')
+            this.props.redesc(this.props.node.id, data.get('desc'));
         this.props.onClose();
     }
 
@@ -23,7 +26,10 @@ export default class NodeModalEdit extends React.Component {
                     <Modal.Body>
                         <Form.Group controlId="">
                             <Form.Label>Name:</Form.Label>
-                            <Form.Control name="name" placeholder={ this.props.node.id }></Form.Control>
+                            {/* TODO: make get label/name work better */}
+                            <Form.Control name="name" placeholder={ 'label' in this.props.node ? this.props.node.label : this.props.node.id }></Form.Control>
+                            <Form.Label>Description:</Form.Label>
+                            <Form.Control name="desc" placeholder={ this.props.node.desc }></Form.Control>
                         </Form.Group>
                         <Form.Group controlId="">
 
