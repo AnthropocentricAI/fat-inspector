@@ -1,12 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Graph } from 'react-d3-graph';
+import {Graph} from 'react-d3-graph';
 import defaultConfig from './config';
 import Popover from 'react-bootstrap/Popover';
 
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import NodeModalEdit from './node_modal_edit.jsx'
+
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit, faDiceD6, faSearch, faSuperscript} from '@fortawesome/free-solid-svg-icons';
+
+library.add(faSearch);
+library.add(faDiceD6);
+library.add(faEdit);
+library.add(faSuperscript);
 
 export default class Tool extends React.Component {
     constructor(props) {
@@ -16,27 +25,29 @@ export default class Tool extends React.Component {
         const nodeOptions = [
             {
                 name: 'Inspect',
-                icon: 'static/assets/inspect.svg',
-                action: () => {}
+                icon: 'search',
+                action: () => {
+                }
             },
             {
                 name: 'Convert to Model',
-                icon: 'static/assets/right_arrow.svg',
+                icon: 'dice-d6',
                 action: {}
             },
             {
                 name: 'Edit',
-                icon: 'static/assets/pencil.svg',
+                icon: 'edit',
                 action: () => {
-                    this.setState({ 'edit': true });
+                    this.setState({'edit': true});
                 }
             },
             {
                 name: 'Apply Function',
-                icon: '',
-                action: () => {}
+                icon: 'superscript',
+                action: () => {
+                }
             }
-        ]
+        ];
 
         const config = defaultConfig;
         const nodeClickedId = false;
@@ -109,7 +120,7 @@ export default class Tool extends React.Component {
 
     onClickGraph() {
         // deselect popup if open
-        if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
+        if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
     }
 
     renameNode(nodeId, name) {
@@ -162,31 +173,32 @@ export default class Tool extends React.Component {
 
         return (
             <div>
-                <h3>Dataset: { this.props.dataset }</h3>
-                <h3>Graph: { this.props.graph }</h3>
+                <h3>Dataset: {this.props.dataset}</h3>
+                <h3>Graph: {this.props.graph}</h3>
                 <Graph ref="graph" {...graphProps} />
 
-                { node &&
-                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ node } rename={ this.renameNode } redesc={ this.redescNode }></NodeModalEdit>
+                {node &&
+                <NodeModalEdit show={this.state.edit} onClose={() => this.setState({edit: false})} node={node}
+                               rename={this.renameNode} redesc={this.redescNode}></NodeModalEdit>
                 }
 
                 {/* display popup */}
                 {/* TODO: add delete */}
-                { node &&
+                {node &&
                 <Portal>
                     <foreignObject x="30" y="-15" width="200" height="200">
                         <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
                             <Nav className="flex-column">
                                 {/* desc */}
-                                { node.desc &&
-                                    <p>{ node.desc }</p>
+                                {node.desc &&
+                                <p>{node.desc}</p>
                                 }
                                 {/* create options */}
                                 {this.state.nodeOptions.map(opt => (
-                                    <Nav.Item key={ opt.name } onClick={ opt.action }>
+                                    <Nav.Item key={opt.name} onClick={opt.action}>
+                                        <FontAwesomeIcon fixedWidth icon={opt.icon}/>
                                         <Nav.Link className="node_popover_nav_link">
-                                        <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px" />
-                                            { opt.name }
+                                            {opt.name}
                                         </Nav.Link>
                                     </Nav.Item>
                                 ))}
