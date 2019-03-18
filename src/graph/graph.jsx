@@ -97,6 +97,9 @@ export default class Tool extends React.Component {
             // open popup
             nodeClickedId: id
         });
+        // set node to front of svg
+        let nodeElement = document.getElementById(id);
+        nodeElement.parentNode.appendChild(nodeElement);
     }
 
     onClickGraph() {
