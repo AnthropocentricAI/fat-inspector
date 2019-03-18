@@ -1,25 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Graph } from 'react-d3-graph';
-import defaultConfig from './config'
-import Popover from 'react-bootstrap/Popover'
+import defaultConfig from './config';
+import Popover from 'react-bootstrap/Popover';
 
-import Nav from 'react-bootstrap/Nav'
-import Popup from '../popup.jsx'
-import PopupForm from '../popup_form.jsx'
+import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
+import NodeModalEdit from './node_modal_edit.jsx'
 
 export default class Tool extends React.Component {
     constructor(props) {
         super(props);
 
         // action called on onClick
-        // TODO: pass this into comp.?
         const nodeOptions = [
             {
                 name: 'Inspect',
                 icon: 'static/assets/inspect.svg',
-                action: {}
+                action: () => {}
             },
             {
                 name: 'Convert to Model',
@@ -29,21 +27,33 @@ export default class Tool extends React.Component {
             {
                 name: 'Edit',
                 icon: 'static/assets/pencil.svg',
-                action: {}
+                action: () => {
+                    this.setState({ 'edit': true });
+                }
+            },
+            {
+                name: 'Apply Function',
+                icon: '',
+                action: () => {}
             }
         ]
 
         const config = defaultConfig;
-        const nodeClicked = false;
+        const nodeClickedId = false;
 
         this.state = {
             config,
-            nodeClicked,
-            nodeOptions
+            nodeClickedId,
+            nodeOptions,
+            edit: false
         };
 
         this.onClickNode = this.onClickNode.bind(this);
         this.onClickGraph = this.onClickGraph.bind(this);
+        this.renameNode = this.renameNode.bind(this);
+        this.redescNode = this.redescNode.bind(this);
+        this.getNodeData = this.getNodeData.bind(this);
+        this.getNameOfNode = this.getNameOfNode.bind(this);
     }
 
     fetchFunctions() {
@@ -85,20 +95,50 @@ export default class Tool extends React.Component {
         let newId = `${id}-${Math.floor(Math.random() * 20)}`;
         this.setState({
             // create new random node
-            /*data: {
+            /* data: {
                 nodes: [...this.state.data.nodes, { id: newId }],
                 links: [...this.state.data.links, { source: id, target: newId }]
-            },*/
+            }, */
             // open popup
-            nodeClicked: {
-                id: id
-            }
+            nodeClickedId: id
         });
+        // set node to front of svg
+        let nodeElement = document.getElementById(id);
+        nodeElement.parentNode.appendChild(nodeElement);
     }
 
     onClickGraph() {
         // deselect popup if open
-        if (this.state.nodeClicked) this.setState({ nodeClicked: null });
+        if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
+    }
+
+    renameNode(nodeId, name) {
+        this.setState({
+            data: {
+                nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, label: name} : x),
+                links: this.state.data.links
+            }
+        });
+    }
+
+    redescNode(nodeId, desc) {
+        this.setState({
+            data: {
+                nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, desc: desc} : x),
+                links: this.state.data.links
+            }
+        });
+    }
+
+    // gets data in payload for a given node
+    // gross but the only way :(
+    getNodeData(nodeId) {
+        for (let x of this.state.data.nodes) if (x.id == nodeId) return x;
+        return null;
+    }
+
+    getNameOfNode(node) {
+        return 'label' in node ? node.label : node.id;
     }
 
     render() {
@@ -111,12 +151,14 @@ export default class Tool extends React.Component {
         };
 
         // portal from children of node element
-        const Modal = ({children}) => {
+        const Portal = ({children}) => {
             return ReactDOM.createPortal(
                 children,
-                document.getElementById(this.state.nodeClicked.id)
+                document.getElementById(this.state.nodeClickedId)
             );
         };
+
+        const node = this.getNodeData(this.state.nodeClickedId);
 
         return (
             <div>
@@ -124,25 +166,34 @@ export default class Tool extends React.Component {
                 <h3>Graph: { this.props.graph }</h3>
                 <Graph ref="graph" {...graphProps} />
 
+                { node &&
+                    <NodeModalEdit show={ this.state.edit } onClose={() => this.setState({ edit: false }) } node={ node } rename={ this.renameNode } redesc={ this.redescNode }></NodeModalEdit>
+                }
+
                 {/* display popup */}
-                { this.state.nodeClicked &&
-                    <Modal>
-                        <foreignObject x="30" y="-15" width="200" height="200">
-                            <Popover className="node_popover" id="popover-basic" title={this.state.nodeClicked.id}>
-                                <Nav className="flex-column">
-                                    {/* create options */}
-                                    {this.state.nodeOptions.map(opt => (
-                                        <Nav.Item>
-                                            <Nav.Link className="node_popover_nav_link">
-                                            <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px"/>
-                                                { opt.name }
-                                            </Nav.Link>
-                                        </Nav.Item>
-                                    ))}
-                                </Nav>
-                            </Popover>
-                        </foreignObject>
-                    </Modal>
+                {/* TODO: add delete */}
+                { node &&
+                <Portal>
+                    <foreignObject x="30" y="-15" width="200" height="200">
+                        <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
+                            <Nav className="flex-column">
+                                {/* desc */}
+                                { node.desc &&
+                                    <p>{ node.desc }</p>
+                                }
+                                {/* create options */}
+                                {this.state.nodeOptions.map(opt => (
+                                    <Nav.Item key={ opt.name } onClick={ opt.action }>
+                                        <Nav.Link className="node_popover_nav_link">
+                                        <img className="node_popover_nav_img" src={opt.icon} width="16px" height="16px" />
+                                            { opt.name }
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                ))}
+                            </Nav>
+                        </Popover>
+                    </foreignObject>
+                </Portal>
                 }
             </div>
         );
