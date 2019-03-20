@@ -161,7 +161,7 @@ export default class Tool extends React.Component {
             return {
                 showApply: false,
                 data: {
-                    nodes: [...prev.data.nodes, {id: child, func: func}],
+                    nodes: [...prev.data.nodes, {id: child, desc: desc, func: func}],
                     links: [...prev.data.links, {source: parent, target: child}]
                 }
             }
@@ -215,13 +215,19 @@ export default class Tool extends React.Component {
                 {
                     node &&
                     <Portal>
-                        <foreignObject x="30" y="-15" width="200" height="200">
+                        <foreignObject x="30" y="-15" width="200px" height="100%">
                             <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
                                 <Nav className="flex-column">
                                     {/* desc */}
-                                    {node.desc &&
-                                    <p>{node.desc}</p>
+                                    {
+                                        node.func &&
+                                        <p>Function: {node.func}</p>
                                     }
+                                    {
+                                        node.desc &&
+                                        <p>Description: {node.desc}</p>
+                                    }
+
                                     {/* create options */}
                                     {this.state.nodeOptions.map(opt => (
                                         <Nav.Item key={opt.name} onClick={opt.action}>

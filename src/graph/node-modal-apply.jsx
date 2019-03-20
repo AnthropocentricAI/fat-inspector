@@ -14,7 +14,7 @@ export default class NodeModalApply extends React.Component {
 
     validateName(e) {
         this.setState({
-            validName: !!e.target.value
+            validName: e.target.value !== ''
         });
     }
 
@@ -71,7 +71,7 @@ export default class NodeModalApply extends React.Component {
                                           onChange={this.validateFunc.bind(this)}>
                                 <option disabled hidden value={-1}>Select a function...</option>
                                 {
-                                    this.props.functions.map((f, i) => <option key={f} value={i}>{f}</option>)
+                                    this.props.functions.map(f => <option key={f} value={f}>{f}</option>)
                                 }
                             </Form.Control>
                         </Form.Group>
