@@ -6,11 +6,12 @@ import Popover from 'react-bootstrap/Popover';
 
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
-import NodeModalEdit from './node_modal_edit.jsx'
+import NodeModalEdit from './node-modal-edit.jsx'
 
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEdit, faDiceD6, faSearch, faSuperscript} from '@fortawesome/free-solid-svg-icons';
+import {faDiceD6, faEdit, faSearch, faSuperscript} from '@fortawesome/free-solid-svg-icons';
+import NodeModalApply from './node-modal-apply.jsx';
 
 library.add(faSearch);
 library.add(faDiceD6);
@@ -38,13 +39,14 @@ export default class Tool extends React.Component {
                 name: 'Edit',
                 icon: 'edit',
                 action: () => {
-                    this.setState({'edit': true});
+                    this.setState({edit: true});
                 }
             },
             {
                 name: 'Apply Function',
                 icon: 'superscript',
                 action: () => {
+                    this.setState({showApply: true})
                 }
             }
         ];
@@ -56,7 +58,9 @@ export default class Tool extends React.Component {
             config,
             nodeClickedId,
             nodeOptions,
-            edit: false
+            functions: [],
+            edit: false,
+            showApply: false
         };
 
         this.onClickNode = this.onClickNode.bind(this);
@@ -152,6 +156,18 @@ export default class Tool extends React.Component {
         return 'label' in node ? node.label : node.id;
     }
 
+    createChild(parent, child, desc, func) {
+        this.setState((prev, props) => {
+            return {
+                showApply: false,
+                data: {
+                    nodes: [...prev.data.nodes, {id: child, func: func}],
+                    links: [...prev.data.links, {source: parent, target: child}]
+                }
+            }
+        })
+    }
+
     render() {
         const graphProps = {
             id: 'graph',
@@ -177,35 +193,48 @@ export default class Tool extends React.Component {
                 <h3>Graph: {this.props.graph}</h3>
                 <Graph ref="graph" {...graphProps} />
 
-                {node &&
-                <NodeModalEdit show={this.state.edit} onClose={() => this.setState({edit: false})} node={node}
-                               rename={this.renameNode} redesc={this.redescNode}></NodeModalEdit>
+                {
+                    node &&
+                    <NodeModalEdit show={this.state.edit}
+                                   onClose={() => this.setState({edit: false})}
+                                   node={node}
+                                   rename={this.renameNode} redesc={this.redescNode}/>
+                }
+
+                {
+                    node &&
+                    <NodeModalApply show={this.state.showApply}
+                                    functions={this.state.functions}
+                                    parent={this.state.nodeClickedId}
+                                    onHide={() => this.setState({showApply: false})}
+                                    onApply={this.createChild.bind(this)}/>
                 }
 
                 {/* display popup */}
                 {/* TODO: add delete */}
-                {node &&
-                <Portal>
-                    <foreignObject x="30" y="-15" width="200" height="200">
-                        <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
-                            <Nav className="flex-column">
-                                {/* desc */}
-                                {node.desc &&
-                                <p>{node.desc}</p>
-                                }
-                                {/* create options */}
-                                {this.state.nodeOptions.map(opt => (
-                                    <Nav.Item key={opt.name} onClick={opt.action}>
-                                        <FontAwesomeIcon fixedWidth icon={opt.icon}/>
-                                        <Nav.Link className="node_popover_nav_link">
-                                            {opt.name}
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                ))}
-                            </Nav>
-                        </Popover>
-                    </foreignObject>
-                </Portal>
+                {
+                    node &&
+                    <Portal>
+                        <foreignObject x="30" y="-15" width="200" height="200">
+                            <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
+                                <Nav className="flex-column">
+                                    {/* desc */}
+                                    {node.desc &&
+                                    <p>{node.desc}</p>
+                                    }
+                                    {/* create options */}
+                                    {this.state.nodeOptions.map(opt => (
+                                        <Nav.Item key={opt.name} onClick={opt.action}>
+                                            <FontAwesomeIcon fixedWidth icon={opt.icon}/>
+                                            <Nav.Link className="node_popover_nav_link">
+                                                {opt.name}
+                                            </Nav.Link>
+                                        </Nav.Item>
+                                    ))}
+                                </Nav>
+                            </Popover>
+                        </foreignObject>
+                    </Portal>
                 }
             </div>
         );

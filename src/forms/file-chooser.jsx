@@ -76,8 +76,10 @@ export default class FileChooser extends React.Component {
                         <div className="form-label-wrapper">
                             <Form.Label>Dataset</Form.Label>
                         </div>
-                        <Form.Control name='dataset' as='select'>
-                            <option disabled selected hidden>Select a dataset...</option>
+                        <Form.Control as='select'
+                                      name='dataset'
+                                      defaultValue={-1}>
+                            <option disabled hidden value={-1}>Select a dataset...</option>
                             {
                                 this.state.datasets.map(d => <option key={d}>{d}</option>)
                             }
@@ -85,8 +87,11 @@ export default class FileChooser extends React.Component {
                         <div className="form-label-wrapper">
                             <Form.Label>Graph</Form.Label>
                         </div>
-                        <Form.Control name='graph' as='select' disabled={this.state.newGraphChecked}>
-                            <option selected disabled hidden>Select a graph...</option>
+                        <Form.Control as='select'
+                                      disabled={this.state.newGraphChecked}
+                                      name='graph'
+                                      defaultValue={-1}>
+                            <option disabled hidden value={-1}>Select a graph...</option>
                             // TODO: add server side graphs
                         </Form.Control>
                         <Form.Check label='Create a new graph'

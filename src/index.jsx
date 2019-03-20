@@ -18,7 +18,7 @@ class App extends React.Component {
             dataset: dataset,
             graph: graph,
             isNew: isNew,
-            openGraph: true
+            openGraph: dataset && graph
         });
     }
 
