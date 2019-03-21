@@ -1,5 +1,10 @@
 import React, { PureComponent } from "react";
-import TopbarButton from "./topbarbutton.jsx";
+import HowToPopUp from "../howtopopup.jsx";
+import AboutPopUp from "../aboutpopup.jsx";
+import UploadPopUp from "../uploadpopup.jsx";
+import Dropdown from "react-bootstrap/Dropdown";
+import CustomMenu from "./dropdownmenu.jsx";
+import CustomToggle from "./customdropdown.jsx";
 
 const buttonnames = [
   {
@@ -34,18 +39,75 @@ const buttonnames = [
 ];
 
 class Topbar extends PureComponent {
+  constructor(args) {
+    super(args);
+
+    this.state = { howToShow: false, aboutShow: false, uploadShow: false };
+    this.modalClose = this.modalClose.bind(this);
+    this.uploadOpen = this.uploadOpen.bind(this);
+    this.howToOpen = this.howToOpen.bind(this);
+    this.aboutOpen = this.aboutOpen.bind(this);
+  }
+
+  modalClose() {
+    this.setState({
+      howToShow: false,
+      aboutShow: false,
+      uploadShow: false
+    });
+  }
+
+  uploadOpen() {
+    this.setState({
+      howToShow: false,
+      aboutShow: false,
+      uploadShow: true
+    });
+  }
+
+  howToOpen() {
+    this.setState({
+      howToShow: true,
+      aboutShow: false,
+      uploadShow: false
+    });
+  }
+
+  aboutOpen() {
+    this.setState({
+      howToShow: false,
+      aboutShow: true,
+      uploadShow: false
+    });
+  }
+
   render() {
     return (
       <div className="topbar">
         <div className="topbar__wrapper">
-          {buttonnames.map(button => (
-            <TopbarButton
-              key={button.name}
-              name={button.name}
-              dropdowns={button.dropdowns}
-            />
-          ))}
+          <Dropdown bsPrefix="super-button" className="topbarbutton">
+            <Dropdown.Toggle>Dataset Options</Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item href="#/action-1">Save Dataset</Dropdown.Item>
+              <Dropdown.Item href="#/action-2">Export Dataset</Dropdown.Item>
+              <Dropdown.Item href="#/action-3">Settings</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          <button className="topbarbutton" onClick={this.uploadOpen}>
+            New Dataset
+          </button>
+          <button className="topbarbutton" onClick={this.howToOpen}>
+            How To
+          </button>
+          <button className="topbarbutton" onClick={this.aboutOpen}>
+            About
+          </button>
         </div>
+
+        <HowToPopUp show={this.state.howToShow} onHide={this.modalClose} />
+        <AboutPopUp show={this.state.aboutShow} onHide={this.modalClose} />
+        <UploadPopUp show={this.state.uploadShow} onHide={this.modalClose} />
       </div>
     );
   }
