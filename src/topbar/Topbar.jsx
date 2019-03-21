@@ -111,21 +111,6 @@ class Topbar extends PureComponent {
       </div>
     );
   }
-    render() {
-        return (
-            <div className="topbar">
-                <div className="topbar__wrapper">
-                    {buttonnames.map(button => (
-                        <TopbarButton
-                            key={button.name}
-                            name={button.name}
-                            dropdowns={button.dropdowns}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
-    }
 }
 
 export default Topbar;

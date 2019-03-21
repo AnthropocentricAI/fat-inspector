@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import FileChooser from './forms/file-chooser.jsx';
-import loadable from '@loadable/component'
+import InspBtn from './inspBtn/inspBtn.jsx';
+import loadable from '@loadable/component';
 
 const Tool = loadable(() => import('./graph/tool.jsx'));
 const Topbar = loadable(() => import('./topbar/Topbar.jsx'));
