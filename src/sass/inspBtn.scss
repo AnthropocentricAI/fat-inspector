@@ -5,22 +5,19 @@
     bottom: 20px;
     right: 20px;
 }
+.insp_button {
+    background-color: #1285ffd1;
+    color: whitesmoke;
+    border-radius: 5px;
+    line-height: 40px;
+    width: 90px;
+    font-weight: bolder;
+    border: solid 1px grey;
 
-// .inspBtn{
-//     font-size: 100%;
-//     background-color: maroon;
-//     flex-grow: 1;
-//     color: whitesmoke;
-//     // border-radius: 7em;
-//     line-height: 5em;
-//     text-align: center;
-//     font-weight: bolder;
-//     border: solid 3px grey;
-
-//     &:hover {
-//         background-color: #e8dab2;
-//     }
-// }
+    &:hover {
+        background-color: #e8dab2;
+    }
+}
 
 .popup {
     position: fixed;
@@ -36,6 +33,7 @@
 
 .popup_inner {
     position: absolute;
+    border-radius: 5px;
     left: 25%;
     right: 25%;
     top: 25%;
@@ -47,8 +45,8 @@
 .popup_close {
     width: 10%;
     position: absolute;
-    right: 11px;
-    top: 11px;
+    right: 2px;
+    top: 15px;
     font-weight: bolder;
     font-size: large;
     color: #c1c1c1;
@@ -61,40 +59,7 @@
 }
 
 .popup_title {
-    width: 100%;
-    display: flex;
-    border-bottom: 1px solid #dee2e6;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
+    margin: 11px;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
 }
-
-.popup_tab {
-    width: 100px;
-    font-weight: 600;
-    font-size: 15px;
-    text-align: center;
-    padding-top: 11px;
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-bottom: 11px;
-    border-bottom: 1px solid #ccc;
-    border-right: 2px solid #ccc;
-    border-top-right-radius: 15px;
-    &:hover {
-        background-color: #949494;
-    }
-}
-
-// .popover{
-//     text-align: left;
-//     font-weight: bold;
-//     border: solid 1px grey;
-//     background: #e8dab2;
-
-//     &:hover {
-//         background-color: maroon;
-//     }
-// }

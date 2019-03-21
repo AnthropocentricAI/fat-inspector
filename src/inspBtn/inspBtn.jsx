@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
-import Popover from 'react-bootstrap/Popover';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Button from 'react-bootstrap/Button';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 class Popup extends React.Component {
   render() {
@@ -9,19 +8,17 @@ class Popup extends React.Component {
       <div className='popup'>
         <div className='popup_inner'>
         <div className="popup_title">
-        {/* <Tab className="popup_title"> {key=>this.props.key}</Tab> */}
-
-
-        {/* <Tabs id="controlled-tab-example" activeKey={this.state.key} onSelect={key => this.setState({ key })}>
-        <Tab eventKey="home" title="Home">
-          <Sonnet />
+        <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
+        <Tab eventKey="home" title="Fairness">
+        hello there:) this is tab1
         </Tab>
-      </Tabs> */}
-
-        {/* <button class="popup_title" onClick={this.props.key}>Fairness</button> */}
-        <button className="popup_tab">{this.props.text1}</button>
-        <button className="popup_tab">{this.props.text2}</button>
-        <button className="popup_tab">{this.props.text3}</button>
+        <Tab eventKey="profile" title="Accountability">
+        tab2
+        </Tab>
+        <Tab eventKey="contact" title="Transparency">
+        tab3
+        </Tab>
+        </Tabs>
         <button class="popup_close" onClick={this.props.closePopup}>X</button>
         </div>
         </div>
@@ -30,13 +27,10 @@ class Popup extends React.Component {
   }
 }
 
-
 class InspBtn extends React.Component {
   constructor() {
         super();
-        // this.toggle = this.toggle.bind(this);
         this.state = {
-          // key: 'home',
           popoverOpen: false
         };
       }
@@ -48,32 +42,15 @@ class InspBtn extends React.Component {
     }
 
     render() {
-      // let popover =(
-      //   <popover className="popover" id = "" title="over1">
-      //   <p>fairness</p>
-      //   <p>transparency</p>
-      //   <p>acc</p>
-      //   </popover>
-      // )
         return(
         <div className="inspBtn_wrap">
-        <button onClick={this.toggle.bind(this)}>Inspect</button>
+        <button className="insp_button" onClick={this.toggle.bind(this)}>Inspect</button>
         {this.state.popoverOpen ?
         <Popup
-          text1="fairness"
-          text2="accountability"
-          text3="transparency"
-          // key={this.toggle.bind(this)}
           closePopup={this.toggle.bind(this)}
         />
         :null
         }
-        {/* <button className="inspBtn">inspector</button> */}
-        {/* <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-        <Button  className="inspBtn" id="Popover1" type="button">
-        Inspect
-        </Button>
-        </OverlayTrigger> */}
         </div>        
         );
     }
