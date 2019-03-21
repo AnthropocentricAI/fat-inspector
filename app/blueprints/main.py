@@ -1,9 +1,9 @@
-"""Tool blueprint module for routes for the 'main' part of the app."""
+"""Main blueprint module for routes for the 'main' part of the app."""
 from flask import render_template, request, abort
 from flask.blueprints import Blueprint
 
 
-bp = Blueprint('tool', __name__)
+bp = Blueprint('main', __name__)
 
 
 @bp.route('/')

@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import FileChooser from './forms/file-chooser.jsx';
-import Tool from './graph/tool.jsx';
-import Topbar from './topbar/Topbar.jsx';
+import loadable from '@loadable/component'
+
+const Tool = loadable(() => import('./graph/tool.jsx'));
+const Topbar = loadable(() => import('./topbar/Topbar.jsx'));
 
 class App extends React.Component {
     constructor(props) {

@@ -4,8 +4,8 @@ module.exports = {
     mode: 'production',
     entry: ['./src/index.jsx', './src/sass/main.scss'],
     output: {
-        path: path.resolve(__dirname, 'app/static/'),
-        filename: 'js/bundle.js'
+        path: path.resolve(__dirname, 'app'),
+        filename: 'static/js/bundle.js'
     },
     module: {
         rules: [
@@ -20,7 +20,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            name: 'css/[name].scss.css',
+                            name: 'static/css/[name].scss.css',
                         }
                     },
                     {
@@ -41,4 +41,4 @@ module.exports = {
     optimization: {
         minimize: true,
     }
-}
+};
