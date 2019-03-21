@@ -25,11 +25,15 @@ def view(name):
     name = util.normalise_path_to_file(name) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-        dataset = models.Dataset.from_path(file_path)
-        return escape(dataset)
+        holder = models.Dataset.from_path(file_path).data
+        dataset = {
+            'data': holder.data[:20].tolist(),
+            'target': holder.target[:20].tolist()
+        }
+        return jsonify(dataset)
     except IOError as e:
         print(e)
-        abort(400, 'Invalid dataset name.')
+        raise APIArgumentError(f'Error when fetching dataset {name}.')
 
 
 # TODO: implement placeholder routes
@@ -54,7 +58,18 @@ def upload():
 
 @bp.route('/<name>/rename', methods=['POST'])
 def rename(name):
-    abort(500, 'Not implemented yet!')
+    if 'new_name' not in request.form:
+        raise APIArgumentError('Invalid request arguments.\n\tnew_name: <str>')
+    old_name = util.normalise_path_to_file(name) + '.csv'
+    new_name = request.form.get('new_name') + '.csv'
+    new_name = os.path.join(current_app.config['ASSETS_DIR'], new_name)
+    try:
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], old_name)
+        os.rename(file_path, new_name)
+        return jsonify({'message': f'Successfully renamed {old_name} to {new_name}'})
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'{name} does not exist, or {new_name} already exists!')
 
 
 @bp.route('/<name>/download')
@@ -68,4 +83,4 @@ def download(name):
                          mimetype='text/csv')
     except IOError as e:
         print(e)
-        abort(400, 'Invalid dataset name.')
+        raise APIArgumentError(f'{name} does not exist!')

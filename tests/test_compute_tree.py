@@ -1,11 +1,12 @@
-
-import numpy as np
 import os
+
 import fatd.holders.loaders
 import fatd.transform.data
+from fatd.holders import Data
+import numpy as np
 
-from app.functions import funcs
 from app import tree
+from app.functions import funcs
 
 
 TEST_ASSETS = os.path.join(os.path.dirname(__file__), 'assets')
@@ -14,7 +15,27 @@ TEST_ASSETS = os.path.join(os.path.dirname(__file__), 'assets')
 class TestCompute:
 
     def setup_method(self):
-        self.default_data = fatd.holders.loaders.csv_loader(os.path.join(TEST_ASSETS, 'default_data.csv'))
+        data = np.array([[5.1, 3.5, 1.4, 0.2, 1.0],
+                         [4.9, 3.0, 1.4, 0.2, 1.0],
+                         [4.7, 3.2, 1.3, 0.2, 1.0],
+                         [4.6, 3.1, 1.5, 0.2, 1.0],
+                         [5.0, 3.6, 1.4, 0.2, 1.0],
+                         [5.4, 3.9, 1.7, 0.4, 1.0],
+                         [4.6, 3.4, 1.4, 0.3, 1.0],
+                         [5.0, 3.4, 1.5, 0.2, 1.0],
+                         [4.4, 2.9, 1.4, 0.2, 1.0],
+                         [4.9, 3.1, 1.5, 0.1, 1.0],
+                         [5.4, 3.7, 1.5, 0.2, 1.0],
+                         [4.8, 3.4, 1.6, 0.2, 1.0],
+                         [4.8, 3.0, 1.4, 0.1, 1.0]])
+        self.default_data = Data(data[:, :4], data[:, 4])
+        os.mkdir(TEST_ASSETS)
+        np.savetxt(os.path.join(TEST_ASSETS, 'default_data.csv'), data, delimiter=',')
+
+    def teardown_method(self):
+        for f in os.listdir(TEST_ASSETS):
+            os.remove(os.path.join(TEST_ASSETS, f))
+        os.rmdir(TEST_ASSETS)
 
     def test_null_function_is_identity(self):
         node = tree.Node(None, self.default_data)
@@ -130,7 +151,8 @@ class TestCompute:
         t = tree.build_tree(graph, TEST_ASSETS)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
-        assert np.array_equal(t.node_of('Alice').data.data, t.node_of('Bob').data.apply(fatd.transform.data.median).data)
+        assert np.array_equal(t.node_of('Alice').data.data,
+                              t.node_of('Bob').data.apply(fatd.transform.data.median).data)
         assert np.array_equal(t.node_of('James').data.data, t.node_of('Bob').data.apply(fatd.transform.data.mean).data)
         assert np.array_equal(t.node_of('Laura').data.data,
                               t.node_of('Alice').data.apply(fatd.transform.data.median, [2], 1).data)
