@@ -30,7 +30,10 @@ def chart(name, tab):
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
         dataset = models.Dataset.from_path(file_path)
         # json data n message
-        return charts.pieChart(dataset.data)
+        svg = charts.pieChart(dataset.data)
+        js = jsonify({ 'data': str(svg), 'msg': 'words' })
+        print(js.data)
+        return js
     except IOError as e:
         print(e)
         abort(400, 'Invalid dataset name.')

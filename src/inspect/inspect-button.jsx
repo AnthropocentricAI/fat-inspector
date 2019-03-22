@@ -3,6 +3,38 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 class Popup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chart: 0
+    };
+  }
+
+  componentDidMount() {
+    console.log('i mounted');
+    // fetch chart - eventually move to other function
+    fetch('http://127.0.0.1:5000/inspector/' + this.props.dataset + '/dog/chart').then(r => {
+      if (r.status !== 200) {
+        console.error('Error when attempting to fetch functions!');
+      }
+      r.json().then(data => {
+        console.log(data.data);
+        try {
+          let ahhh = window.atob(data.data);
+          this.setState({
+            chart: ahhh
+          });
+          /* this.setState({
+            ...this.state,
+            chart: atob(data.data)
+          }); */
+        } catch (error) {
+          console.log(error);
+        };
+      });
+    }, e => console.error(e));
+  }
+
   render() {
     return (
       <div className='popup'>
@@ -10,6 +42,9 @@ class Popup extends React.Component {
           <div className="popup_title">
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
               <Tab eventKey="home" title="Fairness">
+                <div dangerouslySetInnerHTML={{ __html: this.state.chart }}></div>
+                { this.state.chart }
+
                 hello there:) this is tab1
               </Tab>
               <Tab eventKey="profile" title="Accountability">
@@ -48,6 +83,7 @@ class InspectButton extends React.Component {
         {this.state.popoverOpen ?
           <Popup
             closePopup={this.toggle.bind(this)}
+            dataset={this.props.dataset}
           />
           : null
         }

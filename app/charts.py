@@ -14,4 +14,4 @@ def pieChart(dataset):
 
     tmpfile = BytesIO()
     plt.savefig(tmpfile, format='svg')
-    return base64.b64encode(tmpfile.getvalue())
+    return base64.b64encode(tmpfile.getvalue()).decode()

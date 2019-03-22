@@ -35,7 +35,7 @@ class App extends React.Component {
               <Tool dataset={this.state.dataset}
                     graph={this.state.graph}
                     isNew={this.state.isNew}/>
-              <InspectButton/>
+              <InspectButton dataset={this.state.dataset} />
             </div> : <FileChooser onOpenGraph={this.updateSelected.bind(this)}/>
         }
       </div>
