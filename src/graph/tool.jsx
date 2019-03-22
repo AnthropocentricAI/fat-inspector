@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import {Graph} from 'react-d3-graph';
 import defaultConfig from './config';
 import Popover from 'react-bootstrap/Popover';
+import uuid from 'uuid/v4';
 
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
@@ -27,13 +28,12 @@ export default class Tool extends React.Component {
       {
         name: 'Inspect',
         icon: 'search',
-        action: () => {
-        }
+        action: () => {}
       },
       {
         name: 'Convert to Model',
         icon: 'dice-d6',
-        action: {}
+        action: () => {}
       },
       {
         name: 'Edit',
@@ -65,7 +65,7 @@ export default class Tool extends React.Component {
 
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
-    this.renameNode = this.renameNode.bind(this);
+    this.editNameDescNode = this.editNameDescNode.bind(this);
     this.redescNode = this.redescNode.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
     this.getNameOfNode = this.getNameOfNode.bind(this);
@@ -79,10 +79,8 @@ export default class Tool extends React.Component {
       }
       r.json().then(data => {
         this.setState({
-          ...this.state,
           functions: data
-        });
-        console.log(data);
+        }, () => console.log(this.state));
       });
     }, e => console.error(e));
   }
@@ -90,12 +88,11 @@ export default class Tool extends React.Component {
   populateGraph() {
     if (this.props.isNew) {
       this.setState({
-        ...this.state,
         data: {
-          nodes: [{id: 'root-node'}],
+          nodes: [{id: uuid(), label: 'root'}],
           links: []
         }
-      })
+      });
     } else {
       // TODO: fetch graph
     }
@@ -107,14 +104,7 @@ export default class Tool extends React.Component {
   }
 
   onClickNode(id) {
-    let newId = `${id}-${Math.floor(Math.random() * 20)}`;
     this.setState({
-      // create new random node
-      /* data: {
-          nodes: [...this.state.data.nodes, { id: newId }],
-          links: [...this.state.data.links, { source: id, target: newId }]
-      }, */
-      // open popup
       nodeClickedId: id
     });
     // set node to front of svg
@@ -127,10 +117,14 @@ export default class Tool extends React.Component {
     if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
   }
 
-  renameNode(nodeId, name) {
+  editNameDescNode(nodeId, name, desc) {
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, label: name} : x),
+        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {
+          ...x,
+          label: name || x.name,
+          desc: desc || x.desc
+        } : x),
         links: this.state.data.links
       }
     });
@@ -148,7 +142,7 @@ export default class Tool extends React.Component {
   // gets data in payload for a given node
   // gross but the only way :(
   getNodeData(nodeId) {
-    for (let x of this.state.data.nodes) if (x.id == nodeId) return x;
+    for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
   }
 
@@ -161,7 +155,7 @@ export default class Tool extends React.Component {
       return {
         showApply: false,
         data: {
-          nodes: [...prev.data.nodes, {id: child, desc: desc, func: func}],
+          nodes: [...prev.data.nodes, {id: uuid(), label: child, desc: desc, func: func}],
           links: [...prev.data.links, {source: parent, target: child}]
         }
       }
@@ -177,7 +171,7 @@ export default class Tool extends React.Component {
       onClickGraph: this.onClickGraph
     };
 
-    // portal from children of node element
+    // portal from children of node  element
     const Portal = ({children}) => {
       return ReactDOM.createPortal(
         children,
@@ -198,7 +192,7 @@ export default class Tool extends React.Component {
           <NodeModalEdit show={this.state.edit}
                          onClose={() => this.setState({edit: false})}
                          node={node}
-                         rename={this.renameNode} redesc={this.redescNode}/>
+                         edit={this.editNameDescNode}/>
         }
 
         {

@@ -8,10 +8,7 @@ export default class NodeModalEdit extends React.Component {
   submitSave(e) {
     e.preventDefault();
     let data = new FormData(e.target);
-    if (data.get('name') !== '')
-      this.props.rename(this.props.node.id, data.get('name'));
-    if (data.get('desc') !== '')
-      this.props.redesc(this.props.node.id, data.get('desc'));
+    this.props.edit(this.props.node.id, data.get('name'), data.get('desc'));
     this.props.onClose();
   }
 
@@ -19,7 +16,7 @@ export default class NodeModalEdit extends React.Component {
     return (
       <Modal show={this.props.show} onHide={this.props.onClose}>
         <Modal.Header>
-          <Modal.Title>Edit {'label' in this.props.node ? this.props.node.label : this.props.node.id}</Modal.Title>
+          <Modal.Title>Edit { this.props.node.label }</Modal.Title>
         </Modal.Header>
         {/* TODO: include validation */}
         <Form onSubmit={(e) => this.submitSave(e)}>
@@ -30,7 +27,7 @@ export default class NodeModalEdit extends React.Component {
               </div>
               {/* TODO: make get label/name work better */}
               <Form.Control name="name"
-                            placeholder={'label' in this.props.node ? this.props.node.label : this.props.node.id}/>
+                            placeholder={this.props.node.label}/>
               <div className="form-label-wrapper">
                 <Form.Label>Description:</Form.Label>
               </div>
