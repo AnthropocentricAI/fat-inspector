@@ -1,8 +1,8 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-class UploadPopUp extends React.Component {
+class UploadPopup extends React.Component {
   render() {
     return (
       <Modal
@@ -27,4 +27,4 @@ class UploadPopUp extends React.Component {
   }
 }
 
-export default UploadPopUp;
+export default UploadPopup;

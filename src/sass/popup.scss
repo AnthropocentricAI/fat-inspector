@@ -1,15 +1,17 @@
 .popup {
-    &_cont {
-        position: relative;
-        margin: auto;
-        width: 300px;
-        height: 200px;
-        background-color: blue;
-    }
-    &_close {
-        float: right;
-    }
-    &_title {
-        float: left;
-    }
+  &_cont {
+    position: relative;
+    margin: auto;
+    width: 300px;
+    height: 200px;
+    background-color: blue;
+  }
+
+  &_close {
+    float: right;
+  }
+
+  &_title {
+    float: left;
+  }
 }

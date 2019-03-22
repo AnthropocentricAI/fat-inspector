@@ -1,8 +1,8 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-class AboutPopUp extends React.Component {
+class HowToPopup extends React.Component {
   render() {
     return (
       <Modal
@@ -13,15 +13,16 @@ class AboutPopUp extends React.Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            ABOUT FAT FORENSICS
+            HOW TO USE FAT FORENSICS DATA TOOL
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h4>What We Do</h4>
+          <h4>Manipulating Datasets</h4>
           <p>
-            FAT Forensics is an organisation to help test the Fairness,
-            Accountability and Transparency of AI systems by analysing users'
-            datasets and models derrived from them.
+            To apply a function provided by FAT Forensics to your dataset, click
+            on the node representing the chosen dataset, and in the pop-up click
+            "apply function". Once a function is chosen, a new child node of
+            given dataset will appear representing altered data.
           </p>
         </Modal.Body>
         <Modal.Footer>
@@ -32,4 +33,4 @@ class AboutPopUp extends React.Component {
   }
 }
 
-export default AboutPopUp;
+export default HowToPopup;

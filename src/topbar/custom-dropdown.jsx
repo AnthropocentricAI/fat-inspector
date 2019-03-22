@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 
 class CustomToggle extends React.Component {
   constructor(props, context) {

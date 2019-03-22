@@ -1,5 +1,5 @@
-import React, { PureComponent } from "react";
-import Topswitchbutton from "./topswitchbutton.jsx";
+import React, {PureComponent} from "react";
+import TopSwitchButton from "./top-switch-button.jsx";
 
 const buttonnames = [
   {
@@ -13,13 +13,13 @@ const buttonnames = [
   }
 ];
 
-class Topswitch extends PureComponent {
+class TopSwitch extends PureComponent {
   render() {
     return (
       <div className="switch">
         <div className="wrap">
           {buttonnames.map(button => (
-            <Topswitchbutton name={button.name} />
+            <TopSwitchButton name={button.name}/>
           ))}
         </div>
       </div>

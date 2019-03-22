@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 
 class CustomMenu extends React.Component {
   constructor(props, context) {
@@ -6,11 +6,11 @@ class CustomMenu extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
 
-    this.state = { value: "" };
+    this.state = {value: ""};
   }
 
   handleChange(e) {
-    this.setState({ value: e.target.value.toLowerCase().trim() });
+    this.setState({value: e.target.value.toLowerCase().trim()});
   }
 
   render() {
@@ -21,7 +21,7 @@ class CustomMenu extends React.Component {
       "aria-labelledby": labeledBy
     } = this.props;
 
-    const { value } = this.state;
+    const {value} = this.state;
 
     return (
       <div style={style} className={className} aria-labelledby={labeledBy}>

@@ -1,0 +1,67 @@
+.inspBtn_wrap {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.insp_button {
+  background-color: #1285ffd1;
+  color: whitesmoke;
+  border-radius: 5px;
+  line-height: 40px;
+  width: 90px;
+  font-weight: bolder;
+  border: solid 1px grey;
+
+  &:hover {
+    background-color: #e8dab2;
+  }
+}
+
+.popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup_inner {
+  position: absolute;
+  border-radius: 5px;
+  left: 25%;
+  right: 25%;
+  top: 25%;
+  bottom: 25%;
+  margin: auto;
+  background: white;
+}
+
+.popup_close {
+  width: 10%;
+  position: absolute;
+  right: 2px;
+  top: 15px;
+  font-weight: bolder;
+  font-size: large;
+  color: #c1c1c1;
+  background: none;
+  border: none;
+  outline: none;
+
+  &:hover {
+    color: #949494;
+  }
+}
+
+.popup_title {
+  margin: 11px;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+}
