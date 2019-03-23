@@ -75,15 +75,28 @@ def all_chart_types(mode, tab):
 # returns {title, args, svg}
 # for a given dataset, mode, tab, & type of chart
 # (and some args)
-@bp.route('/<name>/<mode>/<tab>/<type>/chart')
+@bp.route('/<name>/<mode>/<tab>/<chart_type>')
 def chart(name, mode, tab, chart_type):
     combo = (mode, tab)
     if combo in all_charts:
-        # TODO: error if dataset doesn't exist
-        avail_charts = all_charts.get(combo).get(chart_type)
-        if type in avail_charts:
-            
-            pass
+        avail_charts = all_charts.get(combo)
+        if chart_type in avail_charts:
+            toRender = avail_charts.get(chart_type)
+
+            name = util.normalise_path_to_file(name) + '.csv'
+            # TODO: proper error if dataset doesn't exist?
+            try:
+                file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+
+                dataset = models.Dataset.from_path(file_path)
+                svg = toRender.get('func')(dataset.data)
+
+                ret = { k: v for k, v in toRender.items() if k != 'func' }
+                ret['svg'] = str(svg)
+                return jsonify(ret)
+                print(e)
+            except IOError as e:
+                abort(400, 'Invalid dataset name.')
         else:
             abort(400, 'Invalid chart type for {}.'.format(combo))
     else:
