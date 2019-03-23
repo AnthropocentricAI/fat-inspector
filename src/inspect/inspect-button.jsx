@@ -13,6 +13,14 @@ class Popup extends React.Component {
     };
   }
 
+  downloadAllChartTypes(mode) {
+
+  }
+
+  downloadChartSVG(mode, tab, chartType) {
+
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state !== prevState) {
 

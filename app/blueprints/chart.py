@@ -24,15 +24,29 @@ all_charts = {
     }
 }
 
+# filters out the func. key
+# from {(mode, tab) -> {}}
+def filterFunc(d):
+    return { k: { k: v for k, v in v.items() if k != 'func' } for k, v in d.items()}
+
+# returns all {tab -> chart_type, title, [args]}
+# for a given mode (d/m/p)
+@bp.route('<mode>/all')
+def all_chart_types_mode(mode):
+    # kinda clunky but w/e
+    bigBoy = dict()
+    for k in all_charts.keys():
+        if mode in k:
+            bigBoy[k[1]] = filterFunc(all_charts.get(k))
+    return jsonify(bigBoy)
+
 # returns {chart_type, title, [args]}
 # for a given mode & tab
-@bp.route('/<mode>/<tab>/all')
-def all_chart_types(mode, tab):
+@bp.route('/<mode>/<tab>/all_combo')
+def all_chart_types_combo(mode, tab):
     combo = (mode, tab)
     if combo in all_charts:
-        # filter out func key from chart types
-        ret = { k: { k: v for k, v in v.items() if k != 'func' } for k, v in all_charts.get(combo).items() }
-        return jsonify(ret)
+        return jsonify(filterFunc(all_charts.get(combo)))
     else:
         abort(400, 'Invalid mode & tab combination.')
 
