@@ -6,14 +6,23 @@ class Popup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      chart: 0
+      chart: 0,
+      fairness: [],
+      accountability: [],
+      transparency: []
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state !== prevState) {
+
+    }
   }
 
   componentDidMount() {
     console.log('i mounted');
     // fetch chart - eventually move to other function
-    fetch('http://127.0.0.1:5000/inspector/' + this.props.dataset + '/dog/chart').then(r => {
+    fetch('http://127.0.0.1:5000/inspector/' + this.props.dataset + '/fairness/chart').then(r => {
       if (r.status !== 200) {
         console.error('Error when attempting to fetch functions!');
       }
@@ -41,9 +50,9 @@ class Popup extends React.Component {
         <div className='popup_inner'>
           <div className="popup_title">
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-              <Tab eventKey="home" title="Fairness">
+              <Tab eventKey="home" title="Fairness" onSelect={ () => { this.setState({ activeTab: 'fairness' }) } }>
                 <div dangerouslySetInnerHTML={{ __html: this.state.chart }}></div>
-                { this.state.chart }
+                { this.state.fairness }
 
                 hello there:) this is tab1
               </Tab>
