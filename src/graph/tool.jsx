@@ -25,8 +25,7 @@ export default class Tool extends React.Component {
 
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
-    this.editNameDescNode = this.editNameDescNode.bind(this);
-    this.redescNode = this.redescNode.bind(this);
+    this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
   }
 
@@ -82,23 +81,14 @@ export default class Tool extends React.Component {
     if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
   }
 
-  editNameDescNode(nodeId, name, desc) {
+  editNodeLabelDesc(nodeId, label, desc) {
     this.setState({
       data: {
         nodes: this.state.data.nodes.map(x => x.id === nodeId ? {
           ...x,
-          label: name || x.name,
+          label: label || x.label,
           desc: desc || x.desc
         } : x),
-        links: this.state.data.links
-      }
-    });
-  }
-
-  redescNode(nodeId, desc) {
-    this.setState({
-      data: {
-        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, desc: desc} : x),
         links: this.state.data.links
       }
     });
@@ -149,24 +139,6 @@ export default class Tool extends React.Component {
         <h3>Dataset: {this.props.dataset}</h3>
         <h3>Graph: {this.props.graph}</h3>
         <Graph ref="graph" {...graphProps} />
-
-        {
-          node &&
-          <NodeModalEdit show={this.state.edit}
-                         onClose={() => this.setState({edit: false})}
-                         node={node}
-                         edit={this.editNameDescNode}/>
-        }
-        
-        {
-          node &&
-          <NodeModalApply show={this.state.showApply}
-                          functions={this.state.functions}
-                          parent={this.state.nodeClickedId}
-                          onHide={() => this.setState({showApply: false})}
-                          onApply={this.createChild.bind(this)}/>
-        }
-
         {/* display popup */}
         {/* TODO: add delete */}
         {
@@ -174,9 +146,10 @@ export default class Tool extends React.Component {
           <Portal>
             <foreignObject x="30" y="-15" width="200px" height="100%">
               <NodePopover onApply={this.createChild}
-                           onEdit={this.editNameDescNode}
+                           onEdit={this.editNodeLabelDesc}
                            onDelete={this.deleteNode}
-                           nodeName={node.label}
+                           nodeId={node.id}
+                           nodeLabel={node.label}
                            nodeDesc={node.desc}
                            nodeFunc={node.func}/>
             </foreignObject>
