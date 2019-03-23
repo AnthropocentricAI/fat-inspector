@@ -14,9 +14,18 @@ from app import charts
 bp = Blueprint('chart', __name__, url_prefix='/chart')
 
 # (d/m/p, f/a/t) -> [ (title, func) ]
-all_charts = {
+""" all_charts = {
     ('data', 'accountability'): [('Class Count', [], charts.pieChart)],
     ('data', 'fairness'): [('Histogram', ['col'], charts.histogram)]
+} """
+# (d/m/p, f/a/t) -> { type -> (title, args, func) }
+all_charts = {
+    ('data', 'accountability'): {
+        'class_count': { 'title': 'Class Count', 'args': [], 'func': charts.pieChart }
+    },
+    ('data', 'fairness'): {
+        'histogram': { 'title': 'Histogram', 'args': ['col'], 'func': charts.histogram }
+    }
 }
 
 
@@ -50,21 +59,32 @@ def chart_svgs(name, mode, tab):
 
     return 0
 
-# returns [(str, args)]
+# returns [(chart_type, title, [args])]
 # for a given mode & tab
 @bp.route('/<mode>/<tab>')
 def all_chart_types(mode, tab):
     combo = (mode, tab)
     if combo in all_charts:
-        # remove function from tuple
-        ret = [ x[:2] for x in all_charts.get(combo) ]
+        # filter out func key from chart types
+        ret = { k: { k: v for k, v in v.items() if k != 'func' } for k, v in all_charts.get(combo).items() }
         return jsonify(ret)
     else:
         abort(400, 'Invalid mode & tab combination.')
 
 # also takes a query string of args
-# returns (str, args, svg)
+# returns {title, args, svg}
 # for a given dataset, mode, tab, & type of chart
+# (and some args)
 @bp.route('/<name>/<mode>/<tab>/<type>/chart')
-def chart(name, mode, tab, type):
-    pass
+def chart(name, mode, tab, chart_type):
+    combo = (mode, tab)
+    if combo in all_charts:
+        # TODO: error if dataset doesn't exist
+        avail_charts = all_charts.get(combo).get(chart_type)
+        if type in avail_charts:
+            
+            pass
+        else:
+            abort(400, 'Invalid chart type for {}.'.format(combo))
+    else:
+        abort(400, 'Invalid mode & tab combination.')
