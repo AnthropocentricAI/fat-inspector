@@ -17,8 +17,8 @@ def pieChart(dataset):
     return base64.b64encode(tmpfile.getvalue()).decode()
 
 # TODO: index data too
-def histogram(dataset):
-    bins, counts = fatd.measure.fairness.data.feature_histogram(dataset, 3)
+def histogram(dataset, col=0):
+    bins, counts = fatd.measure.fairness.data.feature_histogram(dataset, col)
     bin_width = bins[1]-bins[0]
     bins_centres = [bins[i]+(bins[i+1]-bins[i]/2) for i in range(len(bins)-1)]
     plt.bar(bins_centres, counts, bin_width)

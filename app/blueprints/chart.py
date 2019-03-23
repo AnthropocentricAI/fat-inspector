@@ -59,9 +59,9 @@ def chart_svgs(name, mode, tab):
 
     return 0
 
-# returns [(chart_type, title, [args])]
+# returns {chart_type, title, [args]}
 # for a given mode & tab
-@bp.route('/<mode>/<tab>')
+@bp.route('/<mode>/<tab>/all')
 def all_chart_types(mode, tab):
     combo = (mode, tab)
     if combo in all_charts:
@@ -75,8 +75,8 @@ def all_chart_types(mode, tab):
 # returns {title, args, svg}
 # for a given dataset, mode, tab, & type of chart
 # (and some args)
-@bp.route('/<name>/<mode>/<tab>/<chart_type>')
-def chart(name, mode, tab, chart_type):
+@bp.route('/<mode>/<tab>/<chart_type>/<name>/svg')
+def svg(name, mode, tab, chart_type):
     combo = (mode, tab)
     if combo in all_charts:
         avail_charts = all_charts.get(combo)
@@ -91,12 +91,29 @@ def chart(name, mode, tab, chart_type):
                 dataset = models.Dataset.from_path(file_path)
                 svg = toRender.get('func')(dataset.data)
 
-                ret = { k: v for k, v in toRender.items() if k != 'func' }
+                svg = None
+
+                parsedArgs = dict()
+                if request.args:
+                    # try parsing any potential integer args.
+                    # doesn't work with negative - but probably OK
+                    parsedArgs = { k: (int(v) if v.isdigit() else v) for k, v in request.args.items() }
+
+                    try:
+                        svg = toRender.get('func')(dataset.data, **parsedArgs)
+                    except TypeError as e:
+                        abort(400, 'Invalid arguments {} for {}.'.format(parsedArgs, chart_type))
+                        print(e)
+                else:
+                    svg = toRender.get('func')(dataset.data)
+
+                ret = { k: v for k, v in toRender.items() if k != 'func' and k != 'args' }
                 ret['svg'] = str(svg)
+                if parsedArgs: ret['args'] = parsedArgs
                 return jsonify(ret)
-                print(e)
             except IOError as e:
                 abort(400, 'Invalid dataset name.')
+                print(e)
         else:
             abort(400, 'Invalid chart type for {}.'.format(combo))
     else:
