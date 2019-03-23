@@ -147,7 +147,7 @@ export default class Tool extends React.Component {
         {
           node &&
           <Portal>
-            <foreignObject x="30" y="-15" width="200px" height="100%">
+            <foreignObject x="30" y="-15" width="200px" height="100%" className='click-through'>
               <NodePopover functions={this.state.functions}
                            node={node}
                            onApply={this.createChild}

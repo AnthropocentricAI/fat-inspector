@@ -17,7 +17,6 @@ class App extends React.Component {
 
   updateSelected(dataset, graph, isNew) {
     this.setState({
-      ...this.state,
       dataset: dataset,
       graph: graph,
       isNew: isNew,

@@ -1,4 +1,5 @@
 .node-popover {
+  pointer-events: auto;
   &-nav {
     &-link {
       display: inline !important;
@@ -12,4 +13,8 @@ svg[name="svg-container-graph"] {
   left: 0;
   height: 100% !important;
   width: 100% !important;
+}
+
+.click-through {
+  pointer-events: none;
 }
