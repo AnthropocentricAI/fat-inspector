@@ -2,54 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Graph} from 'react-d3-graph';
 import defaultConfig from './config';
-import Popover from 'react-bootstrap/Popover';
 import uuid from 'uuid/v4';
-
-import Nav from 'react-bootstrap/Nav';
+import NodePopover from './node-popover.jsx';
 import PropTypes from 'prop-types';
-import NodeModalEdit from './node-modal-edit.jsx'
 
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faDiceD6, faEdit, faSearch, faSuperscript} from '@fortawesome/free-solid-svg-icons';
-import NodeModalApply from './node-modal-apply.jsx';
 
-library.add(faSearch);
-library.add(faDiceD6);
-library.add(faEdit);
-library.add(faSuperscript);
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
-
-    // action called on onClick
-    const nodeOptions = [
-      {
-        name: 'Inspect',
-        icon: 'search',
-        action: () => {}
-      },
-      {
-        name: 'Convert to Model',
-        icon: 'dice-d6',
-        action: () => {}
-      },
-      {
-        name: 'Edit',
-        icon: 'edit',
-        action: () => {
-          this.setState({edit: true});
-        }
-      },
-      {
-        name: 'Apply Function',
-        icon: 'superscript',
-        action: () => {
-          this.setState({showApply: true})
-        }
-      }
-    ];
 
     const config = defaultConfig;
     const nodeClickedId = false;
@@ -57,7 +18,6 @@ export default class Tool extends React.Component {
     this.state = {
       config,
       nodeClickedId,
-      nodeOptions,
       functions: [],
       edit: false,
       showApply: false
@@ -68,33 +28,38 @@ export default class Tool extends React.Component {
     this.editNameDescNode = this.editNameDescNode.bind(this);
     this.redescNode = this.redescNode.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
-    this.getNameOfNode = this.getNameOfNode.bind(this);
   }
 
   fetchFunctions() {
-    // on load, ask the server for a the list of node functions
-    fetch('/graph/functions').then(r => {
-      if (r.status !== 200) {
-        console.error('Error when attempting to fetch functions!');
-      }
-      r.json().then(data => {
-        this.setState({
-          functions: data
-        }, () => console.log(this.state));
+    // ask the server for a the list of node functions
+    fetch('/graph/functions')
+      .then(r => {
+        if (r.status !== 200) {
+          console.error('Error when attempting to fetch functions!');
+        }
+        r.json().then(data => {
+          this.setState({
+            functions: data
+          }, () => console.log(this.state));
+        });
+      }, e => {
+        console.error(e)
       });
-    }, e => console.error(e));
   }
 
   populateGraph() {
+    // TODO: better way to make new graph & fetch graphs - 22/03/2019
     if (this.props.isNew) {
+      const rootNode = {
+        id: uuid(),
+        label: 'root'
+      };
       this.setState({
         data: {
-          nodes: [{id: uuid(), label: 'root'}],
+          nodes: [rootNode],
           links: []
         }
       });
-    } else {
-      // TODO: fetch graph
     }
   }
 
@@ -139,15 +104,13 @@ export default class Tool extends React.Component {
     });
   }
 
+  deleteNode() {}
+
   // gets data in payload for a given node
   // gross but the only way :(
   getNodeData(nodeId) {
     for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
-  }
-
-  getNameOfNode(node) {
-    return 'label' in node ? node.label : node.id;
   }
 
   createChild(parent, child, desc, func) {
@@ -194,7 +157,7 @@ export default class Tool extends React.Component {
                          node={node}
                          edit={this.editNameDescNode}/>
         }
-
+        
         {
           node &&
           <NodeModalApply show={this.state.showApply}
@@ -210,29 +173,12 @@ export default class Tool extends React.Component {
           node &&
           <Portal>
             <foreignObject x="30" y="-15" width="200px" height="100%">
-              <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
-                <Nav className="flex-column">
-                  {/* desc */}
-                  {
-                    node.func &&
-                    <p>Function: {node.func}</p>
-                  }
-                  {
-                    node.desc &&
-                    <p>Description: {node.desc}</p>
-                  }
-
-                  {/* create options */}
-                  {this.state.nodeOptions.map(opt => (
-                    <Nav.Item key={opt.name} onClick={opt.action}>
-                      <FontAwesomeIcon fixedWidth icon={opt.icon}/>
-                      <Nav.Link className="node_popover_nav_link">
-                        {opt.name}
-                      </Nav.Link>
-                    </Nav.Item>
-                  ))}
-                </Nav>
-              </Popover>
+              <NodePopover onApply={this.createChild}
+                           onEdit={this.editNameDescNode}
+                           onDelete={this.deleteNode}
+                           nodeName={node.label}
+                           nodeDesc={node.desc}
+                           nodeFunc={node.func}/>
             </foreignObject>
           </Portal>
         }
