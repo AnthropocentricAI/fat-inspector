@@ -25,6 +25,8 @@ export default class Tool extends React.Component {
 
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
+    this.createChild = this.createChild.bind(this);
+    this.deleteNode = this.deleteNode.bind(this);
     this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
   }
@@ -104,12 +106,13 @@ export default class Tool extends React.Component {
   }
 
   createChild(parent, child, desc, func) {
+    const child_id = uuid();
     this.setState((prev, props) => {
       return {
         showApply: false,
         data: {
-          nodes: [...prev.data.nodes, {id: uuid(), label: child, desc: desc, func: func}],
-          links: [...prev.data.links, {source: parent, target: child}]
+          nodes: [...prev.data.nodes, {id: child_id, label: child, desc: desc, func: func}],
+          links: [...prev.data.links, {source: parent, target: child_id}]
         }
       }
     })
@@ -145,13 +148,11 @@ export default class Tool extends React.Component {
           node &&
           <Portal>
             <foreignObject x="30" y="-15" width="200px" height="100%">
-              <NodePopover onApply={this.createChild}
+              <NodePopover functions={this.state.functions}
+                           node={node}
+                           onApply={this.createChild}
                            onEdit={this.editNodeLabelDesc}
-                           onDelete={this.deleteNode}
-                           nodeId={node.id}
-                           nodeLabel={node.label}
-                           nodeDesc={node.desc}
-                           nodeFunc={node.func}/>
+                           onDelete={this.deleteNode}/>
             </foreignObject>
           </Portal>
         }

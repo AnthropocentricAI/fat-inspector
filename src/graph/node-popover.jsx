@@ -63,28 +63,26 @@ export default class NodePopover extends React.Component {
   render() {
     return (
       <>
-        <NodeModalEdit nodeId={this.props.nodeId}
-                       nodeLabel={this.props.nodeLabel}
-                       onClose={() => this.setState({showEdit: false})}
+        <NodeModalEdit node={this.props.node}
+                       onHide={() => this.setState({showEdit: false})}
                        onEdit={this.props.onEdit}
                        show={this.state.showEdit}/>
-        { false &&
-          <NodeModalApply nodeId={this.props.nodeId}
-                          onApply={() => this.setState({showApply: false})}
-                          onHide={this.props.onApply}
-                          show={this.state.showApply}/>
-        }
+        <NodeModalApply functions={this.props.functions}
+                        node={this.props.node}
+                        onApply={this.props.onApply}
+                        onHide={() => this.setState({showApply: false})}
+                        show={this.state.showApply}/>
         <Popover className="node-popover"
                  id="popover-basic"
-                 title={this.props.nodeLabel}>
+                 title={this.props.node.label}>
           <Nav className="flex-column">
             {
-              this.props.nodeFunc &&
-              <p>Function: {this.props.nodeFunc}</p>
+              this.props.node.func &&
+              <p>Function: {this.props.node.func}</p>
             }
             {
-              this.props.nodeDesc &&
-              <p>Description: {this.props.nodeDesc}</p>
+              this.props.node.desc &&
+              <p>Description: {this.props.node.desc}</p>
             }
             {
               this.optionsList.map(option => (
@@ -104,11 +102,14 @@ export default class NodePopover extends React.Component {
 }
 
 NodePopover.propTypes = {
+  functions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  node: PropTypes.shape({
+    desc: PropTypes.string,
+    func: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  }).isRequired,
   onApply: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
-  nodeDesc: PropTypes.string,
-  nodeFunc: PropTypes.string,
-  nodeId: PropTypes.string.isRequired,
-  nodeLabel: PropTypes.string.isRequired,
 };

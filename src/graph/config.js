@@ -8,6 +8,7 @@ module.exports = {
   highlightOpacity: 0.2,
   linkHighlightBehavior: true,
   nodeHighlightBehavior: true,
+  minZoom: 1.5,
   staticGraph: false,
   node: {
     color: '#DD6E42',
@@ -27,6 +28,5 @@ module.exports = {
   d3: {
     gravity: -500,
     linkLength: 100,
-    alphaTarget: 0.7
   }
 };
