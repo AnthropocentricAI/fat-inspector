@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 
 
@@ -17,7 +17,7 @@ export default class NodeModalEdit extends React.Component {
     return (
       <Modal show={this.props.show} onHide={this.props.onHide}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit { this.props.node.label }</Modal.Title>
+          <Modal.Title>Edit {this.props.node.label}</Modal.Title>
         </Modal.Header>
         {/* TODO: include validation */}
         <Form onSubmit={e => this.submitSave(e)}>
@@ -26,7 +26,6 @@ export default class NodeModalEdit extends React.Component {
               <div className="form-label-wrapper">
                 <Form.Label>Label</Form.Label>
               </div>
-              {/* TODO: make get label/name work better */}
               <Form.Control name="label"
                             placeholder={this.props.node.label}/>
               <div className="form-label-wrapper">
@@ -38,11 +37,11 @@ export default class NodeModalEdit extends React.Component {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.props.onHide}>
-              Close
-            </Button>
             <Button variant="primary" type="submit">
               Save
+            </Button>
+            <Button variant="secondary" onClick={this.props.onHide}>
+              Close
             </Button>
           </Modal.Footer>
         </Form>

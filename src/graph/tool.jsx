@@ -96,7 +96,28 @@ export default class Tool extends React.Component {
     });
   }
 
-  deleteNode() {}
+  deleteNode(nodeId) {
+    let toDelete = [nodeId];
+    // shallow copy the arrays
+    let nodes = [...this.state.data.nodes];
+    let links = [...this.state.data.links];
+    // TODO: refine this at a later date - VERY inefficient 24/03/2019
+    while (toDelete.length) {
+      let currentId = toDelete.pop();
+      // remove the node from the list
+      nodes = nodes.filter(x => x.id !== currentId);
+      // push all of the connected nodes to toDelete
+      toDelete.push(...links.filter(x => x.source === currentId).map(x => x.target));
+      // remove all of the links which involve currentId
+      links = links.filter(x => x.source !== currentId && x.target !== currentId);
+    }
+    this.setState({
+      data: {
+        nodes: nodes,
+        links: links
+      }
+    });
+  }
 
   // gets data in payload for a given node
   // gross but the only way :(

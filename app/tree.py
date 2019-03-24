@@ -44,8 +44,6 @@ class Node:
 class Tree:
     """Wrapper for a D3 graph of nodes which store data.
 
-   TODO: consider using a real tree structure over dict lookups
-
    Nodes and their children are exposed through a dict lookup. Note that only the parent node will store data
    until Tree.compute() is called: the data is propagated down the tree as functions are applied.
 

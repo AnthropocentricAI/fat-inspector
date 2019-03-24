@@ -71,13 +71,13 @@ export default class NodeModalApply extends React.Component {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant='secondary' onClick={this.props.onHide}>
-              Close
-            </Button>
             <Button variant='primary'
                     type='submit'
                     disabled={!(this.state.validFunc && this.state.validLabel)}>
               Save
+            </Button>
+            <Button variant='secondary' onClick={this.props.onHide}>
+              Close
             </Button>
           </Modal.Footer>
         </Form>

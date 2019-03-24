@@ -5,8 +5,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDiceD6, faEdit, faSearch, faSuperscript, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
-import NodeModalEdit from './node-modal-edit.jsx';
-import NodeModalApply from './node-modal-apply.jsx';
+import NodeModalEdit from '../modals/node-modal-edit.jsx';
+import NodeModalApply from '../modals/node-modal-apply.jsx';
+import ModalConfirmation from '../modals/modal-confirmation.jsx';
 
 // register icons for the popup
 library.add(faSearch);      // search
@@ -50,6 +51,7 @@ export default class NodePopover extends React.Component {
         name: 'Delete Node',
         icon: 'trash-alt',
         action: () => {
+          this.setState({showDelete: true})
         }
       }
     ];
@@ -72,6 +74,12 @@ export default class NodePopover extends React.Component {
                         onApply={this.props.onApply}
                         onHide={() => this.setState({showApply: false})}
                         show={this.state.showApply}/>
+        <ModalConfirmation message={`Are you sure that you want to delete node '${this.props.node.label}'
+                                     and all of its children? This change is permanent cannot be undone.
+                                     ${this.props.node.desc ? <p>Description: {this.props.node.desc}</p> : ''}`}
+                           onConfirm={() => this.props.onDelete(this.props.node.id)}
+                           onHide={() => this.setState({showDelete: false})}
+                           show={this.state.showDelete}/>
         <Popover className="node-popover"
                  id="popover-basic"
                  title={this.props.node.label}>
