@@ -23,11 +23,11 @@ module.exports = {
   },
   link: {
     highlightColor: '#C0D6DF',
-    strokeWidth: 4
+    strokeWidth: 3
   },
   d3: {
-    gravity: -500,
-    linkLength: 100,
+    gravity: -1000,
+    linkLength: 200,
     alphaTarget: 0.7
   }
 };
