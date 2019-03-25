@@ -9,16 +9,41 @@ class Popup extends React.Component {
       chart: 0,
       fairness: [],
       accountability: [],
-      transparency: []
+      transparency: [],
+      chartData: {}
     };
+
+    this.downloadAllChartTypes = this.downloadAllChartTypes.bind(this);
+    this.downloadChartSVG = this.downloadChartSVG.bind(this);
   }
 
   downloadAllChartTypes(mode) {
-
+    fetch(`/chart/${ mode }/all`).then(r => {
+      if (r.status !== 200) {
+        console.error(`Error when attempting to fetch chart types for ${ mode }!`);
+      }
+      r.json().then(data => {
+        console.log(data.data);
+        this.setState({
+          chartData: data
+        });
+      });
+    }, e => console.error(e)); 
   }
 
-  downloadChartSVG(mode, tab, chartType) {
-
+  downloadChartSVG(mode, tab, chartType, dataset, args) {
+    // TODO: args
+    fetch(`/chart/${ mode }/${ tab }/${ chartType }/${ dataset }/svg`).then(r => {
+      if (r.status !== 200) {
+        console.error(`Error when attempting to download chart svg for ${ chartType }!`);
+      }
+      r.json().then(data => {
+        console.log(data);
+        this.setState({
+          chartData: data
+        });
+      });
+    }, e => console.error(e)); 
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -28,9 +53,9 @@ class Popup extends React.Component {
   }
 
   componentDidMount() {
-    console.log('i mounted');
+    
     // fetch chart - eventually move to other function
-    fetch('http://127.0.0.1:5000/inspector/' + this.props.dataset + '/fairness/chart').then(r => {
+    /* fetch('http://127.0.0.1:5000/inspector/' + this.props.dataset + '/fairness/chart').then(r => {
       if (r.status !== 200) {
         console.error('Error when attempting to fetch functions!');
       }
@@ -45,11 +70,31 @@ class Popup extends React.Component {
             ...this.state,
             chart: atob(data.data)
           }); */
-        } catch (error) {
+        /*} catch (error) {
           console.log(error);
         };
       });
+    }, e => console.error(e)); */
+    //downloadAllChartTypes(this.props.mode);
+    console.log('mode popup');
+    console.log(this.props.mode);
+
+    fetch('/chart/' + this.props.mode + '/all').then(r => {
+      if (r.status !== 200) {
+        console.error('Error when attempting to fetch chart types for ' + this.props.mode + '!');
+      }
+      r.json().then(data => {
+        console.log(data);
+
+        this.setState({
+          fairness: data.fairness,
+          accountability: data.accountability,
+          transparency: data.transparency
+        });
+      });
     }, e => console.error(e));
+    
+    this.downloadChartSVG(this.props.mode, 'fairness', 'histogram', this.props.dataset, []);
   }
 
   render() {
@@ -60,11 +105,13 @@ class Popup extends React.Component {
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
               <Tab eventKey="home" title="Fairness" onSelect={ () => { this.setState({ activeTab: 'fairness' }) } }>
                 <div dangerouslySetInnerHTML={{ __html: this.state.chart }}></div>
-                { this.state.fairness }
+                { Object.keys(this.state.fairness).map((obj, i) => <div key={ i }>{ obj }</div>) }
 
                 hello there:) this is tab1
               </Tab>
               <Tab eventKey="profile" title="Accountability">
+                { Object.keys(this.state.accountability).map((obj, i) => <div key={ i }>{ obj }</div>) }
+
                 tab2
               </Tab>
               <Tab eventKey="contact" title="Transparency">
@@ -101,6 +148,7 @@ class InspectButton extends React.Component {
           <Popup
             closePopup={this.toggle.bind(this)}
             dataset={this.props.dataset}
+            mode={ this.props.mode }
           />
           : null
         }

@@ -5,13 +5,16 @@ import InspectButton from './inspect/inspect-button.jsx';
 import Topbar from './topbar/topbar.jsx'
 import loadable from '@loadable/component';
 
+import constants, { MODES } from './constants'
+
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openGraph: false
+      openGraph: false,
+      mode: 'data'
     };
   }
 
@@ -35,7 +38,7 @@ class App extends React.Component {
               <Tool dataset={this.state.dataset}
                     graph={this.state.graph}
                     isNew={this.state.isNew}/>
-              <InspectButton dataset={this.state.dataset} />
+              <InspectButton mode={ this.state.mode } dataset={this.state.dataset} />
             </div> : <FileChooser onOpenGraph={this.updateSelected.bind(this)}/>
         }
       </div>
