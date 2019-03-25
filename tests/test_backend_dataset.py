@@ -7,6 +7,7 @@ import numpy as np
 from fatd.holders import csv_loader
 
 from app import create_app
+from app import utilities as util
 
 
 class TestBackendDataset:
@@ -36,10 +37,8 @@ class TestBackendDataset:
         os.rmdir(self.assets)
 
     def test_list_datasets(self):
-        with open(os.path.join(self.assets, 'test1.csv'), 'w'):
-            pass
-        with open(os.path.join(self.assets, 'test2.csv'), 'w'):
-            pass
+        util.touch_file(os.path.join(self.assets, 'test1.csv'))
+        util.touch_file(os.path.join(self.assets, 'test2.csv'))
 
         rv = self.client.get('/dataset/view')
         data = rv.get_json()
@@ -48,10 +47,8 @@ class TestBackendDataset:
         assert 'test2' in data
 
     def test_list_datasets_only_csv(self):
-        with open(os.path.join(self.assets, 'test1.csv'), 'w'):
-            pass
-        with open(os.path.join(self.assets, 'test2.pdf'), 'w'):
-            pass
+        util.touch_file(os.path.join(self.assets, 'test1.csv'))
+        util.touch_file(os.path.join(self.assets, 'test2.pdf'))
 
         rv = self.client.get('/dataset/view')
         data = rv.get_json()
@@ -83,8 +80,7 @@ class TestBackendDataset:
         assert rv.status_code == 400
 
     def test_rename_dataset(self):
-        with open(os.path.join(self.assets, 'empty_file.csv'), 'w'):
-            pass
+        util.touch_file(os.path.join(self.assets, 'empty_file.csv'))
 
         rv = self.client.post('/dataset/empty_file/rename', data={
             'new_name': 'new_name'
@@ -99,8 +95,7 @@ class TestBackendDataset:
         assert rv.status_code == 400
 
     def test_rename_dataset_bad_params(self):
-        with open(os.path.join(self.assets, 'empty_file.csv'), 'w'):
-            pass
+        util.touch_file(os.path.join(self.assets, 'empty_file.csv'))
 
         rv = self.client.post('/dataset/empty_file/rename', data={})
         assert rv.status_code == 400
@@ -111,8 +106,8 @@ class TestBackendDataset:
                    delimiter=',')
 
         rv = self.client.get('/dataset/default_data/download')
-        bytes = io.BytesIO(rv.data)
-        downloaded = np.loadtxt(bytes, delimiter=',')
+        dataset_file = io.BytesIO(rv.data)
+        downloaded = np.loadtxt(dataset_file, delimiter=',')
         assert np.array_equal(self.default_data, downloaded)
 
     def test_download_dataset_nonexistant(self):
@@ -122,6 +117,7 @@ class TestBackendDataset:
     def test_upload_dataset(self):
         dataset_file = io.BytesIO()
         np.savetxt(dataset_file, self.default_data, delimiter=',')
+        dataset_file.seek(0)
 
         rv = self.client.post('/dataset/upload',
                               content_type='multipart/form-data',
@@ -129,8 +125,11 @@ class TestBackendDataset:
                                   'dataset_file': (dataset_file, 'default_data.csv'),
                                   'dataset_name': 'default_data'
                               })
+        uploaded = np.loadtxt(os.path.join(self.assets, 'default_data.csv'), delimiter=',')
+        print(self.default_data)
+        print(uploaded)
         assert rv.status_code == 200
-        assert os.path.exists(os.path.join(self.assets, 'default_data.csv'))
+        assert np.array_equal(self.default_data, uploaded)
 
     def test_upload_dataset_bad_params(self):
         rv = self.client.post('/dataset/upload',

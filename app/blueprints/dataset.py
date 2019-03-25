@@ -3,9 +3,9 @@ import os
 
 from flask import current_app, request, abort, escape, send_file, jsonify
 from flask.blueprints import Blueprint
+from fatd.holders import csv_loader
 
 from app.exceptions import APIArgumentError
-from app import models
 from app import utilities as util
 
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
@@ -25,7 +25,7 @@ def view(name):
     name = util.normalise_path_to_file(name) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-        holder = models.Dataset.from_path(file_path).data
+        holder = csv_loader(file_path)
         dataset = {
             'data': holder.data[:20].tolist(),
             'target': holder.target[:20].tolist()

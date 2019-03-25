@@ -27,16 +27,8 @@ def load_blueprints(app):
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config.get(os.getenv('FLASK_CONFIG') or 'default'))
-    # register db
-    from app.models import db
-    db.init_app(app)
 
     load_blueprints(app)
-
-    @app.cli.command()
-    def init():
-        db.drop_all()
-        db.create_all()
 
     @app.errorhandler(exceptions.APIArgumentError)
     def handle_api_error(err: exceptions.APIArgumentError):

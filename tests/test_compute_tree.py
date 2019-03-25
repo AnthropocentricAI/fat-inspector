@@ -29,7 +29,10 @@ class TestCompute:
                          [4.8, 3.4, 1.6, 0.2, 1.0],
                          [4.8, 3.0, 1.4, 0.1, 1.0]])
         self.default_data = Data(data[:, :4], data[:, 4])
-        os.mkdir(TEST_ASSETS)
+        try:
+            os.mkdir(TEST_ASSETS)
+        except IOError:
+            pass
         np.savetxt(os.path.join(TEST_ASSETS, 'default_data.csv'), data, delimiter=',')
 
     def teardown_method(self):

@@ -7,3 +7,7 @@ def normalise_path_to_file(path: str) -> str:
     """
     return os.path.basename(os.path.normpath(path))
 
+
+def touch_file(path: str):
+    with open(path, 'w'):
+        pass
