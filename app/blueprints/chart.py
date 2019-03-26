@@ -51,7 +51,7 @@ def all_chart_types_combo(mode, tab):
         abort(400, 'Invalid mode & tab combination.')
 
 # also takes a query string of args
-# returns {title, args, svg}
+# returns {chart_type, args, svg}
 # for a given dataset, mode, tab, & type of chart
 # (and some args)
 @bp.route('/<mode>/<tab>/<chart_type>/<name>/svg')
@@ -86,7 +86,9 @@ def svg(name, mode, tab, chart_type):
                 else:
                     svg = toRender.get('func')(dataset.data)
 
-                ret = { k: v for k, v in toRender.items() if k != 'func' and k != 'args' }
+                #ret = { k: v for k, v in toRender.items() if k not in ['func', 'args', 'title'] }
+                ret = dict()
+                ret['chart_type'] = chart_type
                 ret['svg'] = str(svg)
                 if parsedArgs: ret['args'] = parsedArgs
                 return jsonify(ret)

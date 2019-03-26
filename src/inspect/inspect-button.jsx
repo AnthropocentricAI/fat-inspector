@@ -10,7 +10,8 @@ class Popup extends React.Component {
       fairness: [],
       accountability: [],
       transparency: [],
-      chartData: {}
+      chartData: {},
+      svgData: {}
     };
 
     this.downloadAllChartTypes = this.downloadAllChartTypes.bind(this);
@@ -23,10 +24,11 @@ class Popup extends React.Component {
         console.error(`Error when attempting to fetch chart types for ${ mode }!`);
       }
       r.json().then(data => {
-        console.log(data.data);
-        this.setState({
+        console.log(data);
+        this.setState(prev => ({
+          ...prev,
           chartData: data
-        });
+        }));
       });
     }, e => console.error(e)); 
   }
@@ -39,9 +41,17 @@ class Popup extends React.Component {
       }
       r.json().then(data => {
         console.log(data);
-        this.setState({
-          chartData: data
-        });
+        this.setState(prev => ({
+          ...prev,
+          svgData: {
+            ...prev.svgData,
+            [data.chart_type]: {
+              chartType: data.chart_type,
+              svg: atob(data.svg),
+              args: data.args
+            }
+          }
+        }));
       });
     }, e => console.error(e)); 
   }
@@ -79,7 +89,7 @@ class Popup extends React.Component {
     console.log('mode popup');
     console.log(this.props.mode);
 
-    fetch('/chart/' + this.props.mode + '/all').then(r => {
+    /* fetch('/chart/' + this.props.mode + '/all').then(r => {
       if (r.status !== 200) {
         console.error('Error when attempting to fetch chart types for ' + this.props.mode + '!');
       }
@@ -92,25 +102,48 @@ class Popup extends React.Component {
           transparency: data.transparency
         });
       });
-    }, e => console.error(e));
+    }, e => console.error(e)); */
     
+    this.downloadAllChartTypes(this.props.mode);
+
     this.downloadChartSVG(this.props.mode, 'fairness', 'histogram', this.props.dataset, []);
   }
 
   render() {
+    console.log(this.state.chartData);
+
+    /* Object.keys(this.state.chartData.fairness).map((obj, i) =>
+                <div key={ i }>
+                  { obj.title }
+                </div> */
+    
+    if(this.state.svgData['histogram']){
+      console.log(this.state.svgData['histogram']);
+    }
+
     return (
       <div className='popup'>
         <div className='popup_inner'>
           <div className="popup_title">
-            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-              <Tab eventKey="home" title="Fairness" onSelect={ () => { this.setState({ activeTab: 'fairness' }) } }>
+            <Tabs defaultActiveKey="fairness" id="uncontrolled-tab-example">
+              <Tab eventKey="fairness" title="Fairness" onSelect={ () => { this.setState({ activeTab: 'fairness' }) } }>
                 <div dangerouslySetInnerHTML={{ __html: this.state.chart }}></div>
-                { Object.keys(this.state.fairness).map((obj, i) => <div key={ i }>{ obj }</div>) }
+
+                { this.state.chartData.fairness &&                  
+                  Object.keys(this.state.chartData.fairness).map((obj, i) =>
+                    <div key={ i }>
+                      { obj }
+                      { this.state.svgData[obj] &&
+                        <div dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
+                      }
+                    </div>
+                  )
+                }
 
                 hello there:) this is tab1
               </Tab>
-              <Tab eventKey="profile" title="Accountability">
-                { Object.keys(this.state.accountability).map((obj, i) => <div key={ i }>{ obj }</div>) }
+              <Tab eventKey="accountability" title="Accountability">
+                {/* { Object.keys(this.state.accountability).map((obj, i) => <div key={ i }>{ obj }</div>) } */}
 
                 tab2
               </Tab>
