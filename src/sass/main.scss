@@ -196,9 +196,14 @@ label.uploadLabel input[type='file'] {
 }
 
 .file-chooser-wrapper {
+  background-color: #fff;
+  padding: 1em;
+  border-radius: 25px;
+  border: 1px solid #DDDDDD;
+  box-shadow: 3px 3px 3px #DDDDDD;
   width: 50%;
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -214,11 +219,9 @@ label.uploadLabel input[type='file'] {
 }
 
 .form-wrapper-centre {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 2%;
-  margin-bottom: 2%;
+  text-align: center;
+  margin-top: 2.5%;
+  margin-bottom: 1.5%;
 }
 
 .response-alert {
@@ -226,3 +229,14 @@ label.uploadLabel input[type='file'] {
   margin-bottom: 1em;
 }
 
+.file-chooser-radios {
+  margin: 0.5em auto -0.5em auto;
+}
+
+.particles {
+  background-color: #FBFBFB;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}

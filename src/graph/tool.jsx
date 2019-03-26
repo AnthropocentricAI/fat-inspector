@@ -7,15 +7,18 @@ import NodePopover from './node-popover.jsx';
 import PropTypes from 'prop-types';
 
 
-
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
 
     const config = defaultConfig;
     const nodeClickedId = false;
+    const params = new URLSearchParams(this.props.location.search);
+
+    console.log('here');
 
     this.state = {
+      params,
       config,
       nodeClickedId,
       functions: [],
@@ -23,6 +26,8 @@ export default class Tool extends React.Component {
       showApply: false
     };
 
+    this.populateGraph(true);
+    this.fetchFunctions();
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
@@ -39,34 +44,29 @@ export default class Tool extends React.Component {
           console.error('Error when attempting to fetch functions!');
         }
         r.json().then(data => {
-          this.setState({
-            functions: data
-          }, () => console.log(this.state));
-        });
-      }, e => {
-        console.error(e)
-      });
+           this.state = {
+             ...this.state,
+             functions: data
+           };
+        }, () => console.log(this.state));
+      }, e => console.error(e));
   }
 
-  populateGraph() {
+  populateGraph(isNew) {
     // TODO: better way to make new graph & fetch graphs - 22/03/2019
-    if (this.props.isNew) {
+    if (isNew) {
       const rootNode = {
         id: uuid(),
         label: 'root'
       };
-      this.setState({
+      this.state = {
+        ...this.state,
         data: {
           nodes: [rootNode],
           links: []
         }
-      });
+      };
     }
-  }
-
-  componentWillMount() {
-    this.fetchFunctions();
-    this.populateGraph();
   }
 
   onClickNode(id) {
@@ -160,8 +160,8 @@ export default class Tool extends React.Component {
 
     return (
       <div>
-        <h3>Dataset: {this.props.dataset}</h3>
-        <h3>Graph: {this.props.graph}</h3>
+        <h3>Dataset: {this.state.params.dataset}</h3>
+        <h3>Graph: {this.state.params.graph}</h3>
         <Graph ref="graph" {...graphProps} />
         {/* display popup */}
         {/* TODO: add delete */}
@@ -181,9 +181,3 @@ export default class Tool extends React.Component {
     );
   }
 }
-
-Tool.propTypes = {
-  dataset: PropTypes.string.isRequired,
-  graph: PropTypes.string.isRequired,
-  isNew: PropTypes.bool.isRequired
-};
