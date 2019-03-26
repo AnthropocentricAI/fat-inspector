@@ -4,54 +4,34 @@ import FileChooser from './forms/file-chooser.jsx';
 import InspectButton from './inspect/inspect-button.jsx';
 import Topbar from './topbar/topbar.jsx'
 import loadable from '@loadable/component';
-import {BrowserRouter as Router, Redirect, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import ParticlesConfig from './particles-config.js';
 import Particles from 'react-particles-js';
 
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      openGraph: false
-    };
-  }
-
-  openGraph(dataset, graph, isNew) {
-    this.setState({
-      dataset: dataset,
-      graph: graph,
-      isNew: isNew,
-      openGraph: dataset && graph
-    });
-  }
-
   render() {
     return (
       <>
         <Router>
-          <Route path="/tool" render={(props) => (
-            <>
-              <Topbar/>
-              <Tool {...props}/>
-              <InspectButton/>
-            </>
-          )}/>
-          <Route exact path="/" render={(props) =>
-            <>
-              <Particles className='particles'
-                         params={ParticlesConfig}/>
-              <FileChooser {...props} onSubmit={this.openGraph.bind(this)}/>
-              {
-                this.state.openGraph && !console.log('redirect') &&
-                <Redirect from="/" to={{
-                  pathname: '/tool',
-                  search: `?dataset=${this.state.dataset}&graph=${this.state.graph}&isNew=${this.state.isNew}`
-                }}/>
-              }
-            </>
-          }/>
+          <Switch>
+            <Route exact path="/" render={(props) =>
+              <>
+                <Particles className="particles"
+                           params={ParticlesConfig}/>
+                <FileChooser {...props}/>
+              </>
+            }/>
+            <Route path="/tool" render={(props) => (
+              <>
+                <Topbar/>
+                <Tool {...props}/>
+                <InspectButton/>
+              </>
+            )}/>
+            <Route render={(props) => <Redirect {...props} to="/"/>}/>
+          </Switch>
         </Router>
       </>
     )

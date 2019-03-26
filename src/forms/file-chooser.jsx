@@ -41,7 +41,10 @@ export default class FileChooser extends React.Component {
     let formData = new FormData(e.target);
     let dataset = formData.get('dataset');
     let graph = this.state.newGraph ? formData.get('graphName') : formData.get('graph');
-    this.props.onSubmit(dataset, graph, this.state.newGraph);
+    this.props.history.push({
+      pathname: '/tool',
+      search: `?dataset=${dataset}&graph=${graph}&isNew=${this.state.newGraph}`
+    });
   }
 
   componentWillMount() {
