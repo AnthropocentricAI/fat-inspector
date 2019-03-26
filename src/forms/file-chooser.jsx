@@ -12,6 +12,7 @@ export default class FileChooser extends React.Component {
     this.state = {
       datasets: [],
       uploadModal: false,
+      poppedOut: false,
       existingGraph: false,
       newGraph: false
     };
@@ -72,36 +73,45 @@ export default class FileChooser extends React.Component {
                           label='Select an existing graph'
                           id='radioExistingGraph'
                           name='radioExistingGraph'
-                          onChange={e => this.setState({existingGraph: true, newGraph: false})}/>
+                          onChange={e => this.setState({
+                            poppedOut: true,
+                            existingGraph: true,
+                            newGraph: false
+                          })}/>
               <Form.Check custom
                           inline
                           type='radio'
                           label='Create a new graph'
                           id='radioCreateGraph'
                           name='radioExistingGraph'
-                          onChange={e => this.setState({existingGraph: false, newGraph: true})}/>
+                          onChange={e => this.setState({
+                            poppedOut: true,
+                            existingGraph: false,
+                            newGraph: true
+                          })}/>
             </Form.Group>
-            <Collapse in={this.state.newGraph}>
-              <div>
-                <div className="form-label-wrapper">
-                  <Form.Label>New Graph</Form.Label>
-                </div>
-                <Form.Control name='graphName'
-                              placeholder='New graph name...'/>
-              </div>
-            </Collapse>
-            <Collapse in={this.state.existingGraph}>
-              <div>
-                <div className="form-label-wrapper">
-                  <Form.Label>Select Graph</Form.Label>
-                </div>
-                <Form.Control as='select'
-                              name='graph'
-                              defaultValue={-1}>
-                  <option disabled hidden value={-1}>Select a graph...</option>
-                  // TODO: add server side graphs
-                </Form.Control>
-              </div>
+            <Collapse in={this.state.poppedOut}>
+              {
+                this.state.newGraph ?
+                  <div>
+                    <div className="form-label-wrapper">
+                      <Form.Label>New Graph</Form.Label>
+                    </div>
+                    <Form.Control name='graphName'
+                                  placeholder='New graph name...'/>
+                  </div> :
+                  <div>
+                    <div className="form-label-wrapper">
+                      <Form.Label>Select Graph</Form.Label>
+                    </div>
+                    <Form.Control as='select'
+                                  name='graph'
+                                  defaultValue={-1}>
+                      <option disabled hidden value={-1}>Select a graph...</option>
+                      // TODO: add server side graphs
+                    </Form.Control>
+                  </div>
+              }
             </Collapse>
             <div className="form-wrapper-centre">
               <Button type='submit' variant='primary'>
