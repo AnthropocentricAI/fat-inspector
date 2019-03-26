@@ -17,7 +17,10 @@ export default class ModalConfirmation extends React.Component {
             <p className='confirmation-message'>{this.props.message}</p>
           </Modal.Body>
           <Modal.Footer className="centred-flex footer-no-border">
-            <Button variant="primary" onClick={this.props.onConfirm}>
+            <Button variant="primary" onClick={() => {
+              this.props.onConfirm();
+              this.props.onHide();
+            }}>
               Yes
             </Button>
             <Button variant="secondary" onClick={this.props.onHide}>

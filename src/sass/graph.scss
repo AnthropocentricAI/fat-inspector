@@ -36,3 +36,10 @@ svg[name="svg-container-graph"] {
 .confirmation-message {
   margin: 0;
 }
+
+.graph-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

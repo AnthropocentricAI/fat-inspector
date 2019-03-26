@@ -4,30 +4,30 @@ import {Graph} from 'react-d3-graph';
 import defaultConfig from './config';
 import uuid from 'uuid/v4';
 import NodePopover from './node-popover.jsx';
-import PropTypes from 'prop-types';
-
+import Spinner from 'react-bootstrap/Spinner';
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
 
     const config = defaultConfig;
-    const nodeClickedId = false;
-    const params = new URLSearchParams(this.props.location.search);
 
-    console.log('here');
+    // TODO: redirect if incorrect params - 26/03/2019
+    const queryString = new URLSearchParams(this.props.location.search);
+    let params = {};
+    for (let p of queryString.entries()) {
+      params[p[0]] = p[1];
+    }
 
     this.state = {
-      params,
       config,
-      nodeClickedId,
-      functions: [],
       edit: false,
+      functions: [],
+      nodeClickedId: false,
+      params,
       showApply: false
     };
 
-    this.populateGraph(true);
-    this.fetchFunctions();
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
@@ -36,38 +36,49 @@ export default class Tool extends React.Component {
     this.getNodeData = this.getNodeData.bind(this);
   }
 
+  // upon first mount, we need to populate the graph and fetch relevant data
+  componentDidMount() {
+    this.fetchFunctions();
+    this.populateGraph(true);
+  }
+
+  parseFunctionResponse(r) {
+    if (!r.ok) throw 'Error when attempting to fetch functions!';
+    return r.json();
+  }
+
   fetchFunctions() {
     // ask the server for a the list of node functions
     fetch('/graph/functions')
-      .then(r => {
-        if (r.status !== 200) {
-          console.error('Error when attempting to fetch functions!');
-        }
-        r.json().then(data => {
-           this.state = {
-             ...this.state,
-             functions: data
-           };
-        }, () => console.log(this.state));
-      }, e => console.error(e));
+      .then(this.parseFunctionResponse)
+      .then(data => this.setState({
+        functions: data
+      }))
+      .catch(err => console.error(err))
+  }
+
+  initEmptyGraph() {
+    const rootNode = {
+      id: uuid(),
+      label: 'root'
+    };
+    this.setState({
+      root: rootNode.id,
+      data: {
+          nodes: [rootNode],
+          links: []
+      }
+    });
   }
 
   populateGraph(isNew) {
-    // TODO: better way to make new graph & fetch graphs - 22/03/2019
     if (isNew) {
-      const rootNode = {
-        id: uuid(),
-        label: 'root'
-      };
-      this.state = {
-        ...this.state,
-        data: {
-          nodes: [rootNode],
-          links: []
-        }
-      };
+      this.initEmptyGraph();
+    } else {
+      // TODO: better way to make new graph & fetch graphs - 22/03/2019
     }
   }
+
 
   onClickNode(id) {
     this.setState({
@@ -97,6 +108,7 @@ export default class Tool extends React.Component {
   }
 
   deleteNode(nodeId) {
+    if (nodeId === this.state.root) return;
     let toDelete = [nodeId];
     // shallow copy the arrays
     let nodes = [...this.state.data.nodes];
@@ -122,6 +134,7 @@ export default class Tool extends React.Component {
   // gets data in payload for a given node
   // gross but the only way :(
   getNodeData(nodeId) {
+    if (!this.state.data) return null;
     for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
   }
@@ -162,9 +175,16 @@ export default class Tool extends React.Component {
       <div>
         <h3>Dataset: {this.state.params.dataset}</h3>
         <h3>Graph: {this.state.params.graph}</h3>
-        <Graph ref="graph" {...graphProps} />
+        {
+          this.state.data ?
+            <Graph ref="graph" {...graphProps} /> :
+            <div className="graph-loading">
+              <Spinner animation="border"
+                       role="status"/>
+            </div>
+        }
+
         {/* display popup */}
-        {/* TODO: add delete */}
         {
           node &&
           <Portal>

@@ -111,7 +111,6 @@ export default class FileChooser extends React.Component {
                                   name='graph'
                                   defaultValue={-1}>
                       <option disabled hidden value={-1}>Select a graph...</option>
-                      // TODO: add server side graphs
                     </Form.Control>
                   </div>
               }
