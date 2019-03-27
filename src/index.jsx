@@ -16,6 +16,13 @@ class App extends React.Component {
       <>
         <Router>
           <Switch>
+            <Route exact path={`/tool/:dataset/:graph`} render={(props) => (
+              <>
+                <Topbar/>
+                <Tool {...props}/>
+                <InspectButton/>
+              </>
+            )}/>
             <Route exact path="/" render={(props) =>
               <>
                 <Particles className="particles"
@@ -23,13 +30,6 @@ class App extends React.Component {
                 <FileChooser {...props}/>
               </>
             }/>
-            <Route path="/tool" render={(props) => (
-              <>
-                <Topbar/>
-                <Tool {...props}/>
-                <InspectButton/>
-              </>
-            )}/>
             <Route render={(props) => <Redirect {...props} to="/"/>}/>
           </Switch>
         </Router>

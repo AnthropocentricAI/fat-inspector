@@ -12,22 +12,15 @@ export default class Tool extends React.Component {
 
     const config = defaultConfig;
 
-    // TODO: redirect if incorrect params - 26/03/2019
-    const queryString = new URLSearchParams(this.props.location.search);
-    let params = {};
-    for (let p of queryString.entries()) {
-      params[p[0]] = p[1];
-    }
-
     this.state = {
       config,
       edit: false,
       functions: [],
       nodeClickedId: false,
-      params,
       showApply: false
     };
 
+    console.log(this.props);
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
@@ -78,7 +71,6 @@ export default class Tool extends React.Component {
       // TODO: better way to make new graph & fetch graphs - 22/03/2019
     }
   }
-
 
   onClickNode(id) {
     this.setState({
@@ -173,8 +165,8 @@ export default class Tool extends React.Component {
 
     return (
       <div>
-        <h3>Dataset: {this.state.params.dataset}</h3>
-        <h3>Graph: {this.state.params.graph}</h3>
+        <h3>Dataset: {this.props.match.params.dataset}</h3>
+        <h3>Graph: {this.props.match.params.graph}</h3>
         {
           this.state.data ?
             <Graph ref="graph" {...graphProps} /> :

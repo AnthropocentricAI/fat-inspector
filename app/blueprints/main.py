@@ -9,6 +9,6 @@ bp = Blueprint('main', __name__)
 # this is a catch all route - any invalid route is redirected to the index
 # the frontend handles the rest
 @bp.route('/')
-@bp.route('/<_>')
-def catch_all(_=None):
+@bp.route('/<path:path>')
+def catch_all(path=None):
     return render_template('index.html')
