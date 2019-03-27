@@ -134,13 +134,11 @@ class Popup extends React.Component {
                     <div key={ i }>
                       { obj }
                       { this.state.svgData[obj] &&
-                        <div dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
+                        <div className="chart__cont" dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
                       }
                     </div>
                   )
                 }
-
-                hello there:) this is tab1
               </Tab>
               <Tab eventKey="accountability" title="Accountability">
                 {/* { Object.keys(this.state.accountability).map((obj, i) => <div key={ i }>{ obj }</div>) } */}

@@ -90,6 +90,7 @@ def svg(name, mode, tab, chart_type):
                 ret = dict()
                 ret['chart_type'] = chart_type
                 ret['svg'] = str(svg)
+
                 if parsedArgs: ret['args'] = parsedArgs
                 return jsonify(ret)
             except IOError as e:

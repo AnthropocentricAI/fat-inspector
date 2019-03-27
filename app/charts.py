@@ -1,8 +1,11 @@
 import base64
 from io import BytesIO
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+
+mpl.rcParams['svg.image_inline'] = False
 
 import fatd.measure.accountability.data
 import fatd.measure.fairness.data
