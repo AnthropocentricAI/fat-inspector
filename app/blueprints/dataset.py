@@ -83,4 +83,4 @@ def download(name):
                          mimetype='text/csv')
     except IOError as e:
         print(e)
-        raise APIArgumentError(f'{name} does not exist!')
+        raise APIArgumentError(f'Dataset {name} does not exist!')

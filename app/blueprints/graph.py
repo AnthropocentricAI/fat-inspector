@@ -1,7 +1,8 @@
 """Graph blueprint module for routes to modify graphs."""
 
 from app.tree import Tree
-from flask import render_template, request, abort, jsonify, current_app
+from shutil import copyfile
+from flask import send_file, request, abort, jsonify, current_app
 from flask.blueprints import Blueprint
 from app.exceptions import APIArgumentError
 from app import utilities as util
@@ -31,14 +32,55 @@ def upload():
         raise APIArgumentError(f'{name} already exists, or an error occurred while attempting to save the graph.')
 
 
-@bp.route('/rename', methods=['POST'])
-def rename():
-    abort(500, 'Not implemented yet!')
+@bp.route('<name>/rename', methods=['POST'])
+def rename(name):
+    # TODO: normalise paths: currently the POST parameters are left unchecked
+    if 'new_name' not in request.form:
+        raise APIArgumentError('Invalid request arguments.\n\tnew_name: <str>')
+
+    old_name = util.normalise_path_to_file(name) + '.json'
+    new_name = request.form.get('new_name') + '.json'
+    new_name = os.path.join(current_app.config['ASSETS_DIR'], new_name)
+
+    try:
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], old_name)
+        os.rename(file_path, new_name)
+        return jsonify({'message': f'Successfully renamed {old_name} to {new_name}'})
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'{name} does not exist, or {new_name} already exists!')
 
 
-@bp.route('/download')
-def download():
-    abort(500, 'Not implemented yet!')
+@bp.route('<name>/download')
+def download(name):
+    name = util.normalise_path_to_file(name) + '.json'
+    file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+    try:
+        return send_file(file_path,
+                         as_attachment=True,
+                         attachment_filename=name,
+                         mimetype='text/json')
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'Graph {name} does not exist!')
+
+
+@bp.route('<name>/duplicate', methods=['POST'])
+def duplicate(name):
+    if 'new_name' not in request.form:
+        raise APIArgumentError(f'Invalid request arguments.\n\tnew_name: <str>')
+
+    old_name = util.normalise_path_to_file(name) + '.json'
+    old_path = os.path.join(current_app.config['ASSETS_DIR'], old_name)
+    new_name = util.normalise_path_to_file(request.form.get('new_name')) + '.json'
+    new_path = os.path.join(current_app.config['ASSETS_DIR'], new_name)
+
+    try:
+        copyfile(old_path, new_path)
+        return jsonify({'message': f'Successfully duplicated {old_name} to {new_name}!'})
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'Graph {name} does not exist!')
 
 
 @bp.route('/functions')
@@ -48,5 +90,4 @@ def fetch_functions():
 
 @bp.route('/execute', methods=['POST'])
 def execute():
-    if not request.is_json:
-        abort(500, 'Request should be JSON.')
+    abort(500, 'Not implemented yet!')
