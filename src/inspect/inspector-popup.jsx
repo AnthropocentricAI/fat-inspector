@@ -19,7 +19,7 @@ class InspectorPopup extends React.Component {
                 tab3
               </Tab>
             </Tabs>
-            <button class="popup_close" onClick={this.props.closePopup}>
+            <button className="popup_close" onClick={this.props.closePopup}>
               X
             </button>
           </div>

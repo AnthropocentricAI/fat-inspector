@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Graph} from 'react-d3-graph';
-import defaultConfig from './config';
-import uuid from 'uuid/v4';
-import NodePopover from './node-popover.jsx';
-import Spinner from 'react-bootstrap/Spinner';
+import { Graph } from "react-d3-graph";
+import defaultConfig from "./config";
+import uuid from "uuid/v4";
+import NodePopover from "./node-popover.jsx";
+import Spinner from "react-bootstrap/Spinner";
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -36,30 +36,32 @@ export default class Tool extends React.Component {
   }
 
   parseFunctionResponse(r) {
-    if (!r.ok) throw 'Error when attempting to fetch functions!';
+    if (!r.ok) throw "Error when attempting to fetch functions!";
     return r.json();
   }
 
   fetchFunctions() {
     // ask the server for a the list of node functions
-    fetch('/graph/functions')
+    fetch("/graph/functions")
       .then(this.parseFunctionResponse)
-      .then(data => this.setState({
-        functions: data
-      }))
-      .catch(err => console.error(err))
+      .then(data =>
+        this.setState({
+          functions: data
+        })
+      )
+      .catch(err => console.error(err));
   }
 
   initEmptyGraph() {
     const rootNode = {
       id: uuid(),
-      label: 'root'
+      label: "root"
     };
     this.setState({
       root: rootNode.id,
       data: {
-          nodes: [rootNode],
-          links: []
+        nodes: [rootNode],
+        links: []
       }
     });
   }
@@ -83,17 +85,21 @@ export default class Tool extends React.Component {
 
   onClickGraph() {
     // deselect popup if open
-    if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
+    if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
   }
 
   editNodeLabelDesc(nodeId, label, desc) {
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {
-          ...x,
-          label: label || x.label,
-          desc: desc || x.desc
-        } : x),
+        nodes: this.state.data.nodes.map(x =>
+          x.id === nodeId
+            ? {
+                ...x,
+                label: label || x.label,
+                desc: desc || x.desc
+              }
+            : x
+        ),
         links: this.state.data.links
       }
     });
@@ -111,9 +117,13 @@ export default class Tool extends React.Component {
       // remove the node from the list
       nodes = nodes.filter(x => x.id !== currentId);
       // push all of the connected nodes to toDelete
-      toDelete.push(...links.filter(x => x.source === currentId).map(x => x.target));
+      toDelete.push(
+        ...links.filter(x => x.source === currentId).map(x => x.target)
+      );
       // remove all of the links which involve currentId
-      links = links.filter(x => x.source !== currentId && x.target !== currentId);
+      links = links.filter(
+        x => x.source !== currentId && x.target !== currentId
+      );
     }
     this.setState({
       data: {
@@ -137,16 +147,19 @@ export default class Tool extends React.Component {
       return {
         showApply: false,
         data: {
-          nodes: [...prev.data.nodes, {id: child_id, label: child, desc: desc, func: func}],
-          links: [...prev.data.links, {source: parent, target: child_id}]
+          nodes: [
+            ...prev.data.nodes,
+            { id: child_id, label: child, desc: desc, func: func }
+          ],
+          links: [...prev.data.links, { source: parent, target: child_id }]
         }
-      }
-    })
+      };
+    });
   }
 
   render() {
     const graphProps = {
-      id: 'graph',
+      id: "graph",
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
@@ -154,7 +167,7 @@ export default class Tool extends React.Component {
     };
 
     // portal from children of node  element
-    const Portal = ({children}) => {
+    const Portal = ({ children }) => {
       return ReactDOM.createPortal(
         children,
         document.getElementById(this.state.nodeClickedId)
@@ -167,28 +180,34 @@ export default class Tool extends React.Component {
       <div>
         <h3>Dataset: {this.props.match.params.dataset}</h3>
         <h3>Graph: {this.props.match.params.graph}</h3>
-        {
-          this.state.data ?
-            <Graph ref="graph" {...graphProps} /> :
-            <div className="graph-loading">
-              <Spinner animation="border"
-                       role="status"/>
-            </div>
-        }
+        {this.state.data ? (
+          <Graph ref="graph" {...graphProps} />
+        ) : (
+          <div className="graph-loading">
+            <Spinner animation="border" role="status" />
+          </div>
+        )}
 
         {/* display popup */}
-        {
-          node &&
+        {node && (
           <Portal>
-            <foreignObject x="30" y="-15" width="200px" height="100%" className='click-through'>
-              <NodePopover functions={this.state.functions}
-                           node={node}
-                           onApply={this.createChild}
-                           onEdit={this.editNodeLabelDesc}
-                           onDelete={this.deleteNode}/>
+            <foreignObject
+              x="30"
+              y="-15"
+              width="200px"
+              height="100%"
+              className="click-through"
+            >
+              <NodePopover
+                functions={this.state.functions}
+                node={node}
+                onApply={this.createChild}
+                onEdit={this.editNodeLabelDesc}
+                onDelete={this.deleteNode}
+              />
             </foreignObject>
           </Portal>
-        }
+        )}
       </div>
     );
   }
