@@ -1,11 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import FileChooser from './forms/file-chooser.jsx';
-import InspectButton from './inspect/inspect-button.jsx';
-import Topbar from './topbar/topbar.jsx'
-import loadable from '@loadable/component';
+import FileChooser from "./forms/file-chooser.jsx";
+import Topbar from "./topbar/topbar.jsx";
+import loadable from "@loadable/component";
 
-const Tool = loadable(() => import('./graph/tool.jsx'));
+const Tool = loadable(() => import("./graph/tool.jsx"));
 
 class App extends React.Component {
   constructor(props) {
@@ -28,19 +27,21 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        {
-          this.state.openGraph ?
-            <div>
-              <Topbar/>
-              <Tool dataset={this.state.dataset}
-                    graph={this.state.graph}
-                    isNew={this.state.isNew}/>
-              <InspectButton/>
-            </div> : <FileChooser onOpenGraph={this.updateSelected.bind(this)}/>
-        }
+        {this.state.openGraph ? (
+          <div>
+            <Topbar />
+            <Tool
+              dataset={this.state.dataset}
+              graph={this.state.graph}
+              isNew={this.state.isNew}
+            />
+          </div>
+        ) : (
+          <FileChooser onOpenGraph={this.updateSelected.bind(this)} />
+        )}
       </div>
-    )
+    );
   }
 }
 
-ReactDOM.render(<App/>, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));

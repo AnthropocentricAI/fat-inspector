@@ -29,32 +29,4 @@ class InspectorPopup extends React.Component {
   }
 }
 
-class InspectButton extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      popoverOpen: false
-    };
-  }
-
-  toggle() {
-    this.setState({
-      popoverOpen: !this.state.popoverOpen
-    });
-  }
-
-  render() {
-    return (
-      <div className="inspBtn_wrap">
-        <button className="insp_button" onClick={this.toggle.bind(this)}>
-          Inspect
-        </button>
-        {this.state.popoverOpen ? (
-          <InspectorPopup closePopup={this.toggle.bind(this)} />
-        ) : null}
-      </div>
-    );
-  }
-}
-
-export default InspectButton;
+export default InspectorPopup;

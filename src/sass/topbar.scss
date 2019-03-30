@@ -25,3 +25,20 @@
     background-color: #e8dab2;
   }
 }
+
+.menu {
+  position: absolute;
+  display: grid;
+  width: 25%;
+  top: 60px;
+  height: 180px;
+}
+
+.menubutton {
+  background-color: #5d0000;
+  color: white;
+
+  &:hover {
+    background-color: darkslategray;
+  }
+}

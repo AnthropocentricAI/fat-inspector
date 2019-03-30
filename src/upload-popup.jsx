@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import UploadData from "./forms/upload-data.jsx";
 
 class UploadPopup extends React.Component {
   render() {
@@ -17,7 +18,7 @@ class UploadPopup extends React.Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h4>LIAMS ENDS</h4>
+          <UploadData />
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.props.onHide}>Close</Button>

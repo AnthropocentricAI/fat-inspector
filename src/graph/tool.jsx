@@ -1,17 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Graph} from 'react-d3-graph';
-import defaultConfig from './config';
-import Popover from 'react-bootstrap/Popover';
+import { Graph } from "react-d3-graph";
+import defaultConfig from "./config";
+import Popover from "react-bootstrap/Popover";
 
-import Nav from 'react-bootstrap/Nav';
-import PropTypes from 'prop-types';
-import NodeModalEdit from './node-modal-edit.jsx'
+import Nav from "react-bootstrap/Nav";
+import PropTypes from "prop-types";
+import NodeModalEdit from "./node-modal-edit.jsx";
 
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faDiceD6, faEdit, faSearch, faSuperscript} from '@fortawesome/free-solid-svg-icons';
-import NodeModalApply from './node-modal-apply.jsx';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDiceD6,
+  faEdit,
+  faSearch,
+  faSuperscript
+} from "@fortawesome/free-solid-svg-icons";
+import NodeModalApply from "./node-modal-apply.jsx";
+
+import InspectorPopup from "../inspect/inspector-popup.jsx";
 
 library.add(faSearch);
 library.add(faDiceD6);
@@ -25,28 +32,29 @@ export default class Tool extends React.Component {
     // action called on onClick
     const nodeOptions = [
       {
-        name: 'Inspect',
-        icon: 'search',
+        name: "Inspect",
+        icon: "search",
         action: () => {
+          this.setState({ showInspect: true });
         }
       },
       {
-        name: 'Convert to Model',
-        icon: 'dice-d6',
+        name: "Convert to Model",
+        icon: "dice-d6",
         action: {}
       },
       {
-        name: 'Edit',
-        icon: 'edit',
+        name: "Edit",
+        icon: "edit",
         action: () => {
-          this.setState({edit: true});
+          this.setState({ edit: true });
         }
       },
       {
-        name: 'Apply Function',
-        icon: 'superscript',
+        name: "Apply Function",
+        icon: "superscript",
         action: () => {
-          this.setState({showApply: true})
+          this.setState({ showApply: true });
         }
       }
     ];
@@ -60,7 +68,8 @@ export default class Tool extends React.Component {
       nodeOptions,
       functions: [],
       edit: false,
-      showApply: false
+      showApply: false,
+      showInspect: false
     };
 
     this.onClickNode = this.onClickNode.bind(this);
@@ -73,18 +82,21 @@ export default class Tool extends React.Component {
 
   fetchFunctions() {
     // on load, ask the server for a the list of node functions
-    fetch('/graph/functions').then(r => {
-      if (r.status !== 200) {
-        console.error('Error when attempting to fetch functions!');
-      }
-      r.json().then(data => {
-        this.setState({
-          ...this.state,
-          functions: data
+    fetch("/graph/functions").then(
+      r => {
+        if (r.status !== 200) {
+          console.error("Error when attempting to fetch functions!");
+        }
+        r.json().then(data => {
+          this.setState({
+            ...this.state,
+            functions: data
+          });
+          console.log(data);
         });
-        console.log(data);
-      });
-    }, e => console.error(e));
+      },
+      e => console.error(e)
+    );
   }
 
   populateGraph() {
@@ -92,10 +104,10 @@ export default class Tool extends React.Component {
       this.setState({
         ...this.state,
         data: {
-          nodes: [{id: 'root-node'}],
+          nodes: [{ id: "root-node" }],
           links: []
         }
-      })
+      });
     } else {
       // TODO: fetch graph
     }
@@ -124,13 +136,15 @@ export default class Tool extends React.Component {
 
   onClickGraph() {
     // deselect popup if open
-    if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
+    if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
   }
 
   renameNode(nodeId, name) {
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, label: name} : x),
+        nodes: this.state.data.nodes.map(x =>
+          x.id === nodeId ? { ...x, label: name } : x
+        ),
         links: this.state.data.links
       }
     });
@@ -139,7 +153,9 @@ export default class Tool extends React.Component {
   redescNode(nodeId, desc) {
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {...x, desc: desc} : x),
+        nodes: this.state.data.nodes.map(x =>
+          x.id === nodeId ? { ...x, desc: desc } : x
+        ),
         links: this.state.data.links
       }
     });
@@ -153,7 +169,7 @@ export default class Tool extends React.Component {
   }
 
   getNameOfNode(node) {
-    return 'label' in node ? node.label : node.id;
+    return "label" in node ? node.label : node.id;
   }
 
   createChild(parent, child, desc, func) {
@@ -161,16 +177,22 @@ export default class Tool extends React.Component {
       return {
         showApply: false,
         data: {
-          nodes: [...prev.data.nodes, {id: child, desc: desc, func: func}],
-          links: [...prev.data.links, {source: parent, target: child}]
+          nodes: [...prev.data.nodes, { id: child, desc: desc, func: func }],
+          links: [...prev.data.links, { source: parent, target: child }]
         }
-      }
-    })
+      };
+    });
+  }
+
+  toggleInspector() {
+    this.setState({
+      showInspect: !this.state.showInspect
+    });
   }
 
   render() {
     const graphProps = {
-      id: 'graph',
+      id: "graph",
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
@@ -178,7 +200,7 @@ export default class Tool extends React.Component {
     };
 
     // portal from children of node element
-    const Portal = ({children}) => {
+    const Portal = ({ children }) => {
       return ReactDOM.createPortal(
         children,
         document.getElementById(this.state.nodeClickedId)
@@ -189,49 +211,54 @@ export default class Tool extends React.Component {
 
     return (
       <div>
-        <h3>Dataset: {this.props.dataset}</h3>
-        <h3>Graph: {this.props.graph}</h3>
+        <div className="datainfowrapper">
+          <h3>Dataset: {this.props.dataset}</h3>
+          <h3>Graph: {this.props.graph}</h3>
+        </div>
         <Graph ref="graph" {...graphProps} />
+        {this.state.showInspect ? (
+          <InspectorPopup closePopup={this.toggleInspector.bind(this)} />
+        ) : null}
 
-        {
-          node &&
-          <NodeModalEdit show={this.state.edit}
-                         onClose={() => this.setState({edit: false})}
-                         node={node}
-                         rename={this.renameNode} redesc={this.redescNode}/>
-        }
+        {node && (
+          <NodeModalEdit
+            show={this.state.edit}
+            onClose={() => this.setState({ edit: false })}
+            node={node}
+            rename={this.renameNode}
+            redesc={this.redescNode}
+          />
+        )}
 
-        {
-          node &&
-          <NodeModalApply show={this.state.showApply}
-                          functions={this.state.functions}
-                          parent={this.state.nodeClickedId}
-                          onHide={() => this.setState({showApply: false})}
-                          onApply={this.createChild.bind(this)}/>
-        }
+        {node && (
+          <NodeModalApply
+            show={this.state.showApply}
+            functions={this.state.functions}
+            parent={this.state.nodeClickedId}
+            onHide={() => this.setState({ showApply: false })}
+            onApply={this.createChild.bind(this)}
+          />
+        )}
 
         {/* display popup */}
         {/* TODO: add delete */}
-        {
-          node &&
+        {node && (
           <Portal>
             <foreignObject x="30" y="-15" width="200px" height="100%">
-              <Popover className="node_popover" id="popover-basic" title={this.getNameOfNode(node)}>
+              <Popover
+                className="node_popover"
+                id="popover-basic"
+                title={this.getNameOfNode(node)}
+              >
                 <Nav className="flex-column">
                   {/* desc */}
-                  {
-                    node.func &&
-                    <p>Function: {node.func}</p>
-                  }
-                  {
-                    node.desc &&
-                    <p>Description: {node.desc}</p>
-                  }
+                  {node.func && <p>Function: {node.func}</p>}
+                  {node.desc && <p>Description: {node.desc}</p>}
 
                   {/* create options */}
                   {this.state.nodeOptions.map(opt => (
                     <Nav.Item key={opt.name} onClick={opt.action}>
-                      <FontAwesomeIcon fixedWidth icon={opt.icon}/>
+                      <FontAwesomeIcon fixedWidth icon={opt.icon} />
                       <Nav.Link className="node_popover_nav_link">
                         {opt.name}
                       </Nav.Link>
@@ -241,7 +268,7 @@ export default class Tool extends React.Component {
               </Popover>
             </foreignObject>
           </Portal>
-        }
+        )}
       </div>
     );
   }
