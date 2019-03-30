@@ -116,13 +116,15 @@ class Topbar extends PureComponent {
           <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
-              <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-                <NavDropdown.Item>Action</NavDropdown.Item>
-                <NavDropdown.Item>Another action</NavDropdown.Item>
-                <NavDropdown.Item>Something</NavDropdown.Item>
+              <NavDropdown title="Dataset Settings" id="collasible-nav-dropdown">
+                <NavDropdown.Item>Save</NavDropdown.Item>
+                <NavDropdown.Item>Export</NavDropdown.Item>
+                <NavDropdown.Item>Rename</NavDropdown.Item>
+                <NavDropdown.Item>Duplicate</NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
+              <Nav.Link onClick={this.uploadOpen}>New Dataset</Nav.Link>
+              <Nav.Link onClick={this.howToOpen}>How To</Nav.Link>
+              <Nav.Link onClick={this.aboutOpen}>About</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
