@@ -32,7 +32,6 @@ def view(name):
         abort(400, 'Invalid dataset name.')
 
 
-# TODO: implement placeholder routes
 @bp.route('/upload', methods=['POST'])
 def upload():
     if 'dataset_file' not in request.files or 'dataset_name' not in request.form:

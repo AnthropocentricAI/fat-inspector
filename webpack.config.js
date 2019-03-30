@@ -5,6 +5,7 @@ module.exports = {
     entry: ['./src/index.jsx', './src/sass/main.scss'],
     output: {
         path: path.resolve(__dirname, 'app'),
+        publicPath: '/',
         filename: 'static/js/bundle.js'
     },
     module: {
@@ -20,7 +21,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            name: 'static/css/[name].scss.css',
+                            name: '/static/css/[name].scss.css',
                         }
                     },
                     {

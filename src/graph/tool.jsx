@@ -1,132 +1,79 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Graph } from "react-d3-graph";
-import defaultConfig from "./config";
-import Popover from "react-bootstrap/Popover";
-
-import Nav from "react-bootstrap/Nav";
-import PropTypes from "prop-types";
-import NodeModalEdit from "./node-modal-edit.jsx";
-
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDiceD6,
-  faEdit,
-  faSearch,
-  faSuperscript
-} from "@fortawesome/free-solid-svg-icons";
-import NodeModalApply from "./node-modal-apply.jsx";
-
-import InspectorPopup from "../inspect/inspector-popup.jsx";
-
-library.add(faSearch);
-library.add(faDiceD6);
-library.add(faEdit);
-library.add(faSuperscript);
+import {Graph} from 'react-d3-graph';
+import defaultConfig from './config';
+import uuid from 'uuid/v4';
+import NodePopover from './node-popover.jsx';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
 
-    // action called on onClick
-    const nodeOptions = [
-      {
-        name: "Inspect",
-        icon: "search",
-        action: () => {
-          this.setState({ showInspect: true });
-        }
-      },
-      {
-        name: "Convert to Model",
-        icon: "dice-d6",
-        action: {}
-      },
-      {
-        name: "Edit",
-        icon: "edit",
-        action: () => {
-          this.setState({ edit: true });
-        }
-      },
-      {
-        name: "Apply Function",
-        icon: "superscript",
-        action: () => {
-          this.setState({ showApply: true });
-        }
-      }
-    ];
-
     const config = defaultConfig;
-    const nodeClickedId = false;
 
     this.state = {
       config,
-      nodeClickedId,
-      nodeOptions,
-      functions: [],
       edit: false,
-      showApply: false,
-      showInspect: false
+      functions: [],
+      nodeClickedId: false,
+      showApply: false
     };
 
+    console.log(this.props);
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
-    this.renameNode = this.renameNode.bind(this);
-    this.redescNode = this.redescNode.bind(this);
+    this.createChild = this.createChild.bind(this);
+    this.deleteNode = this.deleteNode.bind(this);
+    this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
-    this.getNameOfNode = this.getNameOfNode.bind(this);
+  }
+
+  // upon first mount, we need to populate the graph and fetch relevant data
+  componentDidMount() {
+    this.fetchFunctions();
+    this.populateGraph(true);
+  }
+
+  parseFunctionResponse(r) {
+    if (!r.ok) throw 'Error when attempting to fetch functions!';
+    return r.json();
   }
 
   fetchFunctions() {
-    // on load, ask the server for a the list of node functions
-    fetch("/graph/functions").then(
-      r => {
-        if (r.status !== 200) {
-          console.error("Error when attempting to fetch functions!");
-        }
-        r.json().then(data => {
-          this.setState({
-            ...this.state,
-            functions: data
-          });
-          console.log(data);
-        });
-      },
-      e => console.error(e)
-    );
+    // ask the server for a the list of node functions
+    fetch('/graph/functions')
+      .then(this.parseFunctionResponse)
+      .then(data => this.setState({
+        functions: data
+      }))
+      .catch(err => console.error(err))
   }
 
-  populateGraph() {
-    if (this.props.isNew) {
-      this.setState({
-        ...this.state,
-        data: {
-          nodes: [{ id: "root-node" }],
+  initEmptyGraph() {
+    const rootNode = {
+      id: uuid(),
+      label: 'root'
+    };
+    this.setState({
+      root: rootNode.id,
+      data: {
+          nodes: [rootNode],
           links: []
-        }
-      });
+      }
+    });
+  }
+
+  populateGraph(isNew) {
+    if (isNew) {
+      this.initEmptyGraph();
     } else {
-      // TODO: fetch graph
+      // TODO: better way to make new graph & fetch graphs - 22/03/2019
     }
   }
 
-  componentWillMount() {
-    this.fetchFunctions();
-    this.populateGraph();
-  }
-
   onClickNode(id) {
-    let newId = `${id}-${Math.floor(Math.random() * 20)}`;
     this.setState({
-      // create new random node
-      /* data: {
-          nodes: [...this.state.data.nodes, { id: newId }],
-          links: [...this.state.data.links, { source: id, target: newId }]
-      }, */
-      // open popup
       nodeClickedId: id
     });
     // set node to front of svg
@@ -136,27 +83,42 @@ export default class Tool extends React.Component {
 
   onClickGraph() {
     // deselect popup if open
-    if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
+    if (this.state.nodeClickedId) this.setState({nodeClickedId: null});
   }
 
-  renameNode(nodeId, name) {
+  editNodeLabelDesc(nodeId, label, desc) {
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x =>
-          x.id === nodeId ? { ...x, label: name } : x
-        ),
+        nodes: this.state.data.nodes.map(x => x.id === nodeId ? {
+          ...x,
+          label: label || x.label,
+          desc: desc || x.desc
+        } : x),
         links: this.state.data.links
       }
     });
   }
 
-  redescNode(nodeId, desc) {
+  deleteNode(nodeId) {
+    if (nodeId === this.state.root) return;
+    let toDelete = [nodeId];
+    // shallow copy the arrays
+    let nodes = [...this.state.data.nodes];
+    let links = [...this.state.data.links];
+    // TODO: refine this at a later date - VERY inefficient 24/03/2019
+    while (toDelete.length) {
+      let currentId = toDelete.pop();
+      // remove the node from the list
+      nodes = nodes.filter(x => x.id !== currentId);
+      // push all of the connected nodes to toDelete
+      toDelete.push(...links.filter(x => x.source === currentId).map(x => x.target));
+      // remove all of the links which involve currentId
+      links = links.filter(x => x.source !== currentId && x.target !== currentId);
+    }
     this.setState({
       data: {
-        nodes: this.state.data.nodes.map(x =>
-          x.id === nodeId ? { ...x, desc: desc } : x
-        ),
-        links: this.state.data.links
+        nodes: nodes,
+        links: links
       }
     });
   }
@@ -164,43 +126,35 @@ export default class Tool extends React.Component {
   // gets data in payload for a given node
   // gross but the only way :(
   getNodeData(nodeId) {
-    for (let x of this.state.data.nodes) if (x.id == nodeId) return x;
+    if (!this.state.data) return null;
+    for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
   }
 
-  getNameOfNode(node) {
-    return "label" in node ? node.label : node.id;
-  }
-
   createChild(parent, child, desc, func) {
+    const child_id = uuid();
     this.setState((prev, props) => {
       return {
         showApply: false,
         data: {
-          nodes: [...prev.data.nodes, { id: child, desc: desc, func: func }],
-          links: [...prev.data.links, { source: parent, target: child }]
+          nodes: [...prev.data.nodes, {id: child_id, label: child, desc: desc, func: func}],
+          links: [...prev.data.links, {source: parent, target: child_id}]
         }
-      };
-    });
-  }
-
-  toggleInspector() {
-    this.setState({
-      showInspect: !this.state.showInspect
-    });
+      }
+    })
   }
 
   render() {
     const graphProps = {
-      id: "graph",
+      id: 'graph',
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
       onClickGraph: this.onClickGraph
     };
 
-    // portal from children of node element
-    const Portal = ({ children }) => {
+    // portal from children of node  element
+    const Portal = ({children}) => {
       return ReactDOM.createPortal(
         children,
         document.getElementById(this.state.nodeClickedId)
@@ -211,71 +165,31 @@ export default class Tool extends React.Component {
 
     return (
       <div>
-        <div className="datainfowrapper">
-          <h3>Dataset: {this.props.dataset}</h3>
-          <h3>Graph: {this.props.graph}</h3>
-        </div>
-        <Graph ref="graph" {...graphProps} />
-        {this.state.showInspect ? (
-          <InspectorPopup closePopup={this.toggleInspector.bind(this)} />
-        ) : null}
-
-        {node && (
-          <NodeModalEdit
-            show={this.state.edit}
-            onClose={() => this.setState({ edit: false })}
-            node={node}
-            rename={this.renameNode}
-            redesc={this.redescNode}
-          />
-        )}
-
-        {node && (
-          <NodeModalApply
-            show={this.state.showApply}
-            functions={this.state.functions}
-            parent={this.state.nodeClickedId}
-            onHide={() => this.setState({ showApply: false })}
-            onApply={this.createChild.bind(this)}
-          />
-        )}
+        <h3>Dataset: {this.props.match.params.dataset}</h3>
+        <h3>Graph: {this.props.match.params.graph}</h3>
+        {
+          this.state.data ?
+            <Graph ref="graph" {...graphProps} /> :
+            <div className="graph-loading">
+              <Spinner animation="border"
+                       role="status"/>
+            </div>
+        }
 
         {/* display popup */}
-        {/* TODO: add delete */}
-        {node && (
+        {
+          node &&
           <Portal>
-            <foreignObject x="30" y="-15" width="200px" height="100%">
-              <Popover
-                className="node_popover"
-                id="popover-basic"
-                title={this.getNameOfNode(node)}
-              >
-                <Nav className="flex-column">
-                  {/* desc */}
-                  {node.func && <p>Function: {node.func}</p>}
-                  {node.desc && <p>Description: {node.desc}</p>}
-
-                  {/* create options */}
-                  {this.state.nodeOptions.map(opt => (
-                    <Nav.Item key={opt.name} onClick={opt.action}>
-                      <FontAwesomeIcon fixedWidth icon={opt.icon} />
-                      <Nav.Link className="node_popover_nav_link">
-                        {opt.name}
-                      </Nav.Link>
-                    </Nav.Item>
-                  ))}
-                </Nav>
-              </Popover>
+            <foreignObject x="30" y="-15" width="200px" height="100%" className='click-through'>
+              <NodePopover functions={this.state.functions}
+                           node={node}
+                           onApply={this.createChild}
+                           onEdit={this.editNodeLabelDesc}
+                           onDelete={this.deleteNode}/>
             </foreignObject>
           </Portal>
-        )}
+        }
       </div>
     );
   }
 }
-
-Tool.propTypes = {
-  dataset: PropTypes.string.isRequired,
-  graph: PropTypes.string.isRequired,
-  isNew: PropTypes.bool.isRequired
-};

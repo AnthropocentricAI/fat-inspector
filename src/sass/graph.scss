@@ -1,6 +1,7 @@
-.node_popover {
-  &_nav {
-    &_link {
+.node-popover {
+  pointer-events: auto;
+  &-nav {
+    &-link {
       display: inline !important;
     }
   }
@@ -12,4 +13,33 @@ svg[name="svg-container-graph"] {
   left: 0;
   height: 100% !important;
   width: 100% !important;
+}
+
+.click-through {
+  pointer-events: none;
+}
+
+.centred-flex {
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-no-border {
+  padding: 0.75rem;
+  border-top: none;
+}
+
+.confirmation-title {
+  padding: 1rem 1rem 0.5rem 1rem;
+}
+
+.confirmation-message {
+  margin: 0;
+}
+
+.graph-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
