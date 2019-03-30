@@ -46,8 +46,13 @@ export default class UploadData extends React.Component {
   }
 
   onSubmitGraph(e) {
-    // TODO: Implement graph uploading
-    alert('TODO')
+    e.preventDefault();
+    let formData = new FormData(e.target);
+    console.log(`Uploading graph ${formData.get('graph_name')}...`);
+    fetch('graph/upload', {
+      method: 'POST',
+      body: formData
+    }).then(r => this.displayResponse(r), e => this.displayResponse(e));;
   }
 
   render() {

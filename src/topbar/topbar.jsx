@@ -63,21 +63,6 @@ class Topbar extends PureComponent {
     });
   }
 
-  howToOpen() {
-    this.setState({
-      howToShow: true,
-      aboutShow: false,
-      uploadShow: false
-    });
-  }
-
-  aboutOpen() {
-    this.setState({
-      howToShow: false,
-      aboutShow: true,
-      uploadShow: false
-    });
-  }
 
   render() {
     return (
