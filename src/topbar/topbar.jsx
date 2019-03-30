@@ -109,7 +109,6 @@ class Topbar extends PureComponent {
       <div>
         <Navbar
           className="main-navbar"
-          className="topbar"
           expand="lg"
           bg="dark"
           variant="dark"
@@ -120,6 +119,7 @@ class Topbar extends PureComponent {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
               <NavDropdown
+                className="topbar-button"
                 title="Dataset Settings"
                 id="collasible-nav-dropdown"
               >
@@ -128,9 +128,15 @@ class Topbar extends PureComponent {
                 <NavDropdown.Item>Rename</NavDropdown.Item>
                 <NavDropdown.Item>Duplicate</NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link onClick={this.uploadOpen}>New Dataset</Nav.Link>
-              <Nav.Link onClick={this.howToOpen}>How To</Nav.Link>
-              <Nav.Link onClick={this.aboutOpen}>About</Nav.Link>
+              <Nav.Link className="topbar-button" onClick={this.uploadOpen}>
+                New Dataset
+              </Nav.Link>
+              <Nav.Link className="topbar-button" onClick={this.howToOpen}>
+                How To
+              </Nav.Link>
+              <Nav.Link className="topbar-button" onClick={this.aboutOpen}>
+                About
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

@@ -7,16 +7,8 @@
   height: 100px;
 }
 
-.topbarbutton {
-  font-size: 100%;
-  margin: 100;
-  background-color: #911800;
-  flex-grow: 1;
-  color: #eaeaea;
-
-  &:hover {
-    background-color: #e8dab2;
-  }
+.topbar-button {
+  font-size: 1.2rem;
 }
 
 .menu {
