@@ -1,4 +1,4 @@
-import React, {PureComponent} from "react";
+import React, { PureComponent } from "react";
 import HowToPopup from "../how-to-popup.jsx";
 import AboutPopup from "../about-popup.jsx";
 import UploadPopup from "../upload-popup.jsx";
@@ -59,14 +59,14 @@ class Topbar extends PureComponent {
   showMenu(event) {
     event.preventDefault();
 
-    this.setState({showMenu: true}, () => {
+    this.setState({ showMenu: true }, () => {
       document.addEventListener("click", this.closeMenu);
     });
   }
 
   closeMenu(event) {
     if (!this.dropdownMenu.contains(event.target)) {
-      this.setState({showMenu: false}, () => {
+      this.setState({ showMenu: false }, () => {
         document.removeEventListener("click", this.closeMenu);
       });
     }
@@ -107,16 +107,22 @@ class Topbar extends PureComponent {
   render() {
     return (
       <div>
-        <Navbar className="main-navbar"
-                expand="lg"
-                bg="dark"
-                variant="dark"
-                fixed="top">
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
+        <Navbar
+          className="main-navbar"
+          className="topbar"
+          expand="lg"
+          bg="dark"
+          variant="dark"
+          fixed="top"
+        >
+          <Navbar.Brand href="#home">FAT Forensics</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
-              <NavDropdown title="Dataset Settings" id="collasible-nav-dropdown">
+              <NavDropdown
+                title="Dataset Settings"
+                id="collasible-nav-dropdown"
+              >
                 <NavDropdown.Item>Save</NavDropdown.Item>
                 <NavDropdown.Item>Export</NavDropdown.Item>
                 <NavDropdown.Item>Rename</NavDropdown.Item>
@@ -128,21 +134,10 @@ class Topbar extends PureComponent {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        {/* {this.state.showMenu ? (
-          <div
-            className="menu"
-            ref={element => {
-              this.dropdownMenu = element;
-            }}
-          >
-            <button className="menubutton"> Menu item 1 </button>
-            <button className="menubutton"> Menu item 2 </button>
-            <button className="menubutton"> Menu item 3 </button>
-          </div>
-        ) : null} */}
-        <HowToPopup show={this.state.howToShow} onHide={this.modalClose}/>
-        <AboutPopup show={this.state.aboutShow} onHide={this.modalClose}/>
-        <UploadPopup show={this.state.uploadShow} onHide={this.modalClose}/>
+
+        <HowToPopup show={this.state.howToShow} onHide={this.modalClose} />
+        <AboutPopup show={this.state.aboutShow} onHide={this.modalClose} />
+        <UploadPopup show={this.state.uploadShow} onHide={this.modalClose} />
       </div>
     );
   }

@@ -21,7 +21,9 @@ class UploadPopup extends React.Component {
           <UploadData />
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.props.onHide}>Close</Button>
+          <Button variant="secondary" onClick={this.props.onHide}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     );

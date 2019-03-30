@@ -25,7 +25,9 @@ class AboutPopup extends React.Component {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.props.onHide}>Close</Button>
+          <Button variant="secondary" onClick={this.props.onHide}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     );
