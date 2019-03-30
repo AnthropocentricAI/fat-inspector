@@ -1,10 +1,10 @@
-import React, { PureComponent } from "react";
+import React, {PureComponent} from "react";
 import HowToPopup from "../how-to-popup.jsx";
 import AboutPopup from "../about-popup.jsx";
 import UploadPopup from "../upload-popup.jsx";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 const buttonnames = [
   {
@@ -59,14 +59,14 @@ class Topbar extends PureComponent {
   showMenu(event) {
     event.preventDefault();
 
-    this.setState({ showMenu: true }, () => {
+    this.setState({showMenu: true}, () => {
       document.addEventListener("click", this.closeMenu);
     });
   }
 
   closeMenu(event) {
     if (!this.dropdownMenu.contains(event.target)) {
-      this.setState({ showMenu: false }, () => {
+      this.setState({showMenu: false}, () => {
         document.removeEventListener("click", this.closeMenu);
       });
     }
@@ -106,35 +106,26 @@ class Topbar extends PureComponent {
 
   render() {
     return (
-      <div className="topbar">
-        <div className="topbar__wrapper">
-          <button className="topbarbutton" onClick={this.showMenu}>
-            Dataset Settings
-            {this.state.showMenu ? (
-              <div
-                className="menu"
-                ref={element => {
-                  this.dropdownMenu = element;
-                }}
-              >
-                <button className="menubutton">Save</button>
-                <button className="menubutton">Export</button>
-                <button className="menubutton">Rename</button>
-                <button className="menubutton">Duplicate</button>
-              </div>
-            ) : null}
-          </button>
-          <button className="topbarbutton" onClick={this.uploadOpen}>
-            New Dataset
-          </button>
-          <button className="topbarbutton" onClick={this.howToOpen}>
-            How To
-          </button>
-          <button className="topbarbutton" onClick={this.aboutOpen}>
-            About
-          </button>
-        </div>
-
+      <div>
+        <Navbar className="main-navbar"
+                expand="lg"
+                bg="dark"
+                variant="dark"
+                fixed="top">
+          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
+                <NavDropdown.Item>Action</NavDropdown.Item>
+                <NavDropdown.Item>Another action</NavDropdown.Item>
+                <NavDropdown.Item>Something</NavDropdown.Item>
+              </NavDropdown>
+              <Nav.Link href="#features">Features</Nav.Link>
+              <Nav.Link href="#pricing">Pricing</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
         {/* {this.state.showMenu ? (
           <div
             className="menu"
@@ -147,9 +138,9 @@ class Topbar extends PureComponent {
             <button className="menubutton"> Menu item 3 </button>
           </div>
         ) : null} */}
-        <HowToPopup show={this.state.howToShow} onHide={this.modalClose} />
-        <AboutPopup show={this.state.aboutShow} onHide={this.modalClose} />
-        <UploadPopup show={this.state.uploadShow} onHide={this.modalClose} />
+        <HowToPopup show={this.state.howToShow} onHide={this.modalClose}/>
+        <AboutPopup show={this.state.aboutShow} onHide={this.modalClose}/>
+        <UploadPopup show={this.state.uploadShow} onHide={this.modalClose}/>
       </div>
     );
   }
