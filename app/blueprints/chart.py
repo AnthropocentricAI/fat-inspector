@@ -17,10 +17,10 @@ bp = Blueprint('chart', __name__, url_prefix='/chart')
 # (d/m/p, f/a/t) -> { type -> (title, args, func) }
 all_charts = {
     ('data', 'accountability'): {
-        'class_count': { 'title': 'Class Count', 'args': [], 'func': charts.pieChart }
+        'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'func': charts.pieChart }
     },
     ('data', 'fairness'): {
-        'histogram': { 'title': 'Histogram', 'args': ['col'], 'func': charts.histogram }
+        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'func': charts.histogram }
     }
 }
 
@@ -68,7 +68,6 @@ def svg(name, mode, tab, chart_type):
                 file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
 
                 dataset = models.Dataset.from_path(file_path)
-                svg = toRender.get('func')(dataset.data)
 
                 svg = None
 
