@@ -33,7 +33,8 @@ class TestCompute:
             os.mkdir(TEST_ASSETS)
         except IOError:
             pass
-        np.savetxt(os.path.join(TEST_ASSETS, 'default_data.csv'), data, delimiter=',')
+        self.default_path = os.path.join(TEST_ASSETS, 'default_data.csv')
+        np.savetxt(self.default_path, data, delimiter=',')
 
     def teardown_method(self):
         for f in os.listdir(TEST_ASSETS):
@@ -64,14 +65,11 @@ class TestCompute:
 
     def test_build_depth_two(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
-        for n in graph['data']['nodes']:
+        t = tree.build_tree(self.default_path, graph)
+        for n in graph['nodes']:
             assert n['id'] in t.nodes
             assert isinstance(t.nodes[n['id']], tree.Node)
         assert 'Alice' in t.children['Bob']
@@ -79,15 +77,12 @@ class TestCompute:
 
     def test_build_depth_three(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}, {'id': 'Sam'}, {'id': 'Chris'}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
                           {'source': 'Alice', 'target': 'Sam'}, {'source': 'James', 'target': 'Chris'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
-        for n in graph['data']['nodes']:
+        t = tree.build_tree(self.default_path, graph)
+        for n in graph['nodes']:
             assert n['id'] in t.nodes
             assert isinstance(t.nodes[n['id']], tree.Node)
         assert 'Alice' in t.children['Bob']
@@ -97,41 +92,32 @@ class TestCompute:
 
     def test_build_function_mappings(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
                           {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
+        t = tree.build_tree(self.default_path, graph)
         assert t.node_of('Bob').func is None
         assert t.node_of('Alice').func[0] == funcs.get('fatd.transform.data.median')
         assert t.node_of('James').func[0] == funcs.get('fatd.transform.data.mean')
 
     def test_build_load_dataset(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
+        t = tree.build_tree(self.default_path, graph)
         actual_data = t.node_of(t.root).data
         assert np.array_equal(actual_data.data, self.default_data.data)
         assert np.array_equal(actual_data.target, self.default_data.target)
 
     def test_compute_depth_two(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
                           {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
+        t = tree.build_tree(self.default_path, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,
@@ -140,8 +126,6 @@ class TestCompute:
 
     def test_compute_depth_three(self):
         graph = {
-            'dataset': 'default_data',
-            'data': {
                 'nodes': [{'id': 'Bob'},
                           {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
                           {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]},
@@ -149,9 +133,8 @@ class TestCompute:
                           {'id': 'Chris', 'function': ['fatd.transform.data.mean', [1], 1]}],
                 'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
                           {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
-            }
         }
-        t = tree.build_tree(graph, TEST_ASSETS)
+        t = tree.build_tree(self.default_path, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,

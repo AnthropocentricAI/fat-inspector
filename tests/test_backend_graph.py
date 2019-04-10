@@ -106,12 +106,3 @@ class TestBackendGraph:
         })
 
         assert rv.status_code == 400
-
-    def test_list_functions(self):
-        assert False
-
-    def test_execute_graph(self):
-        assert False
-
-    def test_execute_graph_bad_params(self):
-        assert False

@@ -105,10 +105,10 @@ def load_tree(path: str) -> Tree:
     return pickle.load(open(path, 'rb'))
 
 
-def build_tree(d3_graph: Dict, dataset_dir: str) -> Tree:
-    nodes = d3_graph['data']['nodes']
-    links = d3_graph['data']['links']
-    data = csv_loader(os.path.join(dataset_dir, d3_graph['dataset'] + '.csv'))
+def build_tree(dataset_path: str, d3_graph: Dict) -> Tree:
+    nodes = d3_graph['nodes']
+    links = d3_graph['links']
+    data = csv_loader(dataset_path)
 
     # map the node functions to the REAL functions
     for n in nodes:

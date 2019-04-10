@@ -96,8 +96,3 @@ def view_all():
 @bp.route('/functions')
 def fetch_functions():
     return jsonify(['TODO'])
-
-
-@bp.route('/execute', methods=['POST'])
-def execute():
-    abort(500, 'Not implemented yet!')
