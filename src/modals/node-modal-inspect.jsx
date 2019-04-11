@@ -9,7 +9,7 @@ import Button from "react-bootstrap/Button";
 export default class NodeModalInspect extends React.Component {
   render() {
     return (
-      <Modal show={this.props.show} onHide={this.props.onHide}>
+      <Modal show={this.props.show} onHide={this.props.onHide} centered>
         <Modal.Header closeButton>
           <Modal.Title>Inspect {this.props.node.label}</Modal.Title>
         </Modal.Header>

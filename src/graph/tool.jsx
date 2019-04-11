@@ -179,8 +179,8 @@ export default class Tool extends React.Component {
     return (
       <div>
         <div className="data-info">
-          <p>Dataset: {this.props.match.params.dataset}</p>
-          <p>Graph: {this.props.match.params.graph}</p>
+          <h3>Dataset: {this.props.match.params.dataset}</h3>
+          <h3>Graph: {this.props.match.params.graph}</h3>
         </div>
         {this.state.data ? (
           <Graph ref="graph" {...graphProps} />
