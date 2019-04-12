@@ -2,6 +2,8 @@ import React from "react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Spinner from 'react-bootstrap/Spinner'
+import InputGroup from 'react-bootstrap/InputGroup'
+import FormControl from 'react-bootstrap/FormControl'
 
 class Popup extends React.Component {
   constructor(props) {
@@ -92,9 +94,27 @@ class Popup extends React.Component {
                   { this.state.chartData[item] &&                  
                     Object.keys(this.state.chartData[item]).map((obj, i) =>
                       <div key={ i }>
-                        { obj }
+                        <h4>{ this.state.chartData[item][obj].title }:</h4>
                         { this.state.svgData[obj] ? (
-                          <div className="chart__cont" dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
+                          < >
+                            <div className="chart__cont" dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
+
+                            <h5>Arguments:</h5>
+
+                            { this.state.chartData[item][obj].args &&
+                              this.state.chartData[item][obj].args.map((arg) =>
+                                <InputGroup className={ arg }>
+                                  <InputGroup.Prepend>
+                                    <InputGroup.Text id="">{ arg }</InputGroup.Text>
+                                  </InputGroup.Prepend>
+                                  <FormControl
+                                    placeholder="0"
+                                  />
+                                </InputGroup>
+                              )
+                            }
+
+                          </>
                         ) : (
                           <Spinner animation="border" role="status">
                             <span className="sr-only">Loading...</span>
