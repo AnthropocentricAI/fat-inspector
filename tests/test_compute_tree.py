@@ -1,15 +1,14 @@
 import os
+import shutil
 
 import fatd.holders.loaders
 import fatd.transform.data
-from fatd.holders import Data
 import numpy as np
+from fatd.holders import Data
 
 from app import tree
+from app.config import TestingConfig
 from app.functions import funcs
-
-
-TEST_ASSETS = os.path.join(os.path.dirname(__file__), 'assets')
 
 
 class TestCompute:
@@ -29,17 +28,16 @@ class TestCompute:
                          [4.8, 3.4, 1.6, 0.2, 1.0],
                          [4.8, 3.0, 1.4, 0.1, 1.0]])
         self.default_data = Data(data[:, :4], data[:, 4])
+        self.assets = TestingConfig.ASSETS_DIR
         try:
-            os.mkdir(TEST_ASSETS)
+            os.mkdir(self.assets)
         except IOError:
             pass
-        self.default_path = os.path.join(TEST_ASSETS, 'default_data.csv')
+        self.default_path = os.path.join(self.assets, 'default_data.csv')
         np.savetxt(self.default_path, data, delimiter=',')
 
     def teardown_method(self):
-        for f in os.listdir(TEST_ASSETS):
-            os.remove(os.path.join(TEST_ASSETS, f))
-        os.rmdir(TEST_ASSETS)
+        shutil.rmtree(self.assets)
 
     def test_null_function_is_identity(self):
         node = tree.Node(None, self.default_data)
@@ -65,10 +63,10 @@ class TestCompute:
 
     def test_build_depth_two(self):
         graph = {
-                'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         for n in graph['nodes']:
             assert n['id'] in t.nodes
             assert isinstance(t.nodes[n['id']], tree.Node)
@@ -77,11 +75,11 @@ class TestCompute:
 
     def test_build_depth_three(self):
         graph = {
-                'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}, {'id': 'Sam'}, {'id': 'Chris'}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
-                          {'source': 'Alice', 'target': 'Sam'}, {'source': 'James', 'target': 'Chris'}]
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}, {'id': 'Sam'}, {'id': 'Chris'}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
+                      {'source': 'Alice', 'target': 'Sam'}, {'source': 'James', 'target': 'Chris'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         for n in graph['nodes']:
             assert n['id'] in t.nodes
             assert isinstance(t.nodes[n['id']], tree.Node)
@@ -92,32 +90,32 @@ class TestCompute:
 
     def test_build_function_mappings(self):
         graph = {
-                'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                          {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
+                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         assert t.node_of('Bob').func is None
         assert t.node_of('Alice').func[0] == funcs.get('fatd.transform.data.median')
         assert t.node_of('James').func[0] == funcs.get('fatd.transform.data.mean')
 
     def test_build_load_dataset(self):
         graph = {
-                'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         actual_data = t.node_of(t.root).data
         assert np.array_equal(actual_data.data, self.default_data.data)
         assert np.array_equal(actual_data.target, self.default_data.target)
 
     def test_compute_depth_two(self):
         graph = {
-                'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                          {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
+                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,
@@ -126,15 +124,15 @@ class TestCompute:
 
     def test_compute_depth_three(self):
         graph = {
-                'nodes': [{'id': 'Bob'},
-                          {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                          {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]},
-                          {'id': 'Laura', 'function': ['fatd.transform.data.median', [2], 1]},
-                          {'id': 'Chris', 'function': ['fatd.transform.data.mean', [1], 1]}],
-                'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
-                          {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
+            'nodes': [{'id': 'Bob'},
+                      {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
+                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]},
+                      {'id': 'Laura', 'function': ['fatd.transform.data.median', [2], 1]},
+                      {'id': 'Chris', 'function': ['fatd.transform.data.mean', [1], 1]}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
+                      {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
         }
-        t = tree.build_tree(self.default_path, graph)
+        t = tree.build_tree(self.default_data, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,

@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import shutil
 
 from app import create_app
 from app import utilities as util
@@ -21,9 +22,7 @@ class TestBackendGraph:
         }
 
     def teardown_method(self):
-        for f in os.listdir(self.assets):
-            os.remove(os.path.join(self.assets, f))
-        os.rmdir(self.assets)
+        shutil.rmtree(self.assets)
 
     def test_download_graph(self):
         with open(os.path.join(self.assets, 'default_graph.json'), 'w') as f:

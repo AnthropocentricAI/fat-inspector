@@ -2,6 +2,7 @@
 
 import io
 import os
+import shutil
 
 import numpy as np
 from fatd.holders import csv_loader
@@ -32,9 +33,7 @@ class TestBackendDataset:
                                       [4.8, 3.0, 1.4, 0.1, 1.0]])
 
     def teardown_method(self):
-        for f in os.listdir(self.assets):
-            os.remove(os.path.join(self.assets, f))
-        os.rmdir(self.assets)
+        shutil.rmtree(self.assets)
 
     def test_list_datasets(self):
         util.touch_file(os.path.join(self.assets, 'test1.csv'))
