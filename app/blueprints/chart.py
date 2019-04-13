@@ -17,10 +17,10 @@ bp = Blueprint('chart', __name__, url_prefix='/chart')
 # (d/m/p, f/a/t) -> { type -> (title, args, func) }
 all_charts = {
     ('data', 'accountability'): {
-        'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'func': charts.pieChart }
+        'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'args_default': [], 'func': charts.pieChart }
     },
     ('data', 'fairness'): {
-        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'func': charts.histogram }
+        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'args_default': [0], 'func': charts.histogram }
     }
 }
 

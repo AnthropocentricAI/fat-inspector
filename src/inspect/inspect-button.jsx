@@ -4,6 +4,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Spinner from 'react-bootstrap/Spinner'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
+const queryString = require('query-string')
 
 class Popup extends React.Component {
   constructor(props) {
@@ -38,9 +39,10 @@ class Popup extends React.Component {
     }, e => console.error(e)); 
   }
 
+  // where args :: String
   downloadChartSVG(mode, tab, chartType, dataset, args) {
     // TODO: args
-    return fetch(`/chart/${ mode }/${ tab }/${ chartType }/${ dataset }/svg`).then(r => {
+    return fetch(`/chart/${ mode }/${ tab }/${ chartType }/${ dataset }/svg?${ args }`).then(r => {
       if (r.status !== 200) {
         console.error(`Error when attempting to download chart svg for ${ chartType }!`);
       }
@@ -63,21 +65,30 @@ class Popup extends React.Component {
   }
 
   componentDidMount() {
-    /* this.downloadAllChartTypes(this.props.mode).then((data) => {
+    this.downloadAllChartTypes(this.props.mode).then((data) => {
       for (const [key, value] of Object.entries(this.state.tabs)) {
         // download all chart SVGs
         if (value.id in data) {
           for (const [key2, value2] of Object.entries(data[value.id])) {
             console.log(value2.id);
-            this.downloadChartSVG(this.props.mode, value.id, value2.id, this.props.dataset, []);
+            // default arguments string
+            let def = value2.args.reduce((obj, k, i) => ({...obj, [k]: value2.args_default[i] }), {});
+            let defString = queryString.stringify(def);
+
+            //let defArgs = [];
+            //value2.args.forEach((key, i) => defArgs[i].)
+            //let def = value2.args.map(function f)
+
+            this.downloadChartSVG(this.props.mode, value.id, value2.id, this.props.dataset, defString);
           }
         }
       }
-    }); */
-    this.downloadAllChartTypes(this.props.mode);
+    });
 
+    /* this.downloadAllChartTypes(this.props.mode);
+    //keys.reduce((obj, k, i) => ({...obj, [k]: values[i] }), {})
     this.downloadChartSVG(this.props.mode, 'fairness', 'histogram', this.props.dataset, []);
-    this.downloadChartSVG(this.props.mode, 'accountability', 'class_count', this.props.dataset, []);
+    this.downloadChartSVG(this.props.mode, 'accountability', 'class_count', this.props.dataset, []); */
   }
 
   render() {
@@ -99,18 +110,20 @@ class Popup extends React.Component {
                           < >
                             <div className="chart__cont" dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
 
-                            <h5>Arguments:</h5>
-
-                            { this.state.chartData[item][obj].args &&
-                              this.state.chartData[item][obj].args.map((arg) =>
-                                <InputGroup className={ arg }>
-                                  <InputGroup.Prepend>
-                                    <InputGroup.Text id="">{ arg }</InputGroup.Text>
-                                  </InputGroup.Prepend>
-                                  <FormControl
-                                    placeholder="0"
-                                  />
-                                </InputGroup>
+                            { this.state.chartData[item][obj].args.length && (
+                              < >
+                                <h5>Arguments:</h5>
+                                { this.state.chartData[item][obj].args.map((arg, arg_i) =>
+                                  <InputGroup className={ arg }>
+                                    <InputGroup.Prepend>
+                                      <InputGroup.Text id="">{ arg }</InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl
+                                      placeholder={ this.state.chartData[item][obj].args_default[arg_i] }
+                                    />
+                                  </InputGroup>
+                                ) }
+                              </>
                               )
                             }
 
