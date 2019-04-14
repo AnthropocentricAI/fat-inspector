@@ -15,3 +15,17 @@ class APIArgumentError(Exception):
         d = dict(self.payload or ())
         d['message'] = self.message
         return d
+
+
+class TreeComputationError(Exception):
+    """Raise if an error occurred while executing a function tree."""
+
+    node_id: str
+    message: str
+
+    def __init__(self, node_id, message):
+        self.node = node_id
+        self.message = message
+
+    def to_dict(self):
+        return {'node_id': self.node_id, 'message': self.message}

@@ -11,6 +11,7 @@ export default class FileChooser extends React.Component {
     super(props);
     this.state = {
       datasets: [],
+      graphs: [],
       uploadModal: false,
       poppedOut: false,
       existingGraph: false,
@@ -18,21 +19,20 @@ export default class FileChooser extends React.Component {
     };
   }
 
-  fetchDatasets() {
-    fetch('/dataset/view', {
-      method: 'GET'
-    }).then(r => {
-      if (r.status !== 200) {
-        console.error('Failed to get a list of datasets from the server!');
-        return;
-      }
-      r.json().then(data => {
-        this.setState({
-          ...this.state,
-          datasets: data
-        });
-      });
-    }, e => console.error(e));
+  processResponse(r) {
+    if (!r.ok) throw `Error occurred when attempting to fetch ${r.url}!`;
+    return r.json();
+  }
+
+  fetchData() {
+    fetch('/dataset/view')
+      .then(this.processResponse)
+      .then(data => this.setState({ datasets: data }))
+      .catch(e => console.error(e));
+    fetch('/graph/view')
+      .then(this.processResponse)
+      .then(data => this.setState({ graphs: data }))
+      .catch(e => console.error(e));
   }
 
   openGraph(e) {
@@ -49,7 +49,7 @@ export default class FileChooser extends React.Component {
   componentWillMount() {
     // on load, ask the server for a list of datasets
     // TODO: add graph fetching too
-    this.fetchDatasets();
+    this.fetchData();
   }
 
   render() {
@@ -65,7 +65,7 @@ export default class FileChooser extends React.Component {
                           defaultValue={-1}>
               <option disabled hidden value={-1}>Select a dataset...</option>
               {
-                this.state.datasets.map(d => <option key={d}>{d}</option>)
+                this.state.datasets.map(d => <option key={`dataset-${d}`}>{d}</option>)
               }
             </Form.Control>
             <Form.Group className='file-chooser-radios'>
@@ -110,6 +110,9 @@ export default class FileChooser extends React.Component {
                                   name='graph'
                                   defaultValue={-1}>
                       <option disabled hidden value={-1}>Select a graph...</option>
+                      {
+                        this.state.graphs.map(g => <option key={`graph-${g}`}>{g}</option>)
+                      }
                     </Form.Control>
                   </div>
               }

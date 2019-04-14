@@ -9,7 +9,7 @@ from fatd.holders.data import Data
 from fatd.holders.models import Models
 from fatd.holders.predictions import Predictions
 from fatd.holders import csv_loader
-
+from app.exceptions import TreeComputationError
 
 NodeData = Union[Data, Models, Predictions]
 NodeFunction = (Any, List, int)
@@ -39,6 +39,13 @@ class Node:
         if not (self.func is None or self.dirty):
             self.data = self.data.apply(*self.func)
             self.dirty = True
+
+    def __eq__(self, other: 'Node') -> bool:
+        # TODO: do something about Datasets not being equal :(
+        return self.func == other.func and self.dirty == other.dirty
+
+    def __ne__(self, other: 'Node') -> bool:
+        return not self == other
 
 
 class Tree:
@@ -86,7 +93,11 @@ class Tree:
         while len(next_nodes) != 0:
             current_id = next_nodes.pop()
             current_node = self.node_of(current_id)
-            current_node.apply()
+
+            try:
+                current_node.apply()
+            except Exception:
+                raise TreeComputationError(current_id, f'Computation failed at node {current_id}.')
 
             children = self.children_of(current_id)
             for child_id in children:
@@ -94,10 +105,21 @@ class Tree:
                 self.node_of(child_id).data = current_node.data
                 next_nodes.append(child_id)
 
-    def save(self, path: str):
-        """Pickles the current instance to <path> and creates directories as it goes."""
-        os.makedirs(path, exist_ok=True)
-        pickle.dump(self, open(path, 'wb'))
+    def __eq__(self, other: 'Tree') -> bool:
+        for k, v in self.nodes.items():
+            if other.node_of(k) != v:
+                return False
+        for k, v in self.children.items():
+            if other.children_of(k) != v:
+                return False
+        return True
+
+
+def save_tree(tree: Tree, path: str):
+    """Pickles the current instance to <path> and creates directories as it goes."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'wb') as f:
+        pickle.dump(tree, f)
 
 
 def load_tree(path: str) -> Tree:
@@ -105,17 +127,16 @@ def load_tree(path: str) -> Tree:
     return pickle.load(open(path, 'rb'))
 
 
-def build_tree(d3_graph: Dict, dataset_dir: str) -> Tree:
-    nodes = d3_graph['data']['nodes']
-    links = d3_graph['data']['links']
-    data = csv_loader(os.path.join(dataset_dir, d3_graph['dataset'] + '.csv'))
+def build_tree(dataset: NodeData, d3_graph: Dict) -> Tree:
+    nodes = d3_graph['nodes']
+    links = d3_graph['links']
 
     # map the node functions to the REAL functions
     for n in nodes:
         if 'function' in n:
             n['function'][0] = funcs.get(n['function'][0], None)
 
-    tree = Tree(nodes, links, data)
+    tree = Tree(nodes, links, dataset)
     # keep a handle on the d3 graph for later
     tree.d3 = d3_graph
     return tree

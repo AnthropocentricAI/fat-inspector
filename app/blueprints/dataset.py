@@ -3,21 +3,18 @@ import os
 
 from flask import current_app, request, abort, escape, send_file, jsonify
 from flask.blueprints import Blueprint
+from fatd.holders import csv_loader
 
 from app.exceptions import APIArgumentError
-from app import models
 from app import utilities as util
 
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
 
-def list_datasets():
-    return [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
-
-
 @bp.route('/view')
 def view_all():
-    return jsonify(sorted(list_datasets()))
+    datasets = util.list_files_in_dir(current_app.config['ASSETS_DIR'], '.csv', True)
+    return jsonify(sorted(datasets))
 
 
 @bp.route('/<name>/view')
@@ -25,11 +22,15 @@ def view(name):
     name = util.normalise_path_to_file(name) + '.csv'
     try:
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-        dataset = models.Dataset.from_path(file_path)
-        return escape(dataset)
+        holder = csv_loader(file_path)
+        dataset = {
+            'data': holder.data[:20].tolist(),
+            'target': holder.target[:20].tolist()
+        }
+        return jsonify(dataset)
     except IOError as e:
         print(e)
-        abort(400, 'Invalid dataset name.')
+        raise APIArgumentError(f'Error when fetching dataset {name}.')
 
 
 @bp.route('/upload', methods=['POST'])
@@ -53,7 +54,18 @@ def upload():
 
 @bp.route('/<name>/rename', methods=['POST'])
 def rename(name):
-    abort(500, 'Not implemented yet!')
+    if 'new_name' not in request.form:
+        raise APIArgumentError('Invalid request arguments.\n\tnew_name: <str>')
+    old_name = util.normalise_path_to_file(name) + '.csv'
+    new_name = request.form.get('new_name') + '.csv'
+    new_name = os.path.join(current_app.config['ASSETS_DIR'], new_name)
+    try:
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], old_name)
+        os.rename(file_path, new_name)
+        return jsonify({'message': f'Successfully renamed {old_name} to {new_name}'})
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'{name} does not exist, or {new_name} already exists!')
 
 
 @bp.route('/<name>/download')
@@ -67,4 +79,4 @@ def download(name):
                          mimetype='text/csv')
     except IOError as e:
         print(e)
-        abort(400, 'Invalid dataset name.')
+        raise APIArgumentError(f'Dataset {name} does not exist!')
