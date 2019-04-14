@@ -5,10 +5,13 @@ import fatd.holders.loaders
 import fatd.transform.data
 import numpy as np
 from fatd.holders import Data
+from pytest import raises
 
-from app import tree
 from app.config import TestingConfig
+from app.exceptions import TreeComputationError
 from app.functions import funcs
+from app.tree import Node
+from app.tree import build_tree
 
 
 class TestCompute:
@@ -40,14 +43,14 @@ class TestCompute:
         shutil.rmtree(self.assets)
 
     def test_null_function_is_identity(self):
-        node = tree.Node(None, self.default_data)
+        node = Node(None, self.default_data)
         node.apply()
         assert np.array_equal(self.default_data.data, node.data.data)
         assert not node.dirty
 
     def test_apply_equal(self):
         func = (np.mean, [], 0)
-        node = tree.Node(func, self.default_data)
+        node = Node(func, self.default_data)
         node.apply()
         expected = self.default_data.apply(*func)
         assert np.array_equal(expected.data, node.data.data)
@@ -55,7 +58,7 @@ class TestCompute:
 
     def test_repeat_apply_once(self):
         func = (fatd.transform.data.mean, [], 0)
-        node = tree.Node(func, self.default_data)
+        node = Node(func, self.default_data)
         node.apply()
         node.apply()
         expected = self.default_data.apply(*func)
@@ -66,10 +69,10 @@ class TestCompute:
             'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         for n in graph['nodes']:
             assert n['id'] in t.nodes
-            assert isinstance(t.nodes[n['id']], tree.Node)
+            assert isinstance(t.nodes[n['id']], Node)
         assert 'Alice' in t.children['Bob']
         assert 'James' in t.children['Bob']
 
@@ -79,10 +82,10 @@ class TestCompute:
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
                       {'source': 'Alice', 'target': 'Sam'}, {'source': 'James', 'target': 'Chris'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         for n in graph['nodes']:
             assert n['id'] in t.nodes
-            assert isinstance(t.nodes[n['id']], tree.Node)
+            assert isinstance(t.nodes[n['id']], Node)
         assert 'Alice' in t.children['Bob']
         assert 'James' in t.children['Bob']
         assert 'Sam' in t.children['Alice']
@@ -94,7 +97,7 @@ class TestCompute:
                       {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         assert t.node_of('Bob').func is None
         assert t.node_of('Alice').func[0] == funcs.get('fatd.transform.data.median')
         assert t.node_of('James').func[0] == funcs.get('fatd.transform.data.mean')
@@ -104,7 +107,7 @@ class TestCompute:
             'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         actual_data = t.node_of(t.root).data
         assert np.array_equal(actual_data.data, self.default_data.data)
         assert np.array_equal(actual_data.target, self.default_data.target)
@@ -115,7 +118,7 @@ class TestCompute:
                       {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,
@@ -132,7 +135,7 @@ class TestCompute:
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
                       {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
         }
-        t = tree.build_tree(self.default_data, graph)
+        t = build_tree(self.default_data, graph)
         t.compute()
         assert np.array_equal(t.node_of('Bob').data.data, self.default_data.data)
         assert np.array_equal(t.node_of('Alice').data.data,
@@ -142,3 +145,14 @@ class TestCompute:
                               t.node_of('Alice').data.apply(fatd.transform.data.median, [2], 1).data)
         assert np.array_equal(t.node_of('Chris').data.data,
                               t.node_of('James').data.apply(fatd.transform.data.mean, [1], 1).data)
+
+    def test_compute_failure(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
+                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+        }
+        t = build_tree(None, graph)
+        with raises(TreeComputationError) as e_info:
+            t.compute()
+            assert 'Bob' in e_info.value.message
