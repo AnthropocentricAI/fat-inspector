@@ -11,13 +11,10 @@ from app import utilities as util
 bp = Blueprint('dataset', __name__, url_prefix='/dataset')
 
 
-def list_datasets():
-    return [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.csv')]
-
-
 @bp.route('/view')
 def view_all():
-    return jsonify(sorted(list_datasets()))
+    datasets = util.list_files_in_dir(current_app.config['ASSETS_DIR'], '.csv', True)
+    return jsonify(sorted(datasets))
 
 
 @bp.route('/<name>/view')

@@ -83,14 +83,10 @@ def duplicate(name):
         raise APIArgumentError(f'Graph {name} does not exist!')
 
 
-# TODO: refactor lots of repetition between graph.py and dataset.py
-def list_graphs():
-    return [f[:-4] for f in os.listdir(current_app.config['ASSETS_DIR']) if f.endswith('.json')]
-
-
 @bp.route('/view')
 def view_all():
-    return jsonify(sorted(list_graphs()))
+    graphs = util.list_files_in_dir(current_app.config['ASSETS_DIR'], '.json', True)
+    return jsonify(sorted(graphs))
 
 
 @bp.route('/functions')
