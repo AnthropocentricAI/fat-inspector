@@ -11,6 +11,7 @@ export default class FileChooser extends React.Component {
     super(props);
     this.state = {
       datasets: [],
+      graphs: [],
       uploadModal: false,
       poppedOut: false,
       existingGraph: false,
@@ -64,7 +65,7 @@ export default class FileChooser extends React.Component {
                           defaultValue={-1}>
               <option disabled hidden value={-1}>Select a dataset...</option>
               {
-                this.state.datasets.map(d => <option key={d}>{d}</option>)
+                this.state.datasets.map(d => <option key={`dataset-${d}`}>{d}</option>)
               }
             </Form.Control>
             <Form.Group className='file-chooser-radios'>
@@ -109,6 +110,9 @@ export default class FileChooser extends React.Component {
                                   name='graph'
                                   defaultValue={-1}>
                       <option disabled hidden value={-1}>Select a graph...</option>
+                      {
+                        this.state.graphs.map(g => <option key={`graph-${g}`}>{g}</option>)
+                      }
                     </Form.Control>
                   </div>
               }

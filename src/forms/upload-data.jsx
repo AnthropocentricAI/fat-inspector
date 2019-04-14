@@ -18,12 +18,12 @@ export default class UploadData extends React.Component {
     }
   }
 
-  displayResponse(message) {
-    message.json().then(data => {
+  displayResponse(response) {
+    response.json().then(data => {
       this.setState({
         ...this.state,
         // if status is not 200 display error popup rather than success
-        error: message.status !== 200,
+        error: !response.ok,
         displayPopup: true,
         responseMessage: data
       });
@@ -86,10 +86,10 @@ export default class UploadData extends React.Component {
           </div>
           <Row>
             <Col md={7}>
-              <Form.Control placeholder='graph name'/>
+              <Form.Control name='graph_name' placeholder='graph name'/>
             </Col>
             <Col md={3}>
-              <FileFacade accept='.json'>
+              <FileFacade inputName='graph_file' accept='.json'>
                 Browse
               </FileFacade>
             </Col>
