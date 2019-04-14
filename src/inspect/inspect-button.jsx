@@ -4,6 +4,8 @@ import Tabs from 'react-bootstrap/Tabs';
 import Spinner from 'react-bootstrap/Spinner'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 const queryString = require('query-string')
 
 class Popup extends React.Component {
@@ -21,6 +23,7 @@ class Popup extends React.Component {
 
     this.downloadAllChartTypes = this.downloadAllChartTypes.bind(this);
     this.downloadChartSVG = this.downloadChartSVG.bind(this);
+    this.submitArgs = this.submitArgs.bind(this);
   }
 
   downloadAllChartTypes = (mode) => {
@@ -91,6 +94,28 @@ class Popup extends React.Component {
     this.downloadChartSVG(this.props.mode, 'accountability', 'class_count', this.props.dataset, []); */
   }
 
+  submitArgs(tab, chart, e) {
+    e.preventDefault();
+    let data = new FormData(e.target);
+    if (data.get('col') !== '')
+      console.log(data.get('col'));
+    
+    //console.log(data);
+    //data.entries().forEach((e) => { console.log(e) });
+    // entries => argString
+    console.log(data);
+    let argString = ''
+    for(var pair of data.entries()) {
+      argString += `${ pair[0] }=${ pair[1] }`;
+      //console.log(pair[0]+ ', '+ pair[1]); 
+    }
+
+    console.log(argString);
+
+    // redownload
+    this.downloadChartSVG(this.props.mode, tab, chart, this.props.dataset, argString);
+  }
+
   render() {
     const tabs = ['fairness', 'accountability', 'transparency'];
 
@@ -101,7 +126,7 @@ class Popup extends React.Component {
             <Tabs defaultActiveKey="fairness" id="uncontrolled-tab-example">
               { tabs.map(item => (
 
-                <Tab eventKey={ item } title="TODO">
+                <Tab eventKey={ item } title={ item }>
                   { this.state.chartData[item] &&                  
                     Object.keys(this.state.chartData[item]).map((obj, i) =>
                       <div key={ i }>
@@ -113,16 +138,25 @@ class Popup extends React.Component {
                             { this.state.chartData[item][obj].args.length && (
                               < >
                                 <h5>Arguments:</h5>
-                                { this.state.chartData[item][obj].args.map((arg, arg_i) =>
-                                  <InputGroup className={ arg }>
-                                    <InputGroup.Prepend>
-                                      <InputGroup.Text id="">{ arg }</InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                      placeholder={ this.state.chartData[item][obj].args_default[arg_i] }
-                                    />
-                                  </InputGroup>
-                                ) }
+                                <Form onSubmit={(e) => this.submitArgs(item, this.state.chartData[item][obj].id, e)}>
+                                  { this.state.chartData[item][obj].args.map((arg, arg_i) =>
+                                    < >
+                                      <Form.Group controlId="">
+                                      <InputGroup className={ arg }>
+                                        <InputGroup.Prepend>
+                                          <InputGroup.Text id={ `txt_${arg}` }>{ arg }</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <Form.Control name={ arg }
+                                                      placeholder={ this.state.chartData[item][obj].args_default[arg_i] }
+                                        />
+                                      </InputGroup>
+                                      </Form.Group>
+                                    </>
+                                  ) }
+                                  <Button variant="primary" type="submit">
+                                    Apply Arguments
+                                  </Button>
+                                </Form>
                               </>
                               )
                             }
