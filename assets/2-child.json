@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "id": "32e1dca1-1d45-4857-81a7-78dc8ab46d6a",
+      "label": "Original Dataset"
+    },
+    {
+      "id": "7dcab302-fe69-46c0-b2a6-3a68a4edcfcd",
+      "label": "Calculate Median",
+      "function": "fatd.transform.data.median"
+    }
+  ],
+  "links": [
+    {
+      "source": "32e1dca1-1d45-4857-81a7-78dc8ab46d6a",
+      "target": "7dcab302-fe69-46c0-b2a6-3a68a4edcfcd"
+    }
+  ]
+}
