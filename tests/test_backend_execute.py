@@ -32,8 +32,8 @@ class TestExecution:
                                      [4.8, 3.0, 1.4, 0.1, 1.0]])
         self.default_data = Data(self.default_arr[:, :4], self.default_arr[:, 4])
         self.default_graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
+                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
 

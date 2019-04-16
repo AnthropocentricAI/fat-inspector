@@ -49,19 +49,19 @@ class TestCompute:
         assert not node.dirty
 
     def test_apply_equal(self):
-        func = (np.mean, [], 0)
+        func = np.mean
         node = Node(func, self.default_data)
         node.apply()
-        expected = self.default_data.apply(*func)
+        expected = self.default_data.apply(func)
         assert np.array_equal(expected.data, node.data.data)
         assert node.dirty
 
     def test_repeat_apply_once(self):
-        func = (fatd.transform.data.mean, [], 0)
+        func = fatd.transform.data.mean
         node = Node(func, self.default_data)
         node.apply()
         node.apply()
-        expected = self.default_data.apply(*func)
+        expected = self.default_data.apply(func)
         assert np.array_equal(expected.data, node.data.data)
 
     def test_build_depth_two(self):
@@ -93,14 +93,14 @@ class TestCompute:
 
     def test_build_function_mappings(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
+                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
         t = build_tree(self.default_data, graph)
         assert t.node_of('Bob').func is None
-        assert t.node_of('Alice').func[0] == funcs.get('fatd.transform.data.median')
-        assert t.node_of('James').func[0] == funcs.get('fatd.transform.data.mean')
+        assert t.node_of('Alice').func == funcs.get('fatd.transform.data.median')
+        assert t.node_of('James').func == funcs.get('fatd.transform.data.mean')
 
     def test_build_load_dataset(self):
         graph = {
@@ -114,8 +114,8 @@ class TestCompute:
 
     def test_compute_depth_two(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
+                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
         t = build_tree(self.default_data, graph)
@@ -128,10 +128,10 @@ class TestCompute:
     def test_compute_depth_three(self):
         graph = {
             'nodes': [{'id': 'Bob'},
-                      {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]},
-                      {'id': 'Laura', 'function': ['fatd.transform.data.median', [2], 1]},
-                      {'id': 'Chris', 'function': ['fatd.transform.data.mean', [1], 1]}],
+                      {'id': 'Alice', 'function': 'fatd.transform.data.median'},
+                      {'id': 'James', 'function': 'fatd.transform.data.mean'},
+                      {'id': 'Laura', 'function': 'fatd.transform.data.median'},
+                      {'id': 'Chris', 'function': 'fatd.transform.data.mean'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
                       {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
         }
@@ -142,14 +142,14 @@ class TestCompute:
                               t.node_of('Bob').data.apply(fatd.transform.data.median).data)
         assert np.array_equal(t.node_of('James').data.data, t.node_of('Bob').data.apply(fatd.transform.data.mean).data)
         assert np.array_equal(t.node_of('Laura').data.data,
-                              t.node_of('Alice').data.apply(fatd.transform.data.median, [2], 1).data)
+                              t.node_of('Alice').data.apply(fatd.transform.data.median).data)
         assert np.array_equal(t.node_of('Chris').data.data,
-                              t.node_of('James').data.apply(fatd.transform.data.mean, [1], 1).data)
+                              t.node_of('James').data.apply(fatd.transform.data.mean).data)
 
     def test_compute_failure(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': ['fatd.transform.data.median', [], 0]},
-                      {'id': 'James', 'function': ['fatd.transform.data.mean', [], 0]}],
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
+                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
             'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
         }
         t = build_tree(None, graph)
