@@ -1,15 +1,30 @@
 """Graph blueprint module for routes to modify graphs."""
 
-from app.tree import Tree
-from shutil import copyfile
-from flask import send_file, request, abort, jsonify, current_app
-from flask.blueprints import Blueprint
-from app.exceptions import APIArgumentError
-from app import utilities as util
+import json
 import os
+from json.decoder import JSONDecodeError
+from shutil import copyfile
+
+from flask import current_app
+from flask import jsonify
+from flask import request
+from flask import send_file
+from flask.blueprints import Blueprint
+
+from app import utilities as util
+from app.exceptions import APIArgumentError
 
 # all routes in here are accessible through '/graph/<route>'
 bp = Blueprint('graph', __name__, url_prefix='/graph')
+
+
+def verify_graph(graph_bytes: bytes):
+    decoded = graph_bytes.decode('utf-8').replace('\'', '"')
+    j = json.loads(decoded)
+    # uploaded graph must have nodes and links
+    nodes = j.get('nodes')
+    links = j.get('links')
+    return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
 
 
 # TODO: implement placeholder routes
@@ -23,10 +38,16 @@ def upload():
     name = util.normalise_path_to_file(request.form.get('graph_name')) + '.json'
 
     try:
+        if not verify_graph(graph_bytes):
+            raise ValueError(f'Invalid graph {graph_bytes} provided.')
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
         with open(file_path, 'xb') as f:
             f.write(graph_bytes)
         return jsonify({'message': f'Successfully uploaded graph {file.filename} as {name}.'})
+    except (JSONDecodeError, ValueError) as e:
+        print(e)
+        raise APIArgumentError(f'{name} is not a valid graph! ' +
+                               'Please provide a .json file with \'nodes\' and \'links\' attributes.')
     except IOError as e:
         print(e)
         raise APIArgumentError(f'{name} already exists, or an error occurred while attempting to save the graph.')
