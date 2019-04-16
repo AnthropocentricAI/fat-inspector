@@ -159,7 +159,7 @@ export default class Tool extends React.Component {
         data: {
           nodes: [
             ...prev.data.nodes,
-            { id: child_id, label: child, desc: desc, func: func },
+            { id: child_id, label: child, desc: desc, function: func },
           ],
           links: [...prev.data.links, { source: parent, target: child_id }],
         },
@@ -206,7 +206,7 @@ export default class Tool extends React.Component {
             <foreignObject
               x="30"
               y="-15"
-              width="200px"
+              width="225px"
               height="100%"
               className="click-through"
             >
