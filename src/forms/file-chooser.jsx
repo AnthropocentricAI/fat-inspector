@@ -24,7 +24,7 @@ export default class FileChooser extends React.Component {
     return r.json();
   }
 
-  fetchData() {
+  fetchLists() {
     fetch('/dataset/view')
       .then(this.processResponse)
       .then(data => this.setState({ datasets: data }))
@@ -43,6 +43,7 @@ export default class FileChooser extends React.Component {
     let graph = this.state.newGraph
       ? formData.get('graphName')
       : formData.get('graph');
+    this.props.onSubmit(dataset, graph, this.state.newGraph);
     this.props.history.push({
       pathname: `/tool/${dataset}/${graph}`,
     });
@@ -51,7 +52,7 @@ export default class FileChooser extends React.Component {
   componentWillMount() {
     // on load, ask the server for a list of datasets
     // TODO: add graph fetching too
-    this.fetchData();
+    this.fetchLists();
   }
 
   render() {

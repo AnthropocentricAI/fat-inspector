@@ -18,13 +18,16 @@ from app.exceptions import APIArgumentError
 bp = Blueprint('graph', __name__, url_prefix='/graph')
 
 
-def verify_graph(graph_bytes: bytes):
-    decoded = graph_bytes.decode('utf-8').replace('\'', '"')
-    j = json.loads(decoded)
-    # uploaded graph must have nodes and links
-    nodes = j.get('nodes')
-    links = j.get('links')
-    return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
+def verify_graph(graph_bytes: bytes) -> bool:
+    try:
+        decoded = graph_bytes.decode('utf-8').replace('\'', '"')
+        graph = json.loads(decoded)
+        # uploaded graph must have nodes and links
+        nodes = graph.get('nodes')
+        links = graph.get('links')
+        return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
+    except JSONDecodeError as e:
+        return False
 
 
 # TODO: implement placeholder routes
@@ -39,15 +42,12 @@ def upload():
 
     try:
         if not verify_graph(graph_bytes):
-            raise ValueError(f'Invalid graph {graph_bytes} provided.')
+            raise APIArgumentError(f'{name} is not a valid graph! ' +
+                                   'Please provide a .json file with \'nodes\' and \'links\' attributes.')
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
         with open(file_path, 'xb') as f:
             f.write(graph_bytes)
         return jsonify({'message': f'Successfully uploaded graph {file.filename} as {name}.'})
-    except (JSONDecodeError, ValueError) as e:
-        print(e)
-        raise APIArgumentError(f'{name} is not a valid graph! ' +
-                               'Please provide a .json file with \'nodes\' and \'links\' attributes.')
     except IOError as e:
         print(e)
         raise APIArgumentError(f'{name} already exists, or an error occurred while attempting to save the graph.')
@@ -55,12 +55,11 @@ def upload():
 
 @bp.route('<name>/rename', methods=['POST'])
 def rename(name):
-    # TODO: normalise paths: currently the POST parameters are left unchecked
     if 'new_name' not in request.form:
         raise APIArgumentError('Invalid request arguments.\n\tnew_name: <str>')
 
     old_name = util.normalise_path_to_file(name) + '.json'
-    new_name = request.form.get('new_name') + '.json'
+    new_name = util.normalise_path_to_file(request.form.get('new_name')) + '.json'
     new_name = os.path.join(current_app.config['ASSETS_DIR'], new_name)
 
     try:
@@ -72,7 +71,7 @@ def rename(name):
         raise APIArgumentError(f'{name} does not exist, or {new_name} already exists!')
 
 
-@bp.route('<name>/download')
+@bp.route('/<name>/download')
 def download(name):
     name = util.normalise_path_to_file(name) + '.json'
     file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
@@ -86,7 +85,7 @@ def download(name):
         raise APIArgumentError(f'Graph {name} does not exist!')
 
 
-@bp.route('<name>/duplicate', methods=['POST'])
+@bp.route('/<name>/duplicate', methods=['POST'])
 def duplicate(name):
     if 'new_name' not in request.form:
         raise APIArgumentError(f'Invalid request arguments.\n\tnew_name: <str>')
@@ -108,6 +107,19 @@ def duplicate(name):
 def view_all():
     graphs = util.list_files_in_dir(current_app.config['ASSETS_DIR'], '.json', True)
     return jsonify(sorted(graphs))
+
+
+@bp.route('/<name>/fetch')
+def fetch(name):
+    name = util.normalise_path_to_file(name) + '.json'
+    file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+    try:
+        with open(file_path) as f:
+            graph = json.load(f)
+            return jsonify(graph)
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'Graph {name} does not exist!')
 
 
 @bp.route('/functions')

@@ -8,6 +8,7 @@ import {
   Redirect,
   Route,
   Switch,
+  withRouter,
 } from 'react-router-dom';
 import ParticlesConfig from './particles-config.js';
 import Particles from 'react-particles-js';
@@ -15,6 +16,19 @@ import Particles from 'react-particles-js';
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isNew: false,
+    };
+  }
+
+  onSelect(dataset, graph, isNew) {
+    this.setState({
+      isNew: isNew,
+    });
+  }
+
   render() {
     return (
       <>
@@ -26,7 +40,7 @@ class App extends React.Component {
               render={props => (
                 <>
                   <Topbar />
-                  <Tool {...props} />
+                  <Tool {...props} isNew={this.state.isNew} />
                 </>
               )}
             />
@@ -36,7 +50,7 @@ class App extends React.Component {
               render={props => (
                 <>
                   <Particles className="particles" params={ParticlesConfig} />
-                  <FileChooser {...props} />
+                  <FileChooser {...props} onSubmit={this.onSelect.bind(this)} />
                 </>
               )}
             />

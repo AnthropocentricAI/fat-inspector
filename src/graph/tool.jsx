@@ -5,6 +5,7 @@ import defaultConfig from './config';
 import uuid from 'uuid/v4';
 import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
+import PropTypes from 'prop-types';
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -32,9 +33,10 @@ export default class Tool extends React.Component {
   // upon first mount, we need to populate the graph and fetch relevant data
   componentDidMount() {
     this.fetchFunctions();
-    this.populateGraph(true);
+    this.populateGraph(this.props.isNew);
   }
 
+  // TODO: make this a utlity function as it is repeated code (see file-chooser.jsx)
   parseFunctionResponse(r) {
     if (!r.ok) throw 'Error when attempting to fetch functions!';
     return r.json();
@@ -70,7 +72,15 @@ export default class Tool extends React.Component {
     if (isNew) {
       this.initEmptyGraph();
     } else {
-      // TODO: better way to make new graph & fetch graphs - 22/03/2019
+      fetch(`/graph/${this.props.match.params.graph}/fetch`)
+        .then(r => r.json())
+        .then(j => {
+          this.setState({
+            data: {
+              ...j,
+            },
+          });
+        });
     }
   }
 
@@ -214,3 +224,7 @@ export default class Tool extends React.Component {
     );
   }
 }
+
+Tool.propTypes = {
+  isNew: PropTypes.bool,
+};
