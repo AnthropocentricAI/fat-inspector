@@ -1,7 +1,7 @@
-import React from "react";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import UploadData from "./forms/upload-data.jsx";
+import React from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import UploadData from './forms/upload-data.jsx';
 
 class UploadPopup extends React.Component {
   render() {

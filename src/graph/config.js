@@ -19,15 +19,15 @@ module.exports = {
     mouseCursor: 'pointer',
     renderLabel: true,
     labelProperty: 'label',
-    symbolType: 'circle'
+    symbolType: 'circle',
   },
   link: {
     highlightColor: '#C0D6DF',
-    strokeWidth: 3
+    strokeWidth: 3,
   },
   d3: {
     gravity: -1000,
     linkLength: 200,
-    alphaTarget: 0.7
-  }
+    alphaTarget: 0.7,
+  },
 };

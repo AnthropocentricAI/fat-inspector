@@ -1,21 +1,21 @@
-import React from "react";
-import Popover from "react-bootstrap/Popover";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import Popover from 'react-bootstrap/Popover';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faDiceD6,
   faEdit,
   faSearch,
   faSuperscript,
-  faTrashAlt
-} from "@fortawesome/free-solid-svg-icons";
-import Nav from "react-bootstrap/Nav";
-import PropTypes from "prop-types";
-import NodeModalEdit from "../modals/node-modal-edit.jsx";
-import NodeModalApply from "../modals/node-modal-apply.jsx";
-import ModalConfirmation from "../modals/modal-confirmation.jsx";
-import InspectorPopup from "../inspect/inspector-popup.jsx";
-import NodeModalInspect from "../modals/node-modal-inspect.jsx";
+  faTrashAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import Nav from 'react-bootstrap/Nav';
+import PropTypes from 'prop-types';
+import NodeModalEdit from '../modals/node-modal-edit.jsx';
+import NodeModalApply from '../modals/node-modal-apply.jsx';
+import ModalConfirmation from '../modals/modal-confirmation.jsx';
+import InspectorPopup from '../inspect/inspector-popup.jsx';
+import NodeModalInspect from '../modals/node-modal-inspect.jsx';
 
 // register icons for the popup
 library.add(faSearch); // search
@@ -30,44 +30,44 @@ export default class NodePopover extends React.Component {
 
     this.optionsList = [
       {
-        name: "Inspect",
-        icon: "search",
+        name: 'Inspect',
+        icon: 'search',
         action: () => {
           this.setState({ showInspector: true });
-        }
+        },
       },
       {
-        name: "Convert to Model",
-        icon: "dice-d6",
-        action: () => {}
+        name: 'Convert to Model',
+        icon: 'dice-d6',
+        action: () => {},
       },
       {
-        name: "Edit",
-        icon: "edit",
+        name: 'Edit',
+        icon: 'edit',
         action: () => {
           this.setState({ showEdit: true });
-        }
+        },
       },
       {
-        name: "Apply Function",
-        icon: "superscript",
+        name: 'Apply Function',
+        icon: 'superscript',
         action: () => {
           this.setState({ showApply: true });
-        }
+        },
       },
       {
-        name: "Delete Node",
-        icon: "trash-alt",
+        name: 'Delete Node',
+        icon: 'trash-alt',
         action: () => {
           this.setState({ showDelete: true });
-        }
-      }
+        },
+      },
     ];
     this.state = {
       showApply: false,
       showEdit: false,
       showDelete: false,
-      showInspector: false
+      showInspector: false,
     };
   }
 
@@ -103,7 +103,7 @@ export default class NodePopover extends React.Component {
                                            Description: {this.props.node.desc}
                                          </p>
                                        ) : (
-                                         ""
+                                         ''
                                        )
                                      }`}
           onConfirm={() => this.props.onDelete(this.props.node.id)}
@@ -139,9 +139,9 @@ NodePopover.propTypes = {
     desc: PropTypes.string,
     func: PropTypes.string,
     id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired
+    label: PropTypes.string.isRequired,
   }).isRequired,
   onApply: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
 };

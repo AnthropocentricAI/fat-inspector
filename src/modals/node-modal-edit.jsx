@@ -5,7 +5,6 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 
-
 export default class NodeModalEdit extends React.Component {
   submitSave(e) {
     e.preventDefault();
@@ -26,14 +25,15 @@ export default class NodeModalEdit extends React.Component {
               <div className="form-label-wrapper">
                 <Form.Label>Label</Form.Label>
               </div>
-              <Form.Control name="label"
-                            placeholder={this.props.node.label}/>
+              <Form.Control name="label" placeholder={this.props.node.label} />
               <div className="form-label-wrapper">
                 <Form.Label>Description</Form.Label>
               </div>
-              <Form.Control as="textarea"
-                            name="desc"
-                            placeholder={this.props.node.desc}/>
+              <Form.Control
+                as="textarea"
+                name="desc"
+                placeholder={this.props.node.desc}
+              />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>

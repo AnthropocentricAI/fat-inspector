@@ -1,41 +1,41 @@
-import React, { PureComponent } from "react";
-import HowToPopup from "../how-to-popup.jsx";
-import AboutPopup from "../about-popup.jsx";
-import UploadPopup from "../upload-popup.jsx";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import React, { PureComponent } from 'react';
+import HowToPopup from '../how-to-popup.jsx';
+import AboutPopup from '../about-popup.jsx';
+import UploadPopup from '../upload-popup.jsx';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 const buttonnames = [
   {
-    name: "EDIT DATASET",
+    name: 'EDIT DATASET',
     dropdowns: [
       {
-        name: "Save"
+        name: 'Save',
       },
       {
-        name: "Export"
+        name: 'Export',
       },
       {
-        name: "Rename"
+        name: 'Rename',
       },
       {
-        name: "Duplicate"
+        name: 'Duplicate',
       },
       {
-        name: "Import"
-      }
-    ]
+        name: 'Import',
+      },
+    ],
   },
   {
-    name: "NEW DATASET"
+    name: 'NEW DATASET',
   },
   {
-    name: "HOW TO USE"
+    name: 'HOW TO USE',
   },
   {
-    name: "ABOUT"
-  }
+    name: 'ABOUT',
+  },
 ];
 
 class Topbar extends PureComponent {
@@ -46,7 +46,7 @@ class Topbar extends PureComponent {
       howToShow: false,
       aboutShow: false,
       uploadShow: false,
-      showMenu: false
+      showMenu: false,
     };
     this.modalClose = this.modalClose.bind(this);
     this.uploadOpen = this.uploadOpen.bind(this);
@@ -60,14 +60,14 @@ class Topbar extends PureComponent {
     event.preventDefault();
 
     this.setState({ showMenu: true }, () => {
-      document.addEventListener("click", this.closeMenu);
+      document.addEventListener('click', this.closeMenu);
     });
   }
 
   closeMenu(event) {
     if (!this.dropdownMenu.contains(event.target)) {
       this.setState({ showMenu: false }, () => {
-        document.removeEventListener("click", this.closeMenu);
+        document.removeEventListener('click', this.closeMenu);
       });
     }
   }
@@ -76,7 +76,7 @@ class Topbar extends PureComponent {
     this.setState({
       howToShow: false,
       aboutShow: false,
-      uploadShow: false
+      uploadShow: false,
     });
   }
 
@@ -84,7 +84,7 @@ class Topbar extends PureComponent {
     this.setState({
       howToShow: false,
       aboutShow: false,
-      uploadShow: true
+      uploadShow: true,
     });
   }
 
@@ -92,7 +92,7 @@ class Topbar extends PureComponent {
     this.setState({
       howToShow: true,
       aboutShow: false,
-      uploadShow: false
+      uploadShow: false,
     });
   }
 
@@ -100,7 +100,7 @@ class Topbar extends PureComponent {
     this.setState({
       howToShow: false,
       aboutShow: true,
-      uploadShow: false
+      uploadShow: false,
     });
   }
 

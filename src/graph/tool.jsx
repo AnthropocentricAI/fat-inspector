@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Graph } from "react-d3-graph";
-import defaultConfig from "./config";
-import uuid from "uuid/v4";
-import NodePopover from "./node-popover.jsx";
-import Spinner from "react-bootstrap/Spinner";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Graph } from 'react-d3-graph';
+import defaultConfig from './config';
+import uuid from 'uuid/v4';
+import NodePopover from './node-popover.jsx';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class Tool extends React.Component {
       edit: false,
       functions: [],
       nodeClickedId: false,
-      showApply: false
+      showApply: false,
     };
 
     console.log(this.props);
@@ -36,17 +36,17 @@ export default class Tool extends React.Component {
   }
 
   parseFunctionResponse(r) {
-    if (!r.ok) throw "Error when attempting to fetch functions!";
+    if (!r.ok) throw 'Error when attempting to fetch functions!';
     return r.json();
   }
 
   fetchFunctions() {
     // ask the server for a the list of node functions
-    fetch("/graph/functions")
+    fetch('/graph/functions')
       .then(this.parseFunctionResponse)
       .then(data =>
         this.setState({
-          functions: data
+          functions: data,
         })
       )
       .catch(err => console.error(err));
@@ -55,14 +55,14 @@ export default class Tool extends React.Component {
   initEmptyGraph() {
     const rootNode = {
       id: uuid(),
-      label: "root"
+      label: 'root',
     };
     this.setState({
       root: rootNode.id,
       data: {
         nodes: [rootNode],
-        links: []
-      }
+        links: [],
+      },
     });
   }
 
@@ -76,7 +76,7 @@ export default class Tool extends React.Component {
 
   onClickNode(id) {
     this.setState({
-      nodeClickedId: id
+      nodeClickedId: id,
     });
     // set node to front of svg
     let nodeElement = document.getElementById(id);
@@ -96,12 +96,12 @@ export default class Tool extends React.Component {
             ? {
                 ...x,
                 label: label || x.label,
-                desc: desc || x.desc
+                desc: desc || x.desc,
               }
             : x
         ),
-        links: this.state.data.links
-      }
+        links: this.state.data.links,
+      },
     });
   }
 
@@ -128,8 +128,8 @@ export default class Tool extends React.Component {
     this.setState({
       data: {
         nodes: nodes,
-        links: links
-      }
+        links: links,
+      },
     });
   }
 
@@ -149,21 +149,21 @@ export default class Tool extends React.Component {
         data: {
           nodes: [
             ...prev.data.nodes,
-            { id: child_id, label: child, desc: desc, func: func }
+            { id: child_id, label: child, desc: desc, func: func },
           ],
-          links: [...prev.data.links, { source: parent, target: child_id }]
-        }
+          links: [...prev.data.links, { source: parent, target: child_id }],
+        },
       };
     });
   }
 
   render() {
     const graphProps = {
-      id: "graph",
+      id: 'graph',
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
-      onClickGraph: this.onClickGraph
+      onClickGraph: this.onClickGraph,
     };
 
     // portal from children of node  element
