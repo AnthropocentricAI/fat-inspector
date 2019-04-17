@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "root",
+      "id": "root-node",
       "label": "I am root!"
     },
     {
@@ -15,11 +15,11 @@
   ],
   "links": [
     {
-      "source": "root",
+      "source": "root-node",
       "target": "aisjdioajsdo"
     },
     {
-      "source": "root",
+      "source": "root-node",
       "target": "rwerwerw"
     }
   ]
