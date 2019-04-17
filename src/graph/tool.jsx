@@ -52,7 +52,7 @@ export default class Tool extends React.Component {
           functions: data,
         })
       )
-      .catch(err => console.error(err));
+      .catch(console.error);
   }
 
   initEmptyGraph() {
@@ -74,13 +74,20 @@ export default class Tool extends React.Component {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
-        .then(r => r.json())
+        .then(r => {
+          if (!r.ok) throw `Failed to fetch ${this.props.match.params.graph}!`;
+          return r.json();
+        })
         .then(j => {
           this.setState({
             data: {
               ...j,
             },
           });
+        })
+        .catch(err => {
+          console.error(err);
+          this.props.history.push('/');
         });
     }
   }
