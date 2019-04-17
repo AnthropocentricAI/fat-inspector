@@ -25,21 +25,22 @@ def verify_graph(graph: dict) -> bool:
     return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
 
 
-@bp.route('/<name>/save')
+@bp.route('/<name>/save', methods=['POST'])
 def save(name):
-    if not request.is_json():
+    if not request.is_json:
         raise APIArgumentError('Invalid request - must be of type JSON.')
 
-    graph = request.json()
+    graph = request.json
     if not verify_graph(graph):
         raise APIArgumentError(f'Invalid graph provided!' +
-                               'Please provide a JSON objectwith \'nodes\' and \'links\' attributes.')
+                               'Please provide a JSON object with \'nodes\' and \'links\' attributes.')
 
     try:
-        file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], name) + '.json'
         with open(file_path, 'w') as f:
             json.dump(graph, f)
-    except IOError as e:
+            return jsonify({'message': f'Successfully saved {name}.'})
+    except (JSONDecodeError, IOError) as e:
         # TODO: replace all of these with logging
         print(e)
         raise APIArgumentError(f'An error occurred while attempting to save graph {name}.')
