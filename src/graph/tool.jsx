@@ -6,6 +6,7 @@ import uuid from 'uuid/v4';
 import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
+import Topbar from '../topbar/topbar.jsx';
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -188,6 +189,7 @@ export default class Tool extends React.Component {
 
     return (
       <div>
+        <Topbar graph={this.props.match.params.graph} data={this.state.data} />
         <div className="data-info">
           <h3>Dataset: {this.props.match.params.dataset}</h3>
           <h3>Graph: {this.props.match.params.graph}</h3>
