@@ -105,6 +105,11 @@ class Topbar extends PureComponent {
   }
 
   render() {
+    // attach the graph data to the Export button, see this for why
+    // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
+    const exportData = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(this.props.data)
+    )}`;
     return (
       <div>
         <Navbar
@@ -124,7 +129,13 @@ class Topbar extends PureComponent {
                 id="collasible-nav-dropdown"
               >
                 <NavDropdown.Item>Save</NavDropdown.Item>
-                <NavDropdown.Item>Export</NavDropdown.Item>
+                <NavDropdown.Item
+                  as="a"
+                  download={`${this.props.graph}.json`}
+                  href={exportData}
+                >
+                  Export
+                </NavDropdown.Item>
                 <NavDropdown.Item>Rename</NavDropdown.Item>
                 <NavDropdown.Item>Duplicate</NavDropdown.Item>
               </NavDropdown>
