@@ -104,6 +104,22 @@ class Topbar extends PureComponent {
     });
   }
 
+  saveGraph() {
+    console.log(this.props.data);
+    fetch(`/graph/${this.props.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.props.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(r => r.json())
+      .then(j => {
+        console.log(j.message);
+      })
+      .catch(e => console.error(e));
+  }
+
   render() {
     // attach the graph data to the Export button, see this for why
     // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
@@ -125,10 +141,12 @@ class Topbar extends PureComponent {
             <Nav className="mr-auto">
               <NavDropdown
                 className="topbar-button"
-                title="Dataset Settings"
+                title="Graph Settings"
                 id="collasible-nav-dropdown"
               >
-                <NavDropdown.Item>Save</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.saveGraph()}>
+                  Save
+                </NavDropdown.Item>
                 <NavDropdown.Item
                   as="a"
                   download={`${this.props.graph}.json`}
