@@ -29,3 +29,12 @@ class TreeComputationError(Exception):
 
     def to_dict(self):
         return {'node_id': self.node_id, 'message': self.message}
+
+
+class TreeBuildError(Exception):
+    """Raise if an error occurred while building a function tree."""
+
+    message: str
+
+    def __init__(self, message):
+        self.message = message
