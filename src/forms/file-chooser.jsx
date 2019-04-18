@@ -5,6 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 import UploadData from './upload-data.jsx';
 import Collapse from 'react-bootstrap/Collapse';
 import PropTypes from 'prop-types';
+import { jsonOkRequired } from '../util';
 
 export default class FileChooser extends React.Component {
   constructor(props) {
@@ -19,20 +20,15 @@ export default class FileChooser extends React.Component {
     };
   }
 
-  processResponse(r) {
-    if (!r.ok) throw `Error occurred when attempting to fetch ${r.url}!`;
-    return r.json();
-  }
-
   fetchLists() {
     fetch('/dataset/view')
-      .then(this.processResponse)
+      .then(jsonOkRequired)
       .then(data => this.setState({ datasets: data }))
-      .catch(e => console.error(e));
+      .catch(console.error);
     fetch('/graph/view')
-      .then(this.processResponse)
+      .then(jsonOkRequired)
       .then(data => this.setState({ graphs: data }))
-      .catch(e => console.error(e));
+      .catch(console.error);
   }
 
   openGraph(e) {
@@ -49,9 +45,7 @@ export default class FileChooser extends React.Component {
     });
   }
 
-  componentWillMount() {
-    // on load, ask the server for a list of datasets
-    // TODO: add graph fetching too
+  componentDidMount() {
     this.fetchLists();
   }
 

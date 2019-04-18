@@ -5,40 +5,9 @@ import UploadPopup from '../upload-popup.jsx';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { jsonOkRequired } from '../util';
 
-const buttonnames = [
-  {
-    name: 'EDIT DATASET',
-    dropdowns: [
-      {
-        name: 'Save',
-      },
-      {
-        name: 'Export',
-      },
-      {
-        name: 'Rename',
-      },
-      {
-        name: 'Duplicate',
-      },
-      {
-        name: 'Import',
-      },
-    ],
-  },
-  {
-    name: 'NEW DATASET',
-  },
-  {
-    name: 'HOW TO USE',
-  },
-  {
-    name: 'ABOUT',
-  },
-];
-
-class Topbar extends PureComponent {
+export default class Topbar extends PureComponent {
   constructor(args) {
     super(args);
 
@@ -48,64 +17,9 @@ class Topbar extends PureComponent {
       uploadShow: false,
       showMenu: false,
     };
-    this.modalClose = this.modalClose.bind(this);
-    this.uploadOpen = this.uploadOpen.bind(this);
-    this.howToOpen = this.howToOpen.bind(this);
-    this.aboutOpen = this.aboutOpen.bind(this);
-    this.showMenu = this.showMenu.bind(this);
-    this.closeMenu = this.closeMenu.bind(this);
-  }
-
-  showMenu(event) {
-    event.preventDefault();
-
-    this.setState({ showMenu: true }, () => {
-      document.addEventListener('click', this.closeMenu);
-    });
-  }
-
-  closeMenu(event) {
-    if (!this.dropdownMenu.contains(event.target)) {
-      this.setState({ showMenu: false }, () => {
-        document.removeEventListener('click', this.closeMenu);
-      });
-    }
-  }
-
-  modalClose() {
-    this.setState({
-      howToShow: false,
-      aboutShow: false,
-      uploadShow: false,
-    });
-  }
-
-  uploadOpen() {
-    this.setState({
-      howToShow: false,
-      aboutShow: false,
-      uploadShow: true,
-    });
-  }
-
-  howToOpen() {
-    this.setState({
-      howToShow: true,
-      aboutShow: false,
-      uploadShow: false,
-    });
-  }
-
-  aboutOpen() {
-    this.setState({
-      howToShow: false,
-      aboutShow: true,
-      uploadShow: false,
-    });
   }
 
   saveGraph() {
-    console.log(this.props.data);
     fetch(`/graph/${this.props.graph}/save`, {
       method: 'POST',
       body: JSON.stringify(this.props.data),
@@ -113,11 +27,11 @@ class Topbar extends PureComponent {
         'Content-Type': 'application/json',
       },
     })
-      .then(r => r.json())
+      .then(jsonOkRequired)
       .then(j => {
         console.log(j.message);
       })
-      .catch(e => console.error(e));
+      .catch(console.error);
   }
 
   render() {
@@ -157,25 +71,41 @@ class Topbar extends PureComponent {
                 <NavDropdown.Item>Rename</NavDropdown.Item>
                 <NavDropdown.Item>Duplicate</NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link className="topbar-button" onClick={this.uploadOpen}>
+              <Nav.Link
+                className="topbar-button"
+                onClick={() => this.setState({ uploadShow: true })}
+              >
                 New Dataset
               </Nav.Link>
-              <Nav.Link className="topbar-button" onClick={this.howToOpen}>
+              <Nav.Link
+                className="topbar-button"
+                onClick={() => this.setState({ howToShow: true })}
+              >
                 How To
               </Nav.Link>
-              <Nav.Link className="topbar-button" onClick={this.aboutOpen}>
+              <Nav.Link
+                className="topbar-button"
+                onClick={() => this.setState({ aboutShow: true })}
+              >
                 About
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
 
-        <HowToPopup show={this.state.howToShow} onHide={this.modalClose} />
-        <AboutPopup show={this.state.aboutShow} onHide={this.modalClose} />
-        <UploadPopup show={this.state.uploadShow} onHide={this.modalClose} />
+        <HowToPopup
+          show={this.state.howToShow}
+          onHide={() => this.setState({ howToShow: false })}
+        />
+        <AboutPopup
+          show={this.state.aboutShow}
+          onHide={() => this.setState({ aboutShow: false })}
+        />
+        <UploadPopup
+          show={this.state.uploadShow}
+          onHide={() => this.setState({ uploadShow: false })}
+        />
       </div>
     );
   }
 }
-
-export default Topbar;

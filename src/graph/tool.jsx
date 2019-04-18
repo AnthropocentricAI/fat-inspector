@@ -7,6 +7,7 @@ import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
 import Topbar from '../topbar/topbar.jsx';
+import { jsonWithStatus } from '../util';
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -22,7 +23,6 @@ export default class Tool extends React.Component {
       showApply: false,
     };
 
-    console.log(this.props);
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
@@ -37,21 +37,15 @@ export default class Tool extends React.Component {
     this.populateGraph(this.props.isNew);
   }
 
-  // TODO: make this a utlity function as it is repeated code (see file-chooser.jsx)
-  parseFunctionResponse(r) {
-    if (!r.ok) throw 'Error when attempting to fetch functions!';
-    return r.json();
-  }
-
   fetchFunctions() {
-    // ask the server for a the list of node functions
     fetch('/graph/functions')
-      .then(this.parseFunctionResponse)
-      .then(data =>
+      .then(jsonWithStatus)
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to get functions!');
         this.setState({
-          functions: data,
-        })
-      )
+          functions: r.json,
+        });
+      })
       .catch(console.error);
   }
 
@@ -74,20 +68,16 @@ export default class Tool extends React.Component {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
+        .then(jsonWithStatus)
         .then(r => {
-          if (!r.ok) throw `Failed to fetch ${this.props.match.params.graph}!`;
-          return r.json();
-        })
-        .then(j => {
-          this.setState({
-            data: {
-              ...j,
-            },
-          });
-        })
-        .catch(err => {
-          console.error(err);
-          this.props.history.push('/');
+          if (!r.ok) this.props.history.push('/');
+          else {
+            this.setState({
+              data: {
+                ...r.json,
+              },
+            });
+          }
         });
     }
   }
