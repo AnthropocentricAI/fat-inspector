@@ -1,6 +1,6 @@
-import React from "react";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
+import React from 'react';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 class InspectorPopup extends React.Component {
   render() {
@@ -33,13 +33,13 @@ class InspectButton extends React.Component {
   constructor() {
     super();
     this.state = {
-      popoverOpen: false
+      popoverOpen: false,
     };
   }
 
   toggle() {
     this.setState({
-      popoverOpen: !this.state.popoverOpen
+      popoverOpen: !this.state.popoverOpen,
     });
   }
 

@@ -23,7 +23,7 @@ export default class Tool extends React.Component {
       edit: false,
       functions: [],
       nodeClickedId: false,
-      showApply: false
+      showApply: false,
     };
 
     console.log(this.props);
@@ -39,21 +39,22 @@ export default class Tool extends React.Component {
   // upon first mount, we need to populate the graph and fetch relevant data
   componentDidMount() {
     this.fetchFunctions();
-    this.populateGraph(true);
+    this.populateGraph(this.props.isNew);
   }
 
+  // TODO: make this a utlity function as it is repeated code (see file-chooser.jsx)
   parseFunctionResponse(r) {
-    if (!r.ok) throw "Error when attempting to fetch functions!";
+    if (!r.ok) throw 'Error when attempting to fetch functions!';
     return r.json();
   }
 
   fetchFunctions() {
     // ask the server for a the list of node functions
-    fetch("/graph/functions")
+    fetch('/graph/functions')
       .then(this.parseFunctionResponse)
       .then(data =>
         this.setState({
-          functions: data
+          functions: data,
         })
       )
       .catch(err => console.error(err));
@@ -62,14 +63,14 @@ export default class Tool extends React.Component {
   initEmptyGraph() {
     const rootNode = {
       id: uuid(),
-      label: "root"
+      label: 'root',
     };
     this.setState({
       root: rootNode.id,
       data: {
         nodes: [rootNode],
-        links: []
-      }
+        links: [],
+      },
     });
   }
 
@@ -77,13 +78,21 @@ export default class Tool extends React.Component {
     if (isNew) {
       this.initEmptyGraph();
     } else {
-      // TODO: better way to make new graph & fetch graphs - 22/03/2019
+      fetch(`/graph/${this.props.match.params.graph}/fetch`)
+        .then(r => r.json())
+        .then(j => {
+          this.setState({
+            data: {
+              ...j,
+            },
+          });
+        });
     }
   }
 
   onClickNode(id) {
     this.setState({
-      nodeClickedId: id
+      nodeClickedId: id,
     });
     // set node to front of svg
     let nodeElement = document.getElementById(id);
@@ -107,8 +116,8 @@ export default class Tool extends React.Component {
             }
             : x
         ),
-        links: this.state.data.links
-      }
+        links: this.state.data.links,
+      },
     });
   }
 
@@ -135,8 +144,8 @@ export default class Tool extends React.Component {
     this.setState({
       data: {
         nodes: nodes,
-        links: links
-      }
+        links: links,
+      },
     });
   }
 
@@ -156,10 +165,10 @@ export default class Tool extends React.Component {
         data: {
           nodes: [
             ...prev.data.nodes,
-            { id: child_id, label: child, desc: desc, func: func }
+            { id: child_id, label: child, desc: desc, function: func },
           ],
-          links: [...prev.data.links, { source: parent, target: child_id }]
-        }
+          links: [...prev.data.links, { source: parent, target: child_id }],
+        },
       };
     });
   }
@@ -170,11 +179,11 @@ export default class Tool extends React.Component {
 
   render() {
     const graphProps = {
-      id: "graph",
+      id: 'graph',
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
-      onClickGraph: this.onClickGraph
+      onClickGraph: this.onClickGraph,
     };
 
     // portal from children of node  element
@@ -212,7 +221,7 @@ export default class Tool extends React.Component {
             <foreignObject
               x="30"
               y="-15"
-              width="200px"
+              width="225px"
               height="100%"
               className="click-through"
             >
@@ -230,3 +239,7 @@ export default class Tool extends React.Component {
     );
   }
 }
+
+Tool.propTypes = {
+  isNew: PropTypes.bool,
+};

@@ -10,6 +10,7 @@ from flask import jsonify
 
 from app import exceptions
 from app.config import config
+from app.utilities import list_files_in_dir
 
 
 def load_blueprints(app):
@@ -17,10 +18,10 @@ def load_blueprints(app):
 
     :param app: current application
     """
-    for file in os.listdir(os.path.join(os.path.dirname(__file__), 'blueprints')):
-        # if it's a python file (excluding '__init__.py' and 'main.py') then import its blueprint
-        if file.endswith('.py') and file != '__init__.py' and file != 'main.py':
-            route = importlib.import_module('app.blueprints.' + file[:-3])
+    blueprints = list_files_in_dir(os.path.join(os.path.dirname(__file__), 'blueprints'), '.py', True)
+    for f in blueprints:
+        if f != '__init__' and f != 'main':
+            route = importlib.import_module(f'app.blueprints.{f}')
             app.register_blueprint(route.bp)
     # main.py MUST be imported last - the catch-all route takes the lowest precedence
     route = importlib.import_module('app.blueprints.main')

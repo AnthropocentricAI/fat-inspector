@@ -37,7 +37,7 @@ class Node:
     def apply(self):
         """Apply the node's function to its data. If self.dirty then it is skipped."""
         if not (self.func is None or self.dirty):
-            self.data = self.data.apply(*self.func)
+            self.data = self.data.apply(self.func)
             self.dirty = True
 
     def __eq__(self, other: 'Node') -> bool:
@@ -134,7 +134,7 @@ def build_tree(dataset: NodeData, d3_graph: Dict) -> Tree:
     # map the node functions to the REAL functions
     for n in nodes:
         if 'function' in n:
-            n['function'][0] = funcs.get(n['function'][0], None)
+            n['function'] = funcs.get(n['function'], None)
 
     tree = Tree(nodes, links, dataset)
     # keep a handle on the d3 graph for later
