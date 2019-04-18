@@ -7,14 +7,13 @@ import {
   faEdit,
   faSearch,
   faSuperscript,
-  faTrashAlt
+  faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import Nav from "react-bootstrap/Nav";
 import PropTypes from "prop-types";
 import NodeModalEdit from "../modals/node-modal-edit.jsx";
 import NodeModalApply from "../modals/node-modal-apply.jsx";
 import ModalConfirmation from "../modals/modal-confirmation.jsx";
-import InspectorPopup from "../inspect/inspector-popup.jsx";
 import NodeModalInspect from "../modals/node-modal-inspect.jsx";
 
 // register icons for the popup
@@ -39,20 +38,20 @@ export default class NodePopover extends React.Component {
       {
         name: "Convert to Model",
         icon: "dice-d6",
-        action: () => {}
-      },
-      {
-        name: "Edit",
-        icon: "edit",
-        action: () => {
-          this.setState({ showEdit: true });
-        }
+        action: () => { }
       },
       {
         name: "Apply Function",
         icon: "superscript",
         action: () => {
           this.setState({ showApply: true });
+        }
+      },
+      {
+        name: "Edit",
+        icon: "edit",
+        action: () => {
+          this.setState({ showEdit: true });
         }
       },
       {
@@ -95,17 +94,17 @@ export default class NodePopover extends React.Component {
         <ModalConfirmation
           message={`Are you sure that you want to delete node '${
             this.props.node.label
-          }'
+            }'
                                      and all of its children? This change is permanent cannot be undone.
                                      ${
-                                       this.props.node.desc ? (
-                                         <p>
-                                           Description: {this.props.node.desc}
-                                         </p>
-                                       ) : (
-                                         ""
-                                       )
-                                     }`}
+            this.props.node.desc ? (
+              <p>
+                Description: {this.props.node.desc}
+              </p>
+            ) : (
+                ""
+              )
+            }`}
           onConfirm={() => this.props.onDelete(this.props.node.id)}
           onHide={() => this.setState({ showDelete: false })}
           show={this.state.showDelete}

@@ -5,6 +5,12 @@ import defaultConfig from "./config";
 import uuid from "uuid/v4";
 import NodePopover from "./node-popover.jsx";
 import Spinner from "react-bootstrap/Spinner";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBolt
+} from "@fortawesome/free-solid-svg-icons";
+library.add(faBolt);
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -27,6 +33,7 @@ export default class Tool extends React.Component {
     this.deleteNode = this.deleteNode.bind(this);
     this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
+    this.executeFunctions = this.executeFunctions.bind(this);
   }
 
   // upon first mount, we need to populate the graph and fetch relevant data
@@ -94,10 +101,10 @@ export default class Tool extends React.Component {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-                ...x,
-                label: label || x.label,
-                desc: desc || x.desc
-              }
+              ...x,
+              label: label || x.label,
+              desc: desc || x.desc
+            }
             : x
         ),
         links: this.state.data.links
@@ -157,6 +164,10 @@ export default class Tool extends React.Component {
     });
   }
 
+  executeFunctions() {
+    fetch(`execute/ ${this.props.match.params.dataset} / ${this.props.match.params.graph}`, { method: 'POST' });
+  }
+
   render() {
     const graphProps = {
       id: "graph",
@@ -182,13 +193,18 @@ export default class Tool extends React.Component {
           <h3>Dataset: {this.props.match.params.dataset}</h3>
           <h3>Graph: {this.props.match.params.graph}</h3>
         </div>
+        <button className="apply-functions" onClick={this.executeFunctions}>
+          <FontAwesomeIcon icon="bolt" size="lg" />
+          <h6>Execute</h6>
+          <h6>Functions</h6>
+        </button>
         {this.state.data ? (
           <Graph ref="graph" {...graphProps} />
         ) : (
-          <div className="graph-loading">
-            <Spinner animation="border" role="status" />
-          </div>
-        )}
+            <div className="graph-loading">
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
 
         {/* display popup */}
         {node && (

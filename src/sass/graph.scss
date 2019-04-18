@@ -15,12 +15,34 @@
   }
 }
 
+.apply-functions {
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  font: bold;
+  font: 30;
+  display: inline;
+  text-align: center;
+  background-color: transparent;
+  border-color: black;
+  color: black;
+  border-width: 1px;
+  vertical-align: middle;
+  border-radius: 2em;
+  transition: 0.3s;
+
+  &:hover {
+    background-color: orangered;
+  }
+}
+
 svg[name="svg-container-graph"] {
   position: fixed;
   top: 0;
   left: 0;
   height: 100% !important;
   width: 100% !important;
+  z-index: -1;
 }
 
 .click-through {
