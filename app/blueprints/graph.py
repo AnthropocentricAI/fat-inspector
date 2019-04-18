@@ -18,19 +18,34 @@ from app.exceptions import APIArgumentError
 bp = Blueprint('graph', __name__, url_prefix='/graph')
 
 
-def verify_graph(graph_bytes: bytes) -> bool:
+def verify_graph(graph: dict) -> bool:
+    # uploaded graph must have nodes and links
+    nodes = graph.get('nodes')
+    links = graph.get('links')
+    return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
+
+
+@bp.route('/<name>/save', methods=['POST'])
+def save(name):
+    if not request.is_json:
+        raise APIArgumentError('Invalid request - must be of type JSON.')
+
+    graph = request.json
+    if not verify_graph(graph):
+        raise APIArgumentError(f'Invalid graph provided!' +
+                               'Please provide a JSON object with \'nodes\' and \'links\' attributes.')
+
     try:
-        decoded = graph_bytes.decode('utf-8').replace('\'', '"')
-        graph = json.loads(decoded)
-        # uploaded graph must have nodes and links
-        nodes = graph.get('nodes')
-        links = graph.get('links')
-        return isinstance(nodes, list) and isinstance(links, list) and len(nodes) > 0
-    except JSONDecodeError as e:
-        return False
+        file_path = os.path.join(current_app.config['ASSETS_DIR'], name) + '.json'
+        with open(file_path, 'w') as f:
+            json.dump(graph, f)
+            return jsonify({'message': f'Successfully saved {name}.'})
+    except (JSONDecodeError, IOError) as e:
+        # TODO: replace all of these with logging
+        print(e)
+        raise APIArgumentError(f'An error occurred while attempting to save graph {name}.')
 
 
-# TODO: implement placeholder routes
 @bp.route('/upload', methods=['POST'])
 def upload():
     if 'graph_file' not in request.files or 'graph_name' not in request.form:
@@ -41,7 +56,9 @@ def upload():
     name = util.normalise_path_to_file(request.form.get('graph_name')) + '.json'
 
     try:
-        if not verify_graph(graph_bytes):
+        g = graph_bytes.decode('utf-8').replace('\'', '"')
+        graph = json.loads(g)
+        if not verify_graph(graph):
             raise APIArgumentError(f'{name} is not a valid graph! ' +
                                    'Please provide a .json file with \'nodes\' and \'links\' attributes.')
         file_path = os.path.join(current_app.config['ASSETS_DIR'], name)

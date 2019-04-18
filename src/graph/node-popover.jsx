@@ -8,13 +8,13 @@ import {
   faSearch,
   faSuperscript,
   faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import Nav from "react-bootstrap/Nav";
-import PropTypes from "prop-types";
-import NodeModalEdit from "../modals/node-modal-edit.jsx";
-import NodeModalApply from "../modals/node-modal-apply.jsx";
-import ModalConfirmation from "../modals/modal-confirmation.jsx";
-import NodeModalInspect from "../modals/node-modal-inspect.jsx";
+} from '@fortawesome/free-solid-svg-icons';
+import Nav from 'react-bootstrap/Nav';
+import PropTypes from 'prop-types';
+import NodeModalEdit from '../modals/node-modal-edit.jsx';
+import NodeModalApply from '../modals/node-modal-apply.jsx';
+import ModalConfirmation from '../modals/modal-confirmation.jsx';
+import NodeModalInspect from '../modals/node-modal-inspect.jsx';
 
 // register icons for the popup
 library.add(faSearch); // search
@@ -36,23 +36,23 @@ export default class NodePopover extends React.Component {
         },
       },
       {
-        name: "Convert to Model",
-        icon: "dice-d6",
-        action: () => { }
+        name: 'Convert to Model',
+        icon: 'dice-d6',
+        action: () => {},
       },
       {
-        name: "Apply Function",
-        icon: "superscript",
+        name: 'Apply Function',
+        icon: 'superscript',
         action: () => {
           this.setState({ showApply: true });
-        }
+        },
       },
       {
-        name: "Edit",
-        icon: "edit",
+        name: 'Edit',
+        icon: 'edit',
         action: () => {
           this.setState({ showEdit: true });
-        }
+        },
       },
       {
         name: 'Delete Node',
@@ -73,9 +73,9 @@ export default class NodePopover extends React.Component {
   render() {
     const confirmMessage = `Are you sure that you want to delete node '${
       this.props.node.label
-      }' and all of its children? This change is permanent cannot be undone. ${
+    }' and all of its children? This change is permanent cannot be undone. ${
       this.props.node.desc ? <p>Description: {this.props.node.desc}</p> : ''
-      }`;
+    }`;
     return (
       <>
         <NodeModalInspect

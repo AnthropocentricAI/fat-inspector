@@ -1,15 +1,17 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Graph } from "react-d3-graph";
-import defaultConfig from "./config";
-import uuid from "uuid/v4";
-import NodePopover from "./node-popover.jsx";
-import Spinner from "react-bootstrap/Spinner";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBolt
-} from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Graph } from 'react-d3-graph';
+import defaultConfig from './config';
+import uuid from 'uuid/v4';
+import NodePopover from './node-popover.jsx';
+import Spinner from 'react-bootstrap/Spinner';
+import PropTypes from 'prop-types';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Topbar from '../topbar/topbar.jsx';
+import { jsonWithStatus } from '../util';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
+
 library.add(faBolt);
 
 export default class Tool extends React.Component {
@@ -26,7 +28,6 @@ export default class Tool extends React.Component {
       showApply: false,
     };
 
-    console.log(this.props);
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
@@ -42,22 +43,16 @@ export default class Tool extends React.Component {
     this.populateGraph(this.props.isNew);
   }
 
-  // TODO: make this a utlity function as it is repeated code (see file-chooser.jsx)
-  parseFunctionResponse(r) {
-    if (!r.ok) throw 'Error when attempting to fetch functions!';
-    return r.json();
-  }
-
   fetchFunctions() {
-    // ask the server for a the list of node functions
     fetch('/graph/functions')
-      .then(this.parseFunctionResponse)
-      .then(data =>
+      .then(jsonWithStatus)
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to get functions!');
         this.setState({
-          functions: data,
-        })
-      )
-      .catch(err => console.error(err));
+          functions: r.json,
+        });
+      })
+      .catch(console.error);
   }
 
   initEmptyGraph() {
@@ -79,13 +74,16 @@ export default class Tool extends React.Component {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
-        .then(r => r.json())
-        .then(j => {
-          this.setState({
-            data: {
-              ...j,
-            },
-          });
+        .then(jsonWithStatus)
+        .then(r => {
+          if (!r.ok) this.props.history.push('/');
+          else {
+            this.setState({
+              data: {
+                ...r.json,
+              },
+            });
+          }
         });
     }
   }
@@ -110,10 +108,10 @@ export default class Tool extends React.Component {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-              ...x,
-              label: label || x.label,
-              desc: desc || x.desc
-            }
+                ...x,
+                label: label || x.label,
+                desc: desc || x.desc,
+              }
             : x
         ),
         links: this.state.data.links,
@@ -174,7 +172,12 @@ export default class Tool extends React.Component {
   }
 
   executeFunctions() {
-    fetch(`execute/ ${this.props.match.params.dataset} / ${this.props.match.params.graph}`, { method: 'POST' });
+    fetch(
+      `/execute/${this.props.match.params.dataset}/${
+        this.props.match.params.graph
+      }`,
+      { method: 'POST' }
+    );
   }
 
   render() {
@@ -198,6 +201,7 @@ export default class Tool extends React.Component {
 
     return (
       <div>
+        <Topbar graph={this.props.match.params.graph} data={this.state.data} />
         <div className="data-info">
           <h3>Dataset: {this.props.match.params.dataset}</h3>
           <h3>Graph: {this.props.match.params.graph}</h3>
@@ -210,10 +214,10 @@ export default class Tool extends React.Component {
         {this.state.data ? (
           <Graph ref="graph" {...graphProps} />
         ) : (
-            <div className="graph-loading">
-              <Spinner animation="border" role="status" />
-            </div>
-          )}
+          <div className="graph-loading">
+            <Spinner animation="border" role="status" />
+          </div>
+        )}
 
         {/* display popup */}
         {node && (

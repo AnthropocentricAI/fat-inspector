@@ -39,7 +39,6 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Topbar />
                   <Tool {...props} isNew={this.state.isNew} />
                 </>
               )}
