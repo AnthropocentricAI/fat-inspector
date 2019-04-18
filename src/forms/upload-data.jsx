@@ -6,6 +6,7 @@ import FileFacade from './file-facade.jsx';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Alert from 'react-bootstrap/Alert';
+import { jsonWithStatus } from '../util';
 
 export default class UploadData extends React.Component {
   constructor(props) {
@@ -18,51 +19,37 @@ export default class UploadData extends React.Component {
   }
 
   displayResponse(response) {
-    response.json().then(data => {
-      this.setState({
-        ...this.state,
-        // if status is not 200 display error popup rather than success
-        error: !response.ok,
-        displayPopup: true,
-        responseMessage: data,
-      });
+    this.setState({
+      error: !response.ok,
+      displayPopup: true,
+      responseMessage: response.json,
     });
     setTimeout(
       () =>
         this.setState({
-          ...this.state,
           displayPopup: false,
         }),
       2500
     );
   }
 
-  onSubmitDataset(e) {
-    // stop normal form submission
+  submitFile(e, type) {
     e.preventDefault();
     let formData = new FormData(e.target);
-    console.log(`Uploading dataset ${formData.get('dataset_name')}...`);
-    fetch('dataset/upload', {
+    console.log(`Uploading new ${type}...`);
+    fetch(`${type}/upload`, {
       method: 'POST',
       body: formData,
-    }).then(r => this.displayResponse(r), e => this.displayResponse(e));
-  }
-
-  onSubmitGraph(e) {
-    e.preventDefault();
-    let formData = new FormData(e.target);
-    console.log(`Uploading graph ${formData.get('graph_name')}...`);
-    fetch('graph/upload', {
-      method: 'POST',
-      body: formData,
-    }).then(r => this.displayResponse(r), e => this.displayResponse(e));
+    })
+      .then(jsonWithStatus)
+      .then(r => this.displayResponse(r));
   }
 
   render() {
     return (
       <div>
         {/* dataset form */}
-        <Form onSubmit={this.onSubmitDataset.bind(this)}>
+        <Form onSubmit={e => this.submitFile(e, 'dataset')}>
           <div className="form-label-wrapper">
             <Form.Label>Dataset</Form.Label>
           </div>
@@ -83,7 +70,7 @@ export default class UploadData extends React.Component {
           </Row>
         </Form>
         {/* graph form */}
-        <Form onSubmit={this.onSubmitGraph.bind(this)}>
+        <Form onSubmit={e => this.submitFile(e, 'graph')}>
           <div className="form-label-wrapper">
             <Form.Label>Graph</Form.Label>
           </div>
