@@ -8,14 +8,13 @@ import Collapse from 'react-bootstrap/Collapse';
 import Alert from 'react-bootstrap/Alert';
 
 export default class UploadData extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       error: false,
       displayPopup: false,
-      errorMessage: ''
-    }
+      errorMessage: '',
+    };
   }
 
   displayResponse(response) {
@@ -25,13 +24,17 @@ export default class UploadData extends React.Component {
         // if status is not 200 display error popup rather than success
         error: !response.ok,
         displayPopup: true,
-        responseMessage: data
+        responseMessage: data,
       });
     });
-    setTimeout(() => this.setState({
-      ...this.state,
-      displayPopup: false
-    }), 2500);
+    setTimeout(
+      () =>
+        this.setState({
+          ...this.state,
+          displayPopup: false,
+        }),
+      2500
+    );
   }
 
   onSubmitDataset(e) {
@@ -51,50 +54,50 @@ export default class UploadData extends React.Component {
     console.log(`Uploading graph ${formData.get('graph_name')}...`);
     fetch('graph/upload', {
       method: 'POST',
-      body: formData
-    }).then(r => this.displayResponse(r), e => this.displayResponse(e));;
+      body: formData,
+    }).then(r => this.displayResponse(r), e => this.displayResponse(e));
   }
 
   render() {
     return (
       <div>
-        { /* dataset form */}
+        {/* dataset form */}
         <Form onSubmit={this.onSubmitDataset.bind(this)}>
           <div className="form-label-wrapper">
             <Form.Label>Dataset</Form.Label>
           </div>
           <Row>
             <Col md={7}>
-              <Form.Control name='dataset_name' placeholder='dataset name'/>
+              <Form.Control name="dataset_name" placeholder="dataset name" />
             </Col>
             <Col md={3}>
-              <FileFacade inputName='dataset_file' accept='.csv'>
+              <FileFacade inputName="dataset_file" accept=".csv">
                 Browse
               </FileFacade>
             </Col>
             <Col md={2}>
-              <Button type='submit' className='btn btn-secondary'>
+              <Button type="submit" className="btn btn-secondary">
                 Submit
               </Button>
             </Col>
           </Row>
         </Form>
-        { /* graph form */}
+        {/* graph form */}
         <Form onSubmit={this.onSubmitGraph.bind(this)}>
-          <div className='form-label-wrapper'>
+          <div className="form-label-wrapper">
             <Form.Label>Graph</Form.Label>
           </div>
           <Row>
             <Col md={7}>
-              <Form.Control name='graph_name' placeholder='graph name'/>
+              <Form.Control name="graph_name" placeholder="graph name" />
             </Col>
             <Col md={3}>
-              <FileFacade inputName='graph_file' accept='.json'>
+              <FileFacade inputName="graph_file" accept=".json">
                 Browse
               </FileFacade>
             </Col>
             <Col md={2}>
-              <Button type='submit' className='btn btn-secondary'>
+              <Button type="submit" className="btn btn-secondary">
                 Submit
               </Button>
             </Col>
@@ -102,16 +105,19 @@ export default class UploadData extends React.Component {
         </Form>
         <Collapse in={this.state.displayPopup}>
           <div>
-            {
-              this.state.responseMessage ?
-                <Alert className='response-alert'
-                       variant={this.state.error ? 'danger' : 'success'}>
-                  <span className='response-body'>{this.state.responseMessage.message}</span>
-                </Alert> : null
-            }
+            {this.state.responseMessage ? (
+              <Alert
+                className="response-alert"
+                variant={this.state.error ? 'danger' : 'success'}
+              >
+                <span className="response-body">
+                  {this.state.responseMessage.message}
+                </span>
+              </Alert>
+            ) : null}
           </div>
         </Collapse>
       </div>
-    )
+    );
   }
 }

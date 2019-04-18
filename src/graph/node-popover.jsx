@@ -1,7 +1,7 @@
-import React from "react";
-import Popover from "react-bootstrap/Popover";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import Popover from 'react-bootstrap/Popover';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faDiceD6,
   faEdit,
@@ -29,11 +29,11 @@ export default class NodePopover extends React.Component {
 
     this.optionsList = [
       {
-        name: "Inspect",
-        icon: "search",
+        name: 'Inspect',
+        icon: 'search',
         action: () => {
           this.setState({ showInspector: true });
-        }
+        },
       },
       {
         name: "Convert to Model",
@@ -55,22 +55,27 @@ export default class NodePopover extends React.Component {
         }
       },
       {
-        name: "Delete Node",
-        icon: "trash-alt",
+        name: 'Delete Node',
+        icon: 'trash-alt',
         action: () => {
           this.setState({ showDelete: true });
-        }
-      }
+        },
+      },
     ];
     this.state = {
       showApply: false,
       showEdit: false,
       showDelete: false,
-      showInspector: false
+      showInspector: false,
     };
   }
 
   render() {
+    const confirmMessage = `Are you sure that you want to delete node '${
+      this.props.node.label
+      }' and all of its children? This change is permanent cannot be undone. ${
+      this.props.node.desc ? <p>Description: {this.props.node.desc}</p> : ''
+      }`;
     return (
       <>
         <NodeModalInspect
@@ -92,19 +97,7 @@ export default class NodePopover extends React.Component {
           show={this.state.showApply}
         />
         <ModalConfirmation
-          message={`Are you sure that you want to delete node '${
-            this.props.node.label
-            }'
-                                     and all of its children? This change is permanent cannot be undone.
-                                     ${
-            this.props.node.desc ? (
-              <p>
-                Description: {this.props.node.desc}
-              </p>
-            ) : (
-                ""
-              )
-            }`}
+          message={confirmMessage}
           onConfirm={() => this.props.onDelete(this.props.node.id)}
           onHide={() => this.setState({ showDelete: false })}
           show={this.state.showDelete}
@@ -115,7 +108,9 @@ export default class NodePopover extends React.Component {
           title={this.props.node.label}
         >
           <Nav className="flex-column">
-            {this.props.node.func && <p>Function: {this.props.node.func}</p>}
+            {this.props.node.function && (
+              <p>Function: {this.props.node.function}</p>
+            )}
             {this.props.node.desc && <p>Description: {this.props.node.desc}</p>}
             {this.optionsList.map(option => (
               <Nav.Item key={option.name} onClick={option.action}>
@@ -136,11 +131,11 @@ NodePopover.propTypes = {
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   node: PropTypes.shape({
     desc: PropTypes.string,
-    func: PropTypes.string,
+    function: PropTypes.string,
     id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired
+    label: PropTypes.string.isRequired,
   }).isRequired,
   onApply: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
 };

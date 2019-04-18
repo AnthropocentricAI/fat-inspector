@@ -11,14 +11,14 @@ import PropTypes from 'prop-types';
 export default class FileFacade extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {selectedFile: undefined}
+    this.state = { selectedFile: undefined };
   }
 
   updateSelectedFile(e) {
     let filename = e.target.value.split(/([\\/])/g).pop();
     this.setState({
       ...this.state,
-      selectedFile: filename
+      selectedFile: filename,
     });
   }
 
@@ -26,19 +26,23 @@ export default class FileFacade extends React.Component {
     return (
       <div className="file-facade-wrapper">
         <Form.Label>
-          <Form.Control onChange={this.updateSelectedFile.bind(this)}
-                        style={{display: 'none'}}
-                        name={this.props.inputName || ''}
-                        type='file'
-                        accept={this.props.accept}/>
-          <span className='file-facade-button'>{this.props.children}</span>
-          <span className='file-facade-name'>{this.state.selectedFile || ''}</span>
+          <Form.Control
+            onChange={this.updateSelectedFile.bind(this)}
+            style={{ display: 'none' }}
+            name={this.props.inputName || ''}
+            type="file"
+            accept={this.props.accept}
+          />
+          <span className="file-facade-button">{this.props.children}</span>
+          <span className="file-facade-name">
+            {this.state.selectedFile || ''}
+          </span>
         </Form.Label>
       </div>
-    )
+    );
   }
 }
 
 FileFacade.propTypes = {
-  inputName: PropTypes.string
+  inputName: PropTypes.string,
 };

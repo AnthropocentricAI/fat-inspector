@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import Modal from "react-bootstrap/Modal";
-import PropTypes from "prop-types";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import Button from "react-bootstrap/Button";
+import Modal from 'react-bootstrap/Modal';
+import PropTypes from 'prop-types';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import Button from 'react-bootstrap/Button';
 
 export default class NodeModalInspect extends React.Component {
   render() {
@@ -38,5 +38,5 @@ export default class NodeModalInspect extends React.Component {
 
 NodeModalInspect.propTypes = {
   onHide: PropTypes.func.isRequired,
-  show: PropTypes.bool.isRequired
+  show: PropTypes.bool.isRequired,
 };

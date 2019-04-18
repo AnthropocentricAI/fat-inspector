@@ -1,20 +1,34 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import FileChooser from "./forms/file-chooser.jsx";
-import Topbar from "./topbar/topbar.jsx";
-import loadable from "@loadable/component";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import FileChooser from './forms/file-chooser.jsx';
+import Topbar from './topbar/topbar.jsx';
+import loadable from '@loadable/component';
 import {
   BrowserRouter as Router,
   Redirect,
   Route,
-  Switch
-} from "react-router-dom";
-import ParticlesConfig from "./particles-config.js";
-import Particles from "react-particles-js";
+  Switch,
+  withRouter,
+} from 'react-router-dom';
+import ParticlesConfig from './particles-config.js';
+import Particles from 'react-particles-js';
 
-const Tool = loadable(() => import("./graph/tool.jsx"));
+const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isNew: false,
+    };
+  }
+
+  onSelect(dataset, graph, isNew) {
+    this.setState({
+      isNew: isNew,
+    });
+  }
+
   render() {
     return (
       <>
@@ -26,7 +40,7 @@ class App extends React.Component {
               render={props => (
                 <>
                   <Topbar />
-                  <Tool {...props} />
+                  <Tool {...props} isNew={this.state.isNew} />
                 </>
               )}
             />
@@ -36,7 +50,7 @@ class App extends React.Component {
               render={props => (
                 <>
                   <Particles className="particles" params={ParticlesConfig} />
-                  <FileChooser {...props} />
+                  <FileChooser {...props} onSubmit={this.onSelect.bind(this)} />
                 </>
               )}
             />
@@ -48,4 +62,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'));

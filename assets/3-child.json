@@ -1,0 +1,26 @@
+{
+  "nodes": [
+    {
+      "id": "root",
+      "label": "I am root!"
+    },
+    {
+      "id": "aisjdioajsdo",
+      "label": "I am child!"
+    },
+    {
+      "id": "rwerwerw",
+      "label": "I am child!"
+    }
+  ],
+  "links": [
+    {
+      "source": "root",
+      "target": "aisjdioajsdo"
+    },
+    {
+      "source": "root",
+      "target": "rwerwerw"
+    }
+  ]
+}

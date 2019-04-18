@@ -38,9 +38,7 @@ class TestBackendGraph:
         assert rv.status_code == 400
 
     def test_upload_graph(self):
-        graph_file = io.BytesIO()
-        graph_file.write(b'testbytes')
-        graph_file.seek(0)
+        graph_file = io.BytesIO(json.dumps(self.default_graph).encode('utf-8'))
 
         rv = self.client.post('/graph/upload',
                               content_type='multipart/form-data',
