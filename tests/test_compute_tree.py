@@ -305,3 +305,22 @@ class TestCompute:
             _ = build_tree(self.default_data, graph)
 
         assert 'got 2' in exc_info.value.message
+
+    def test_disjoint_failure(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
+            'links': []
+        }
+
+        with raises(TreeBuildError) as exc_info:
+            _ = build_tree(self.default_data, graph)
+
+        assert 'got 3' in exc_info.value.message
+
+    def test_root_only(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}],
+            'links': []
+        }
+
+        _ = build_tree(self.default_data, graph)
