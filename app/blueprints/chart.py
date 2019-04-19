@@ -27,7 +27,7 @@ all_charts = {
 
 # filters out the func. key
 # from {(mode, tab) -> {}}
-def filterFunc(d):
+def filter_func(d):
     return { k: { k: v for k, v in v.items() if k != 'func' } for k, v in d.items()}
 
 
@@ -39,7 +39,7 @@ def all_chart_types_mode(mode):
     bigBoy = dict()
     for k in all_charts.keys():
         if mode in k:
-            bigBoy[k[1]] = filterFunc(all_charts.get(k))
+            bigBoy[k[1]] = filter_func(all_charts.get(k))
     return jsonify(bigBoy)
 
 
@@ -49,7 +49,7 @@ def all_chart_types_mode(mode):
 def all_chart_types_combo(mode, tab):
     combo = (mode, tab)
     if combo in all_charts:
-        return jsonify(filterFunc(all_charts.get(combo)))
+        return jsonify(filter_func(all_charts.get(combo)))
     else:
         abort(400, 'Invalid mode & tab combination.')
 

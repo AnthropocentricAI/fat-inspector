@@ -8,15 +8,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 const queryString = require('query-string')
 
+import Chart from './inspect-chart.jsx'
+
 class Popup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tabs: {
-        fairness: { id: 'fairness', title: 'Fairness' },
-        accountability: { id: 'accountability', title: 'Accountability' },
-        transparency: { id: 'transparency', title: 'Transparency' }
-      },
+      tabs: [
+        { id: 'fairness', title: 'Fairness' },
+        { id: 'accountability', title: 'Accountability' },
+        { id: 'transparency', title: 'Transparency' }
+      ],
       chartData: {},
       svgData: {}
     };
@@ -82,7 +84,7 @@ class Popup extends React.Component {
             //value2.args.forEach((key, i) => defArgs[i].)
             //let def = value2.args.map(function f)
 
-            this.downloadChartSVG(this.props.mode, value.id, value2.id, this.props.dataset, defString);
+            //this.downloadChartSVG(this.props.mode, value.id, value2.id, this.props.dataset, defString);
           }
         }
       }
@@ -117,29 +119,42 @@ class Popup extends React.Component {
   }
 
   render() {
-    const tabs = ['fairness', 'accountability', 'transparency'];
+    //const tabs = ['fairness', 'accountability', 'transparency'];
 
     return (
       <div className='popup'>
         <div className='popup_inner'>
           <div className="popup_title">
             <Tabs defaultActiveKey="fairness" id="uncontrolled-tab-example">
-              { tabs.map(item => (
+              {/* { tabs.map(item => ( */}
+              {/* Object.keys(this.state.tabs).map((tab_key, i) => {*/}
+              { this.state.tabs.map((tab) => 
+                
+                
+                <Tab eventKey={ tab.id } title={ tab.title }>
+                  { this.state.chartData[tab.id] &&
+                    Object.keys(this.state.chartData[tab.id]).map((chartId, i) =>
+                      <Chart mode={ this.props.mode }
+                             tab={ tab.id }
+                             chartData={ this.state.chartData[tab.id][chartId] }
+                             dataset={ this.props.dataset }>
+                      </Chart>
+                    )
+                  }
 
-                <Tab eventKey={ item } title={ item }>
-                  { this.state.chartData[item] &&                  
-                    Object.keys(this.state.chartData[item]).map((obj, i) =>
+                  {/*{ this.state.chartData[tab.id] &&                  
+                    Object.keys(this.state.chartData[tab.id]).map((obj, i) =>
                       <div key={ i }>
-                        <h4>{ this.state.chartData[item][obj].title }:</h4>
+                        <h4>{ this.state.chartData[tab.id][obj].title }:</h4>
                         { this.state.svgData[obj] ? (
                           < >
                             <div className="chart__cont" dangerouslySetInnerHTML={{ __html: this.state.svgData[obj].svg }}></div>
 
-                            { this.state.chartData[item][obj].args.length && (
+                            { (this.state.chartData[tab.id][obj].args.length != 0) && (
                               < >
                                 <h5>Arguments:</h5>
-                                <Form onSubmit={(e) => this.submitArgs(item, this.state.chartData[item][obj].id, e)}>
-                                  { this.state.chartData[item][obj].args.map((arg, arg_i) =>
+                                <Form onSubmit={(e) => this.submitArgs(tab.id, this.state.chartData[tab.id][obj].id, e)}>
+                                  { this.state.chartData[tab.id][obj].args.map((arg, arg_i) =>
                                     < >
                                       <Form.Group controlId="">
                                       <InputGroup className={ arg }>
@@ -147,7 +162,7 @@ class Popup extends React.Component {
                                           <InputGroup.Text id={ `txt_${arg}` }>{ arg }</InputGroup.Text>
                                         </InputGroup.Prepend>
                                         <Form.Control name={ arg }
-                                                      placeholder={ this.state.chartData[item][obj].args_default[arg_i] }
+                                                      placeholder={ this.state.chartData[tab.id  ][obj].args_default[arg_i] }
                                         />
                                       </InputGroup>
                                       </Form.Group>
@@ -169,10 +184,10 @@ class Popup extends React.Component {
                         )}
                       </div>
                     )
-                  }
+                  }*/}
                 </Tab>
-
-              )) }
+              
+              ) }
             </Tabs>
             <button class="popup_close" onClick={this.props.closePopup}>X</button>
           </div>
