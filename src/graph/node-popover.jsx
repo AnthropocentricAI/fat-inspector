@@ -6,13 +6,12 @@ import {
   faDiceD6,
   faEdit,
   faSearch,
-  faSuperscript,
+  faSitemap,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import NodeModalEdit from '../modals/node-modal-edit.jsx';
-import NodeModalApply from '../modals/node-modal-apply.jsx';
 import ModalConfirmation from '../modals/modal-confirmation.jsx';
 import NodeModalInspect from '../modals/node-modal-inspect.jsx';
 
@@ -20,7 +19,7 @@ import NodeModalInspect from '../modals/node-modal-inspect.jsx';
 library.add(faSearch); // search
 library.add(faDiceD6); // dice-d6
 library.add(faEdit); // edit
-library.add(faSuperscript); // superscript
+library.add(faSitemap); // sitemap
 library.add(faTrashAlt); // trash-alt
 
 export default class NodePopover extends React.Component {
@@ -36,18 +35,6 @@ export default class NodePopover extends React.Component {
         },
       },
       {
-        name: 'Convert to Model',
-        icon: 'dice-d6',
-        action: () => {},
-      },
-      {
-        name: 'Apply Function',
-        icon: 'superscript',
-        action: () => {
-          this.setState({ showApply: true });
-        },
-      },
-      {
         name: 'Edit',
         icon: 'edit',
         action: () => {
@@ -55,7 +42,19 @@ export default class NodePopover extends React.Component {
         },
       },
       {
-        name: 'Delete Node',
+        name: 'Add Child',
+        icon: 'sitemap',
+        action: () => {
+          this.setState({ showApply: true });
+        },
+      },
+      {
+        name: 'Convert to Model',
+        icon: 'dice-d6',
+        action: () => {},
+      },
+      {
+        name: 'Delete',
         icon: 'trash-alt',
         action: () => {
           this.setState({ showDelete: true });
@@ -84,17 +83,19 @@ export default class NodePopover extends React.Component {
           show={this.state.showInspector}
         />
         <NodeModalEdit
-          node={this.props.node}
-          onHide={() => this.setState({ showEdit: false })}
-          onEdit={this.props.onEdit}
-          show={this.state.showEdit}
-        />
-        <NodeModalApply
           functions={this.props.functions}
           node={this.props.node}
-          onApply={this.props.onApply}
+          onHide={() => this.setState({ showEdit: false })}
+          onSubmit={this.props.onEdit}
+          show={this.state.showEdit}
+        />
+        <NodeModalEdit
+          functions={this.props.functions}
+          node={this.props.node}
+          onSubmit={this.props.onApply}
           onHide={() => this.setState({ showApply: false })}
           show={this.state.showApply}
+          add
         />
         <ModalConfirmation
           message={confirmMessage}
@@ -108,10 +109,16 @@ export default class NodePopover extends React.Component {
           title={this.props.node.label}
         >
           <Nav className="flex-column">
-            {this.props.node.function && (
-              <p>Function: {this.props.node.function}</p>
-            )}
             {this.props.node.desc && <p>Description: {this.props.node.desc}</p>}
+            {this.props.node.function && (
+              <>
+                <p>
+                  Function: {this.props.node.function.name.toString()} <br />
+                  Indices: [{this.props.node.function.indices.toString()}]<br />
+                  Axis: {this.props.node.function.axis}
+                </p>
+              </>
+            )}
             {this.optionsList.map(option => (
               <Nav.Item key={option.name} onClick={option.action}>
                 <FontAwesomeIcon fixedWidth icon={option.icon} />
@@ -131,7 +138,7 @@ NodePopover.propTypes = {
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   node: PropTypes.shape({
     desc: PropTypes.string,
-    function: PropTypes.string,
+    function: PropTypes.object,
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
   }).isRequired,
