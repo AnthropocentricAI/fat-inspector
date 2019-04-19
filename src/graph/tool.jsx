@@ -32,7 +32,7 @@ export default class Tool extends React.Component {
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
-    this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
+    this.editNode = this.editNode.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
     this.executeFunctions = this.executeFunctions.bind(this);
   }
@@ -59,6 +59,8 @@ export default class Tool extends React.Component {
     const rootNode = {
       id: uuid(),
       label: 'root',
+      x: this.state.config.width / 2,
+      y: this.state.config.height / 2,
     };
     this.setState({
       root: rootNode.id,
@@ -102,15 +104,20 @@ export default class Tool extends React.Component {
     if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
   }
 
-  editNodeLabelDesc(nodeId, label, desc) {
+  editNode(nodeId, node) {
     this.setState({
       data: {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
                 ...x,
-                label: label || x.label,
-                desc: desc || x.desc,
+                label: node.label || x.label,
+                desc: node.desc || x.desc,
+                function: {
+                  name: node.function.name || x.function.name,
+                  indices: node.function.indices || x.function.indices,
+                  axis: node.function.axis || x.function.axis,
+                },
               }
             : x
         ),
@@ -155,16 +162,13 @@ export default class Tool extends React.Component {
     return null;
   }
 
-  createChild(parent, child, desc, func) {
+  createChild(parent, node) {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
         showApply: false,
         data: {
-          nodes: [
-            ...prev.data.nodes,
-            { id: child_id, label: child, desc: desc, function: func },
-          ],
+          nodes: [...prev.data.nodes, { id: child_id, ...node }],
           links: [...prev.data.links, { source: parent, target: child_id }],
         },
       };
@@ -233,7 +237,7 @@ export default class Tool extends React.Component {
                 functions={this.state.functions}
                 node={node}
                 onApply={this.createChild}
-                onEdit={this.editNodeLabelDesc}
+                onEdit={this.editNode}
                 onDelete={this.deleteNode}
               />
             </foreignObject>
