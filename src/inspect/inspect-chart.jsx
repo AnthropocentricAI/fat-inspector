@@ -18,12 +18,15 @@ class Chart extends React.Component {
       if (r.status !== 200)
         console.error(`Error when attempting to download chart svg for ${ chartType }!`);
       r.json().then(data => {
-        this.setState(prev => ({
-          svgData: {
-            chartType: data.chart_type,
-            svg: atob(data.svg),
-            args: data.args
-          }
+          let decodedSvg = data.svg ? atob(data.svg) : null;
+
+          this.setState(prev => ({
+            svgData: {
+              chartType: data.chart_type,
+              svg: decodedSvg,
+              text: data.text,
+              args: data.args
+            }
         }));
         return data;
       });
@@ -43,9 +46,18 @@ class Chart extends React.Component {
 
         { this.state.svgData ? (
           <>
-            <div className="chart__cont"
-                 dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
-            </div>
+
+            { this.state.svgData.svg && (  
+              <div className="chart__cont"
+                  dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
+              </div>
+            ) }
+
+            { this.state.svgData.text && (  
+              <div className="chart__text">
+                  { this.state.svgData.text }
+              </div>
+            ) }
 
             { (this.props.chartData.args.length != 0) && (
                 <ChartArgs args={ this.props.chartData.args }
