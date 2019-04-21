@@ -14,7 +14,7 @@ from fatd.holders import csv_loader
 bp = Blueprint('chart', __name__, url_prefix='/chart')
 
 
-# (d/m/p, f/a/t) -> { type -> (title, args, func) }
+# (d/m/p, f/a/t) -> { type -> (title, args, (func :: dataset -> args -> string -> svg)) }
 all_charts = {
     ('data', 'accountability'): {
         'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'args_default': [], 'func': charts.pieChart }
@@ -54,7 +54,7 @@ def all_chart_types_combo(mode, tab):
         abort(400, 'Invalid mode & tab combination.')
 
 
-# also takes a query string of args
+# also takes a query string of argsfunc
 # returns {chart_type, args, svg}
 # for a given dataset, mode, tab, & type of chart
 # (and some args)
@@ -91,7 +91,8 @@ def svg(name, mode, tab, chart_type):
                 #ret = { k: v for k, v in toRender.items() if k not in ['func', 'args', 'title'] }
                 ret = dict()
                 ret['chart_type'] = chart_type
-                ret['svg'] = str(svg)
+                ret['svg'] = str(svg[1])
+                ret['text'] = svg[0]
 
                 if parsedArgs: ret['args'] = parsedArgs
                 return jsonify(ret)
