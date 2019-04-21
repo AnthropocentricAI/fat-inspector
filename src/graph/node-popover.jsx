@@ -82,6 +82,8 @@ export default class NodePopover extends React.Component {
           node={this.props.node}
           onHide={() => this.setState({ showInspector: false })}
           show={this.state.showInspector}
+          dataset={this.props.dataset}
+          mode={this.props.mode}
         />
         <NodeModalEdit
           node={this.props.node}

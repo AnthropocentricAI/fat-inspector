@@ -235,6 +235,8 @@ export default class Tool extends React.Component {
                 onApply={this.createChild}
                 onEdit={this.editNodeLabelDesc}
                 onDelete={this.deleteNode}
+                dataset={this.props.match.params.dataset}
+                mode={this.props.mode}
               />
             </foreignObject>
           </Portal>
