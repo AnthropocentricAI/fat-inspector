@@ -13,6 +13,8 @@ import {
 import ParticlesConfig from './particles-config.js';
 import Particles from 'react-particles-js';
 
+import constants, { MODES } from './constants'
+
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
@@ -20,6 +22,8 @@ class App extends React.Component {
     super(props);
     this.state = {
       isNew: false,
+      openGraph: false,
+      mode: 'data'
     };
   }
 
@@ -39,7 +43,7 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} />
+                  <Tool {...props} isNew={this.state.isNew} mode={this.state.mode} />
                 </>
               )}
             />
