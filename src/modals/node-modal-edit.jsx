@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 import Collapse from 'react-bootstrap/Collapse';
 
-export default class NodeModalApply extends React.Component {
+export default class NodeModalEdit extends React.Component {
   constructor(props) {
     super(props);
     const functionSelected = !this.props.add && !!this.props.node.function;
@@ -172,7 +172,7 @@ export default class NodeModalApply extends React.Component {
   }
 }
 
-NodeModalApply.propTypes = {
+NodeModalEdit.propTypes = {
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   node: PropTypes.shape({
     id: PropTypes.string.isRequired,
