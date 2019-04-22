@@ -20,15 +20,15 @@ class APIArgumentError(Exception):
 class TreeComputationError(Exception):
     """Raise if an error occurred while executing a function tree."""
 
-    node_id: str
+    node: str
     message: str
 
-    def __init__(self, node_id, message):
-        self.node = node_id
+    def __init__(self, node, message):
+        self.node = node
         self.message = message
 
     def to_dict(self):
-        return {'node_id': self.node_id, 'message': self.message}
+        return {'node': self.node, 'message': self.message}
 
 
 class TreeBuildError(Exception):
