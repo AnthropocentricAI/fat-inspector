@@ -147,7 +147,7 @@ def build_tree(dataset: NodeData, d3_graph: Dict) -> Tree:
         for n in nodes:
             if 'function' in n:
                 func_data = n['function']
-                func, indices, axis = funcs.get(func_data['name']), func_data['indices'], func_data['axis']
+                func, indices, axis = funcs[func_data['name']], func_data['indices'], func_data['axis']
                 n['function'] = (func, indices, axis)
             else:
                 n['function'] = (None,)

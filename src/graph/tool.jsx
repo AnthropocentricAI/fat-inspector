@@ -9,8 +9,9 @@ import PropTypes from 'prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
-import { jsonWithStatus } from '../util';
+import { jsonOkRequired, jsonWithStatus } from '../util';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import Alert from 'react-bootstrap/Alert';
 
 library.add(faBolt);
 
@@ -26,7 +27,13 @@ export default class Tool extends React.Component {
       functions: [],
       nodeClickedId: false,
       showApply: false,
+      displayMessage: false,
+      message: { variant: '', text: '' },
     };
+
+    // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
+    // we need this ref to highlight a particular node in the graph
+    this.graph = React.createRef();
 
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
@@ -181,7 +188,28 @@ export default class Tool extends React.Component {
         this.props.match.params.graph
       }`,
       { method: 'POST' }
-    );
+    )
+      .then(jsonWithStatus)
+      .then(({ ok, json }) => {
+        this.setState(
+          {
+            displayMessage: true,
+            message: {
+              variant: ok ? 'success' : 'danger',
+              text: json.message,
+            },
+          },
+          () => {
+            // this needs to be set after state change because the state
+            // change will overwrite the highlighted value
+            json.node &&
+              this.graph.current._setNodeHighlightedValue(json.node, true);
+            setTimeout(() => {
+              this.setState({ displayMessage: false });
+            }, 2500);
+          }
+        );
+      });
   }
 
   render() {
@@ -216,13 +244,22 @@ export default class Tool extends React.Component {
           <h6>Functions</h6>
         </button>
         {this.state.data ? (
-          <Graph ref="graph" {...graphProps} />
+          <Graph ref={this.graph} {...graphProps} />
         ) : (
           <div className="graph-loading">
             <Spinner animation="border" role="status" />
           </div>
         )}
-
+        <Alert
+          variant={this.state.message.variant}
+          dismissible
+          show={this.state.displayMessage}
+          className="bottom-popup"
+          onClose={() => this.setState({ displayMessage: false })}
+        >
+          {this.state.message.text}
+        </Alert>
+        )}
         {/* display popup */}
         {node && (
           <Portal>
