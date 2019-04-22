@@ -57,7 +57,9 @@ export default class NodeModalInspect extends React.Component {
                            mode={ this.props.mode }
                            tab={ tab.id }
                            chartData={ this.state.chartData[tab.id][chartId] }
-                           dataset={ this.props.dataset }>
+                           dataset={ this.props.dataset }
+                           graph={ this.props.graph }
+                           node={ this.props.node.id }>
                     </Chart>
                   )
                 }

@@ -83,6 +83,7 @@ export default class NodePopover extends React.Component {
           show={this.state.showInspector}
           dataset={this.props.dataset}
           mode={this.props.mode}
+          graph={this.props.graph}
         />
         <NodeModalEdit
           functions={this.props.functions}
