@@ -9,8 +9,9 @@ import PropTypes from 'prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
-import { jsonWithStatus } from '../util';
+import { jsonOkRequired, jsonWithStatus } from '../util';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import Alert from 'react-bootstrap/Alert';
 
 library.add(faBolt);
 
@@ -26,13 +27,19 @@ export default class Tool extends React.Component {
       functions: [],
       nodeClickedId: false,
       showApply: false,
+      displayMessage: false,
+      message: { variant: '', text: '' },
     };
+
+    // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
+    // we need this ref to highlight a particular node in the graph
+    this.graph = React.createRef();
 
     this.onClickNode = this.onClickNode.bind(this);
     this.onClickGraph = this.onClickGraph.bind(this);
     this.createChild = this.createChild.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
-    this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
+    this.editNode = this.editNode.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
     this.executeFunctions = this.executeFunctions.bind(this);
   }
@@ -59,6 +66,8 @@ export default class Tool extends React.Component {
     const rootNode = {
       id: uuid(),
       label: 'root',
+      x: this.state.config.width / 2,
+      y: this.state.config.height / 2,
     };
     this.setState({
       root: rootNode.id,
@@ -102,15 +111,20 @@ export default class Tool extends React.Component {
     if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
   }
 
-  editNodeLabelDesc(nodeId, label, desc) {
+  editNode(nodeId, node) {
     this.setState({
       data: {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
                 ...x,
-                label: label || x.label,
-                desc: desc || x.desc,
+                label: node.label || x.label,
+                desc: node.desc || x.desc,
+                function: {
+                  name: node.function.name || x.function.name,
+                  indices: node.function.indices || x.function.indices,
+                  axis: node.function.axis || x.function.axis,
+                },
               }
             : x
         ),
@@ -155,16 +169,13 @@ export default class Tool extends React.Component {
     return null;
   }
 
-  createChild(parent, child, desc, func) {
+  createChild(parent, node) {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
         showApply: false,
         data: {
-          nodes: [
-            ...prev.data.nodes,
-            { id: child_id, label: child, desc: desc, function: func },
-          ],
+          nodes: [...prev.data.nodes, { id: child_id, ...node }],
           links: [...prev.data.links, { source: parent, target: child_id }],
         },
       };
@@ -177,7 +188,28 @@ export default class Tool extends React.Component {
         this.props.match.params.graph
       }`,
       { method: 'POST' }
-    );
+    )
+      .then(jsonWithStatus)
+      .then(({ ok, json }) => {
+        this.setState(
+          {
+            displayMessage: true,
+            message: {
+              variant: ok ? 'success' : 'danger',
+              text: json.message,
+            },
+          },
+          () => {
+            // this needs to be set after state change because the state
+            // change will overwrite the highlighted value
+            json.node &&
+              this.graph.current._setNodeHighlightedValue(json.node, true);
+            setTimeout(() => {
+              this.setState({ displayMessage: false });
+            }, 2500);
+          }
+        );
+      });
   }
 
   render() {
@@ -212,13 +244,22 @@ export default class Tool extends React.Component {
           <h6>Functions</h6>
         </button>
         {this.state.data ? (
-          <Graph ref="graph" {...graphProps} />
+          <Graph ref={this.graph} {...graphProps} />
         ) : (
           <div className="graph-loading">
             <Spinner animation="border" role="status" />
           </div>
         )}
-
+        <Alert
+          variant={this.state.message.variant}
+          dismissible
+          show={this.state.displayMessage}
+          className="bottom-popup"
+          onClose={() => this.setState({ displayMessage: false })}
+        >
+          {this.state.message.text}
+        </Alert>
+        )}
         {/* display popup */}
         {node && (
           <Portal>
@@ -233,7 +274,7 @@ export default class Tool extends React.Component {
                 functions={this.state.functions}
                 node={node}
                 onApply={this.createChild}
-                onEdit={this.editNodeLabelDesc}
+                onEdit={this.editNode}
                 onDelete={this.deleteNode}
                 dataset={this.props.match.params.dataset}
                 mode={this.props.mode}

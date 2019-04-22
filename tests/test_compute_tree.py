@@ -8,6 +8,7 @@ from fatd.holders import Data
 from pytest import raises
 
 from app.config import TestingConfig
+from app.exceptions import TreeBuildError
 from app.exceptions import TreeComputationError
 from app.functions import funcs
 from app.tree import Node
@@ -43,14 +44,14 @@ class TestCompute:
         shutil.rmtree(self.assets)
 
     def test_null_function_is_identity(self):
-        node = Node(None, self.default_data)
+        node = Node(None, data=self.default_data)
         node.apply()
         assert np.array_equal(self.default_data.data, node.data.data)
         assert not node.dirty
 
     def test_apply_equal(self):
         func = np.mean
-        node = Node(func, self.default_data)
+        node = Node(func, data=self.default_data)
         node.apply()
         expected = self.default_data.apply(func)
         assert np.array_equal(expected.data, node.data.data)
@@ -58,7 +59,7 @@ class TestCompute:
 
     def test_repeat_apply_once(self):
         func = fatd.transform.data.mean
-        node = Node(func, self.default_data)
+        node = Node(func, data=self.default_data)
         node.apply()
         node.apply()
         expected = self.default_data.apply(func)
@@ -93,14 +94,46 @@ class TestCompute:
 
     def test_build_function_mappings(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
-                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
-            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [
+                {
+                    'id': 'Bob'
+                },
+                {
+                    'id': 'Alice',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'James',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [1, 3],
+                        'axis': 1
+                    }
+                }
+            ],
+            'links': [
+                {
+                    'source': 'Bob',
+                    'target': 'Alice'
+                },
+                {
+                    'source': 'Bob',
+                    'target': 'James'
+                }
+            ]
         }
         t = build_tree(self.default_data, graph)
         assert t.node_of('Bob').func is None
         assert t.node_of('Alice').func == funcs.get('fatd.transform.data.median')
+        assert t.node_of('Alice').indices == []
+        assert t.node_of('Alice').axis == 0
         assert t.node_of('James').func == funcs.get('fatd.transform.data.mean')
+        assert t.node_of('James').indices == [1, 3]
+        assert t.node_of('James').axis == 1
 
     def test_build_load_dataset(self):
         graph = {
@@ -114,9 +147,37 @@ class TestCompute:
 
     def test_compute_depth_two(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
-                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
-            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [
+                {
+                    'id': 'Bob'
+                },
+                {
+                    'id': 'Alice',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'James',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [],
+                        'axis': 0
+                    }
+                }
+            ],
+            'links': [
+                {
+                    'source': 'Bob',
+                    'target': 'Alice'
+                },
+                {
+                    'source': 'Bob',
+                    'target': 'James'
+                }
+            ]
         }
         t = build_tree(self.default_data, graph)
         t.compute()
@@ -127,13 +188,61 @@ class TestCompute:
 
     def test_compute_depth_three(self):
         graph = {
-            'nodes': [{'id': 'Bob'},
-                      {'id': 'Alice', 'function': 'fatd.transform.data.median'},
-                      {'id': 'James', 'function': 'fatd.transform.data.mean'},
-                      {'id': 'Laura', 'function': 'fatd.transform.data.median'},
-                      {'id': 'Chris', 'function': 'fatd.transform.data.mean'}],
-            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'},
-                      {'source': 'Alice', 'target': 'Laura'}, {'source': 'James', 'target': 'Chris'}]
+            'nodes': [
+                {
+                    'id': 'Bob'
+                },
+                {
+                    'id': 'Alice',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'James',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'Laura',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'Chris',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [],
+                        'axis': 0
+                    }
+                }
+            ],
+            'links': [
+                {
+                    'source': 'Bob',
+                    'target': 'Alice'
+                },
+                {
+                    'source': 'Bob',
+                    'target': 'James'
+                },
+                {
+                    'source': 'Alice',
+                    'target': 'Laura'
+                },
+                {
+                    'source': 'James',
+                    'target': 'Chris'
+                }
+            ]
         }
         t = build_tree(self.default_data, graph)
         t.compute()
@@ -148,11 +257,70 @@ class TestCompute:
 
     def test_compute_failure(self):
         graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
-                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
-            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [
+                {
+                    'id': 'Bob'
+                },
+                {
+                    'id': 'Alice',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'James',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [],
+                        'axis': 3
+                    }
+                }
+            ],
+            'links': [
+                {
+                    'source': 'Bob',
+                    'target': 'Alice'
+                },
+                {
+                    'source': 'Bob',
+                    'target': 'James'
+                }
+            ]
         }
-        t = build_tree(None, graph)
+        t = build_tree(self.default_data, graph)
         with raises(TreeComputationError) as e_info:
             t.compute()
-            assert 'Bob' in e_info.value.message
+
+        assert e_info.value.node == 'James'
+
+    def test_multiple_roots_failure(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
+            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'James', 'target': 'Alice'}]
+        }
+
+        with raises(TreeBuildError) as exc_info:
+            _ = build_tree(self.default_data, graph)
+
+        assert 'got 2' in exc_info.value.message
+
+    def test_disjoint_failure(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}, {'id': 'Alice'}, {'id': 'James'}],
+            'links': []
+        }
+
+        with raises(TreeBuildError) as exc_info:
+            _ = build_tree(self.default_data, graph)
+
+        assert 'got 3' in exc_info.value.message
+
+    def test_root_only(self):
+        graph = {
+            'nodes': [{'id': 'Bob'}],
+            'links': []
+        }
+
+        _ = build_tree(self.default_data, graph)

@@ -1,6 +1,7 @@
-import os
 import json
+import os
 
+from fatd.holders import csv_loader
 from flask import current_app
 from flask import jsonify
 from flask.blueprints import Blueprint
@@ -9,15 +10,13 @@ from app.exceptions import APIArgumentError
 from app.exceptions import TreeComputationError
 from app.tree import build_tree
 from app.tree import save_tree
-from fatd.holders import csv_loader
-
 
 bp = Blueprint('execute', __name__, url_prefix='/execute')
 
 
 @bp.errorhandler(TreeComputationError)
 def handle_tree_error(err: TreeComputationError):
-    response = err.to_dict()
+    response = jsonify(err.to_dict())
     response.status_code = 400
     return response
 
@@ -36,7 +35,7 @@ def execute(dataset, graph):
         pickle_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', name)
         save_tree(tree, pickle_path)
         return jsonify({'message': f'Executed {graph} with {dataset} successfully.'})
-    except Exception as e:
+    except IOError as e:
         # TODO: make except clause more specific
         print(e)
         raise APIArgumentError(f'Failed to execute {graph} with {dataset}. Perhaps the dataset does not exist?')
