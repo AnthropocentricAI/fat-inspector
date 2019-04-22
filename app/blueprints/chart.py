@@ -8,6 +8,7 @@ from flask.blueprints import Blueprint
 from app.exceptions import APIArgumentError
 from app import utilities as util
 from app import charts
+from app.tree import load_tree
 
 from fatd.holders import csv_loader
 
@@ -58,19 +59,20 @@ def all_chart_types_combo(mode, tab):
 # returns {chart_type, args, svg}
 # for a given dataset, mode, tab, & type of chart
 # (and some args)
-@bp.route('/<mode>/<tab>/<chart_type>/<name>/svg')
-def svg(name, mode, tab, chart_type):
+@bp.route('/<mode>/<tab>/<chart_type>/<dataset>/<graph>/<node>/svg')
+def svg(dataset, graph, node, mode, tab, chart_type):
     combo = (mode, tab)
     if combo in all_charts:
         avail_charts = all_charts.get(combo)
         if chart_type in avail_charts:
             toRender = avail_charts.get(chart_type)
 
-            name = util.normalise_path_to_file(name) + '.csv'
+            name = f'{dataset}_{graph}_tree.pickle'
             # TODO: proper error if dataset doesn't exist?
             try:
-                file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
-                dataset = csv_loader(file_path)
+                file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', name)
+                t = load_tree(file_path)
+                dataset = t.node_of(node).data
 
                 svg = None
 

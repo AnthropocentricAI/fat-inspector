@@ -278,6 +278,7 @@ export default class Tool extends React.Component {
                 onDelete={this.deleteNode}
                 dataset={this.props.match.params.dataset}
                 mode={this.props.mode}
+                graph={this.props.match.params.graph}
               />
             </foreignObject>
           </Portal>
