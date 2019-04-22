@@ -27,6 +27,7 @@ class App extends React.Component {
               <>
                 <Particles className="particles"
                            params={ParticlesConfig}/>
+                
                 <FileChooser {...props}/>
               </>
             }/>
