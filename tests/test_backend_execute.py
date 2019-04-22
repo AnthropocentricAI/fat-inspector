@@ -32,9 +32,37 @@ class TestExecution:
                                      [4.8, 3.0, 1.4, 0.1, 1.0]])
         self.default_data = Data(self.default_arr[:, :4], self.default_arr[:, 4])
         self.default_graph = {
-            'nodes': [{'id': 'Bob'}, {'id': 'Alice', 'function': 'fatd.transform.data.median'},
-                      {'id': 'James', 'function': 'fatd.transform.data.mean'}],
-            'links': [{'source': 'Bob', 'target': 'Alice'}, {'source': 'Bob', 'target': 'James'}]
+            'nodes': [
+                {
+                    'id': 'Bob'
+                },
+                {
+                    'id': 'Alice',
+                    'function': {
+                        'name': 'fatd.transform.data.median',
+                        'indices': [],
+                        'axis': 0
+                    }
+                },
+                {
+                    'id': 'James',
+                    'function': {
+                        'name': 'fatd.transform.data.mean',
+                        'indices': [],
+                        'axis': 0
+                    }
+                }
+            ],
+            'links': [
+                {
+                    'source': 'Bob',
+                    'target': 'Alice'
+                },
+                {
+                    'source': 'Bob',
+                    'target': 'James'
+                }
+            ]
         }
 
     def teardown_method(self):

@@ -13,6 +13,7 @@ from flask.blueprints import Blueprint
 
 from app import utilities as util
 from app.exceptions import APIArgumentError
+from app.functions import funcs
 
 # all routes in here are accessible through '/graph/<route>'
 bp = Blueprint('graph', __name__, url_prefix='/graph')
@@ -141,4 +142,4 @@ def fetch(name):
 
 @bp.route('/functions')
 def fetch_functions():
-    return jsonify(['TODO'])
+    return jsonify(list(funcs.keys()))

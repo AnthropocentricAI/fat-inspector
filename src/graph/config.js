@@ -4,7 +4,7 @@ module.exports = {
   automaticRearrangeAfterDropNode: true,
   directed: true,
   collapsible: false,
-  highlightDegree: true,
+  highlightDegree: 0,
   highlightOpacity: 0.2,
   linkHighlightBehavior: true,
   nodeHighlightBehavior: true,
