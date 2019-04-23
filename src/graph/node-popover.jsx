@@ -123,7 +123,11 @@ export default class NodePopover extends React.Component {
               </>
             )}
             {this.optionsList.map(option => (
-              <Nav.Item key={option.name} onClick={option.action}>
+              <Nav.Item
+                key={option.name}
+                onClick={option.action}
+                className="node-popover-nav-item"
+              >
                 <FontAwesomeIcon fixedWidth icon={option.icon} />
                 <Nav.Link className="node-popover-nav-link">
                   {option.name}
