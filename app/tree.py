@@ -1,16 +1,16 @@
 """"""
 
 import os
-import pickle
 from typing import Any, Dict, List, Union
 
-from app.functions import funcs
+import dill as pickle
 from fatd.holders.data import Data
 from fatd.holders.models import Models
 from fatd.holders.predictions import Predictions
-from fatd.holders import csv_loader
-from app.exceptions import TreeComputationError
+
 from app.exceptions import TreeBuildError
+from app.exceptions import TreeComputationError
+from app.functions import funcs
 
 NodeData = Union[Data, Models, Predictions]
 NodeFunction = (Any, List, int)
