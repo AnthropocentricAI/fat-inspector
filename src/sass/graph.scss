@@ -8,23 +8,25 @@
 
 .node-popover {
   pointer-events: auto;
-  &-nav {
-    &-link {
-      display: inline !important;
-      padding: 0;
-      &:hover > svg {
-        color: black;
-      }
+  &-text {
+    padding-left: 0.5rem;
+  }
+  &-button {
+    text-align: center;
+    border-color: #ccc;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    color: black;
+    font-size: 14px;
+    &:hover, &:active {
+      background-color: #ccc;
+      border-color: #ccc;
+      color: #fff;
     }
-    &-item {
-    margin-bottom: 0.25rem;
-    }
-    &-text {
-      padding-left: 0.5rem;
-    }
-    &-icon {
-      color: lighten(black, 40%);
-    }
+  }
+  &-buttongroup {
+    width: 100%;
   }
 }
 
@@ -56,6 +58,7 @@ svg[name='svg-container-graph'] {
   height: 100% !important;
   width: 100% !important;
   z-index: -1;
+  padding-top: 60px;
 }
 
 .click-through {
