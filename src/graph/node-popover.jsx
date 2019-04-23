@@ -14,6 +14,8 @@ import PropTypes from 'prop-types';
 import NodeModalEdit from '../modals/node-modal-edit.jsx';
 import ModalConfirmation from '../modals/modal-confirmation.jsx';
 import NodeModalInspect from '../modals/node-modal-inspect.jsx';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Button from 'react-bootstrap/Button';
 
 // register icons for the popup
 library.add(faSearch); // search
@@ -111,7 +113,7 @@ export default class NodePopover extends React.Component {
           id="popover-basic"
           title={this.props.node.label}
         >
-          <Nav className="flex-column">
+          <div>
             {this.props.node.desc && <p>Description: {this.props.node.desc}</p>}
             {this.props.node.function && (
               <>
@@ -122,23 +124,25 @@ export default class NodePopover extends React.Component {
                 </p>
               </>
             )}
-            {this.optionsList.map(option => (
-              <Nav.Item
-                key={option.name}
-                onClick={option.action}
-                className="node-popover-nav-item"
-              >
-                <Nav.Link className="node-popover-nav-link">
+            <ButtonGroup className="node-popover-buttongroup" vertical>
+              {this.optionsList.map(option => (
+                <Button
+                  style={{ textAlign: 'center' }}
+                  key={`popover-option-${option.name}`}
+                  onClick={option.action}
+                  variant="outline-secondary"
+                  className="node-popover-button"
+                >
                   <FontAwesomeIcon
                     fixedWidth
-                    className="node-popover-nav-icon"
+                    className="node-popover-icon"
                     icon={option.icon}
                   />
-                  <span className="node-popover-nav-text">{option.name}</span>
-                </Nav.Link>
-              </Nav.Item>
-            ))}
-          </Nav>
+                  <span className="node-popover-text">{option.name}</span>
+                </Button>
+              ))}
+            </ButtonGroup>
+          </div>
         </Popover>
       </>
     );
