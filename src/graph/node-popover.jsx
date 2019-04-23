@@ -128,9 +128,13 @@ export default class NodePopover extends React.Component {
                 onClick={option.action}
                 className="node-popover-nav-item"
               >
-                <FontAwesomeIcon fixedWidth icon={option.icon} />
                 <Nav.Link className="node-popover-nav-link">
-                  {option.name}
+                  <FontAwesomeIcon
+                    fixedWidth
+                    className="node-popover-nav-icon"
+                    icon={option.icon}
+                  />
+                  <span className="node-popover-nav-text">{option.name}</span>
                 </Nav.Link>
               </Nav.Item>
             ))}

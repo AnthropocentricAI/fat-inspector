@@ -11,9 +11,19 @@
   &-nav {
     &-link {
       display: inline !important;
+      padding: 0;
+      &:hover > svg {
+        color: black;
+      }
     }
     &-item {
-      margin-bottom: 0.25rem;
+    margin-bottom: 0.25rem;
+    }
+    &-text {
+      padding-left: 0.5rem;
+    }
+    &-icon {
+      color: lighten(black, 40%);
     }
   }
 }
