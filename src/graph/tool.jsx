@@ -35,14 +35,6 @@ export default class Tool extends React.Component {
     // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
     // we need this ref to highlight a particular node in the graph
     this.graph = React.createRef();
-
-    this.onClickNode = this.onClickNode.bind(this);
-    this.onClickGraph = this.onClickGraph.bind(this);
-    this.createChild = this.createChild.bind(this);
-    this.deleteNode = this.deleteNode.bind(this);
-    this.editNode = this.editNode.bind(this);
-    this.getNodeData = this.getNodeData.bind(this);
-    this.executeFunctions = this.executeFunctions.bind(this);
   }
 
   // upon first mount, we need to populate the graph and fetch relevant data
@@ -51,7 +43,7 @@ export default class Tool extends React.Component {
     this.populateGraph(this.props.isNew);
   }
 
-  fetchFunctions() {
+  fetchFunctions = () => {
     fetch('/graph/functions')
       .then(jsonOkRequired)
       .then(data => {
@@ -60,9 +52,9 @@ export default class Tool extends React.Component {
         });
       })
       .catch(console.error);
-  }
+  };
 
-  initEmptyGraph() {
+  initEmptyGraph = () => {
     const rootNode = {
       id: uuid(),
       label: 'root',
@@ -77,9 +69,9 @@ export default class Tool extends React.Component {
         links: [],
       },
     });
-  }
+  };
 
-  populateGraph(isNew) {
+  populateGraph = isNew => {
     if (isNew) {
       this.initEmptyGraph();
     } else {
@@ -96,23 +88,23 @@ export default class Tool extends React.Component {
           }
         });
     }
-  }
+  };
 
-  onClickNode(id) {
+  onClickNode = id => {
     this.setState({
       nodeClickedId: id,
     });
     // set node to front of svg
     let nodeElement = document.getElementById(id);
     nodeElement.parentNode.appendChild(nodeElement);
-  }
+  };
 
-  onClickGraph() {
+  onClickGraph = () => {
     // deselect popup if open
     if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
-  }
+  };
 
-  editNode(nodeId, node) {
+  editNode = (nodeId, node) => {
     this.setState({
       blockUnload: true,
       data: {
@@ -133,9 +125,9 @@ export default class Tool extends React.Component {
         links: this.state.data.links,
       },
     });
-  }
+  };
 
-  deleteNode(nodeId) {
+  deleteNode = nodeId => {
     if (nodeId === this.state.root) return;
     let toDelete = [nodeId];
     // shallow copy the arrays
@@ -162,17 +154,17 @@ export default class Tool extends React.Component {
         links: links,
       },
     });
-  }
+  };
 
   // gets data in payload for a given node
   // gross but the only way :(
-  getNodeData(nodeId) {
+  getNodeData = nodeId => {
     if (!this.state.data) return null;
     for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
-  }
+  };
 
-  createChild(parent, node) {
+  createChild = (parent, node) => {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
@@ -184,9 +176,9 @@ export default class Tool extends React.Component {
         },
       };
     });
-  }
+  };
 
-  executeFunctions() {
+  executeFunctions = () => {
     fetch(
       `/execute/${this.props.match.params.dataset}/${
         this.props.match.params.graph
@@ -214,7 +206,7 @@ export default class Tool extends React.Component {
           }
         );
       });
-  }
+  };
 
   saveGraph = () => {
     return fetch(`/graph/${this.props.match.params.graph}/save`, {
