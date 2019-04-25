@@ -52,11 +52,10 @@ export default class Tool extends React.Component {
 
   fetchFunctions() {
     fetch('/graph/functions')
-      .then(jsonWithStatus)
-      .then(r => {
-        if (!r.ok) throw new Error('Failed to get functions!');
+      .then(jsonOkRequired)
+      .then(data => {
         this.setState({
-          functions: r.json,
+          functions: data,
         });
       })
       .catch(console.error);
@@ -212,13 +211,58 @@ export default class Tool extends React.Component {
       });
   }
 
+  saveGraph = () => {
+    return fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(({ message }) => console.log(message))
+      .catch(console.error);
+  };
+
+  showRename = () => {
+    this.setState({ showRename: true });
+  };
+
+  duplicateGraph = () => {
+    this.setState({ showDuplicate: true });
+  };
+
   render() {
+    const node = this.getNodeData(this.state.nodeClickedId);
+
     const graphProps = {
       id: 'graph',
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
       onClickGraph: this.onClickGraph,
+    };
+
+    const topbarGraphItems = [
+      { text: 'Save', onClick: this.saveGraph },
+      {
+        text: 'Download',
+        href: `/graph/${this.props.match.params.graph}/download`,
+        target: '_blank',
+      },
+      { text: 'Rename', onClick: this.showRename },
+      { text: 'Duplicate', onClick: this.duplicateGraph },
+    ];
+
+    const popoverProps = {
+      dataset: this.props.match.params.dataset,
+      graph: this.props.match.params.graph,
+      functions: this.state.functions,
+      node: node,
+      mode: this.props.mode,
+      onApply: this.createChild,
+      onEdit: this.editNode,
+      onDelete: this.deleteNode,
     };
 
     // portal from children of node  element
@@ -229,11 +273,9 @@ export default class Tool extends React.Component {
       );
     };
 
-    const node = this.getNodeData(this.state.nodeClickedId);
-
     return (
       <div>
-        <Topbar graph={this.props.match.params.graph} data={this.state.data} />
+        <Topbar items={topbarGraphItems} />
         <div className="data-info">
           <h3>Dataset: {this.props.match.params.dataset}</h3>
           <h3>Graph: {this.props.match.params.graph}</h3>
@@ -270,16 +312,7 @@ export default class Tool extends React.Component {
               height="100%"
               className="click-through"
             >
-              <NodePopover
-                functions={this.state.functions}
-                node={node}
-                onApply={this.createChild}
-                onEdit={this.editNode}
-                onDelete={this.deleteNode}
-                dataset={this.props.match.params.dataset}
-                mode={this.props.mode}
-                graph={this.props.match.params.graph}
-              />
+              <NodePopover {...popoverProps} />
             </foreignObject>
           </Portal>
         )}
