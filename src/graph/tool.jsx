@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import defaultConfig from './config';
 import uuid from 'uuid/v4';
-import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -22,8 +21,6 @@ const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
     </div>
   ),
 });
-console.log(Graph);
-
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
@@ -280,6 +277,7 @@ export default class Tool extends React.Component {
     };
 
     return (
+      // TODO: look at bundle sizes
       <div>
         <Prompt
           when={this.state.blockUnload}
