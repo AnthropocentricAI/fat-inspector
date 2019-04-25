@@ -46,7 +46,7 @@ export default class NodeModalInspect extends React.Component {
         <Modal.Header closeButton>
           <Modal.Title>Inspect {this.props.node.label}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="modal__inspect-body">
           <Tabs defaultActiveKey="fairness" id="uncontrolled-tab-example">
             { this.state.tabs.map((tab) =>   
               <Tab key={ tab.id } eventKey={ tab.id } title={ tab.title }>
@@ -66,6 +66,7 @@ export default class NodeModalInspect extends React.Component {
               </Tab>
             ) }
           </Tabs>
+          some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words 
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.onHide}>
