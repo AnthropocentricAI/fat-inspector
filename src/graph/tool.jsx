@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Graph } from 'react-d3-graph';
 import defaultConfig from './config';
 import uuid from 'uuid/v4';
 import NodePopover from './node-popover.jsx';
@@ -10,28 +9,30 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
 import { jsonOkRequired, jsonWithStatus } from '../util';
-import {
-  faBolt,
-  faExternalLinkSquareAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import Alert from 'react-bootstrap/Alert';
 import { Prompt } from 'react-router';
+import loadable from '@loadable/component';
 
 library.add(faBolt);
+const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
+  fallback: (
+    <div className="graph-loading">
+      <Spinner animation="border" role="status" />
+    </div>
+  ),
+});
+console.log(Graph);
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
-
-    const config = defaultConfig;
-
     this.state = {
-      config,
+      config: defaultConfig,
       blockUnload: false,
       functions: [],
       message: { variant: '', text: '' },
     };
-
     // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
     // we need this ref to highlight a particular node in the graph
     this.graph = React.createRef();
