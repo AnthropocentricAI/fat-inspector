@@ -10,8 +10,12 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
 import { jsonOkRequired, jsonWithStatus } from '../util';
-import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBolt,
+  faExternalLinkSquareAlt,
+} from '@fortawesome/free-solid-svg-icons';
 import Alert from 'react-bootstrap/Alert';
+import { Prompt } from 'react-router';
 
 library.add(faBolt);
 
@@ -23,11 +27,8 @@ export default class Tool extends React.Component {
 
     this.state = {
       config,
-      edit: false,
+      blockUnload: false,
       functions: [],
-      nodeClickedId: false,
-      showApply: false,
-      displayMessage: false,
       message: { variant: '', text: '' },
     };
 
@@ -69,6 +70,7 @@ export default class Tool extends React.Component {
       y: this.state.config.height / 2,
     };
     this.setState({
+      blockUnload: true,
       root: rootNode.id,
       data: {
         nodes: [rootNode],
@@ -112,6 +114,7 @@ export default class Tool extends React.Component {
 
   editNode(nodeId, node) {
     this.setState({
+      blockUnload: true,
       data: {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
@@ -153,6 +156,7 @@ export default class Tool extends React.Component {
       );
     }
     this.setState({
+      blockUnload: true,
       data: {
         nodes: nodes,
         links: links,
@@ -172,6 +176,7 @@ export default class Tool extends React.Component {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
+        blockUnload: true,
         showApply: false,
         data: {
           nodes: [...prev.data.nodes, { id: child_id, ...node }],
@@ -220,7 +225,12 @@ export default class Tool extends React.Component {
       },
     })
       .then(jsonOkRequired)
-      .then(({ message }) => console.log(message))
+      .then(({ message }) => {
+        console.log(message);
+        this.setState({
+          blockUnload: false,
+        });
+      })
       .catch(console.error);
   };
 
@@ -233,6 +243,9 @@ export default class Tool extends React.Component {
   };
 
   render() {
+    // set up the "Are you sure?" prompt if the graph hasn't been saved
+    window.onbeforeunload = this.state.blockUnload ? () => true : null;
+
     const node = this.getNodeData(this.state.nodeClickedId);
 
     const graphProps = {
@@ -275,6 +288,10 @@ export default class Tool extends React.Component {
 
     return (
       <div>
+        <Prompt
+          when={this.state.blockUnload}
+          message="Are you sure? Changes that you made may not be saved."
+        />
         <Topbar items={topbarGraphItems} />
         <div className="data-info">
           <h3>Dataset: {this.props.match.params.dataset}</h3>
