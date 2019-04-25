@@ -301,7 +301,7 @@ export default class Tool extends React.Component {
         >
           {this.state.message.text}
         </Alert>
-        )}
+
         {/* display popup */}
         {node && (
           <Portal>
