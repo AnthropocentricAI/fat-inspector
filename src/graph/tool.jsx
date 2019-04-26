@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Graph } from 'react-d3-graph';
 import defaultConfig from './config';
 import uuid from 'uuid/v4';
-import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -13,38 +11,31 @@ import { jsonOkRequired, jsonWithStatus } from '../util';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import BackButton from './back-button.jsx';
 import Alert from 'react-bootstrap/Alert';
+import NodePopover from './node-popover.jsx';
+import { Prompt } from 'react-router-dom';
+import loadable from '@loadable/component';
 
 library.add(faBolt);
+const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
+  fallback: (
+    <div className="graph-loading">
+      <Spinner animation="border" role="status" />
+    </div>
+  ),
+});
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
-
-    const config = defaultConfig;
-
     this.state = {
-      config,
-      edit: false,
+      config: defaultConfig,
+      blockUnload: false,
       functions: [],
-      nodeClickedId: false,
-      showApply: false,
-      displayMessage: false,
       message: { variant: '', text: '' },
     };
-
     // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
     // we need this ref to highlight a particular node in the graph
     this.graph = React.createRef();
-
-    this.onClickNode = this.onClickNode.bind(this);
-    this.onClickGraph = this.onClickGraph.bind(this);
-    this.createChild = this.createChild.bind(this);
-    this.deleteNode = this.deleteNode.bind(this);
-    this.editNode = this.editNode.bind(this);
-    this.getNodeData = this.getNodeData.bind(this);
-    this.executeFunctions = this.executeFunctions.bind(this);
-    this.convertToModel = this.convertToModel.bind(this);
-    this.backToData = this.backToData.bind(this);
   }
 
   // upon first mount, we need to populate the graph and fetch relevant data
@@ -53,19 +44,18 @@ export default class Tool extends React.Component {
     this.populateGraph(this.props.isNew);
   }
 
-  fetchFunctions() {
+  fetchFunctions = () => {
     fetch('/graph/functions')
-      .then(jsonWithStatus)
-      .then(r => {
-        if (!r.ok) throw new Error('Failed to get functions!');
+      .then(jsonOkRequired)
+      .then(data => {
         this.setState({
-          functions: r.json,
+          functions: data,
         });
       })
       .catch(console.error);
-  }
+  };
 
-  initEmptyGraph() {
+  initEmptyGraph = () => {
     const rootNode = {
       id: uuid(),
       label: 'root',
@@ -73,15 +63,16 @@ export default class Tool extends React.Component {
       y: this.state.config.height / 2,
     };
     this.setState({
+      blockUnload: true,
       root: rootNode.id,
       data: {
         nodes: [rootNode],
         links: [],
       },
     });
-  }
+  };
 
-  populateGraph(isNew) {
+  populateGraph = isNew => {
     if (isNew) {
       this.initEmptyGraph();
     } else {
@@ -98,56 +89,54 @@ export default class Tool extends React.Component {
           }
         });
     }
-  }
+  };
 
-  onClickNode(id) {
+  onClickNode = id => {
     this.setState({
       nodeClickedId: id,
     });
     // set node to front of svg
     let nodeElement = document.getElementById(id);
     nodeElement.parentNode.appendChild(nodeElement);
-  }
+  };
 
-  onClickGraph() {
+  onClickGraph = () => {
     // deselect popup if open
     if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
-  }
+  };
 
-  editNode(nodeId, node) {
+  editNode = (nodeId, node) => {
     this.setState({
+      blockUnload: true,
       data: {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-              ...x,
-              label: node.label || x.label,
-              desc: node.desc || x.desc,
-              function: {
-                name: node.function.name || x.function.name,
-                indices: node.function.indices || x.function.indices,
-                axis: node.function.axis || x.function.axis,
-              },
-            }
+                ...x,
+                label: node.label || x.label,
+                desc: node.desc || x.desc,
+                function: {
+                  name: node.function.name || x.function.name,
+                  indices: node.function.indices || x.function.indices,
+                  axis: node.function.axis || x.function.axis,
+                },
+              }
             : x
         ),
         links: this.state.data.links,
       },
     });
-  }
+  };
 
-  convertToModel(nodeID) {
-
+  convertToModel = nodeID => {
     this.props.history.push({
       pathname: `/tool/${this.props.match.params.dataset}/${
         this.props.match.params.graph
-        }/${
-        this.props.match.params.model
-        }`,
+      }/${this.props.match.params.model}`,
     });
-  }
+  };
 
-  deleteNode(nodeId) {
+  deleteNode = nodeId => {
     if (nodeId === this.state.root) return;
     let toDelete = [nodeId];
     // shallow copy the arrays
@@ -168,25 +157,27 @@ export default class Tool extends React.Component {
       );
     }
     this.setState({
+      blockUnload: true,
       data: {
         nodes: nodes,
         links: links,
       },
     });
-  }
+  };
 
   // gets data in payload for a given node
   // gross but the only way :(
-  getNodeData(nodeId) {
+  getNodeData = nodeId => {
     if (!this.state.data) return null;
     for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
-  }
+  };
 
-  createChild(parent, node) {
+  createChild = (parent, node) => {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
+        blockUnload: true,
         showApply: false,
         data: {
           nodes: [...prev.data.nodes, { id: child_id, ...node }],
@@ -194,20 +185,20 @@ export default class Tool extends React.Component {
         },
       };
     });
-  }
+  };
 
-  backToData() {
+  backToData = () => {
     this.props.history.push({
       pathname: `/tool/${this.props.match.params.dataset}/${
         this.props.match.params.graph
-        }`,
+      }`,
     });
-  }
+  };
 
-  executeFunctions() {
+  executeFunctions = () => {
     fetch(
       `/execute/${this.props.match.params.dataset}/${
-      this.props.match.params.graph
+        this.props.match.params.graph
       }`,
       { method: 'POST' }
     )
@@ -232,15 +223,68 @@ export default class Tool extends React.Component {
           }
         );
       });
-  }
+  };
+
+  saveGraph = () => {
+    return fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(({ message }) => {
+        console.log(message);
+        this.setState({
+          blockUnload: false,
+        });
+      })
+      .catch(console.error);
+  };
+
+  showRename = () => {
+    this.setState({ showRename: true });
+  };
+
+  duplicateGraph = () => {
+    this.setState({ showDuplicate: true });
+  };
 
   render() {
+    // set up the "Are you sure?" prompt if the graph hasn't been saved
+    window.onbeforeunload = this.state.blockUnload ? () => true : null;
+
+    const node = this.getNodeData(this.state.nodeClickedId);
+
     const graphProps = {
       id: 'graph',
       data: this.state.data,
       config: this.state.config,
       onClickNode: this.onClickNode,
       onClickGraph: this.onClickGraph,
+    };
+
+    const topbarGraphItems = [
+      { text: 'Save', onClick: this.saveGraph },
+      {
+        text: 'Download',
+        href: `/graph/${this.props.match.params.graph}/download`,
+        target: '_blank',
+      },
+      { text: 'Rename', onClick: this.showRename },
+      { text: 'Duplicate', onClick: this.duplicateGraph },
+    ];
+
+    const popoverProps = {
+      dataset: this.props.match.params.dataset,
+      graph: this.props.match.params.graph,
+      functions: this.state.functions,
+      node: node,
+      mode: this.props.mode,
+      onApply: this.createChild,
+      onEdit: this.editNode,
+      onDelete: this.deleteNode,
     };
 
     // portal from children of node  element
@@ -251,11 +295,14 @@ export default class Tool extends React.Component {
       );
     };
 
-    const node = this.getNodeData(this.state.nodeClickedId);
-
     return (
+      // TODO: look at bundle sizes
       <div>
-        <Topbar graph={this.props.match.params.graph} data={this.state.data} />
+        <Prompt
+          when={this.state.blockUnload}
+          message="Are you sure? Changes that you made may not be saved."
+        />
+        <Topbar items={topbarGraphItems} />
         <div className="data-info">
           <h4>Dataset: {this.props.match.params.dataset}</h4>
           <h4>Graph: {this.props.match.params.graph}</h4>
@@ -267,10 +314,10 @@ export default class Tool extends React.Component {
         {this.state.data ? (
           <Graph ref={this.graph} {...graphProps} />
         ) : (
-            <div className="graph-loading">
-              <Spinner animation="border" role="status" />
-            </div>
-          )}
+          <div className="graph-loading">
+            <Spinner animation="border" role="status" />
+          </div>
+        )}
         <Alert
           variant={this.state.message.variant}
           dismissible
@@ -280,32 +327,22 @@ export default class Tool extends React.Component {
         >
           {this.state.message.text}
         </Alert>
-        )}
+
         {/* display popup */}
         {node && (
           <Portal>
             <foreignObject
               x="30"
               y="-15"
-              width="225px"
+              width="100%"
               height="100%"
               className="click-through"
             >
-              <NodePopover
-                functions={this.state.functions}
-                node={node}
-                onApply={this.createChild}
-                onEdit={this.editNode}
-                onDelete={this.deleteNode}
-                dataset={this.props.match.params.dataset}
-                mode={this.props.mode}
-                convert={this.convertToModel}
-                graph={this.props.match.params.graph}
-              />
+              <NodePopover {...popoverProps} />
             </foreignObject>
           </Portal>
         )}
-        {(this.props.mode == 'model-graph') && (
+        {this.props.mode === 'model-graph' && (
           <BackButton mode={this.props.mode} backFunction={this.backToData} />
         )}
       </div>
