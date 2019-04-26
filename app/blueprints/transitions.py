@@ -17,9 +17,9 @@ from app.tree import load_tree
 
 bp = Blueprint('transition', __name__, url_prefix='/transition')
 
-@bp.route('<graphName>/<nodeID>/model')
-def findModel(graphName, nodeID):
-    path = 'idk'
-    tree = load_tree(path)
-    
-    node = tree.node_of(nodeId).
+# @bp.route('<graphName>/<nodeID>/model')
+# def findModel(graphName, nodeID):
+#     path = 'idk'
+#     tree = load_tree(path)
+#
+#     node = tree.node_of(nodeID)
