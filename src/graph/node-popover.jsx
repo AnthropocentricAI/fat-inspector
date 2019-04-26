@@ -94,7 +94,7 @@ export default class NodePopover extends React.Component {
       },
     ];
     const hasInfo = popoverInfo.reduce(
-      (acc, { attr, content }) => acc || content !== undefined,
+      (acc, { attr, content }) => acc || content,
       false
     );
     return (

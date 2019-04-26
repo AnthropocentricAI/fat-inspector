@@ -118,7 +118,7 @@ export default class Tool extends React.Component {
             ? {
                 ...x,
                 label: node.label || x.label,
-                desc: node.desc || x.desc,
+                desc: node.desc,
                 function: func,
               }
             : x
