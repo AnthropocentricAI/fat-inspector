@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileChooser from './forms/file-chooser.jsx';
-import Topbar from './topbar/topbar.jsx';
 import loadable from '@loadable/component';
 import {
   BrowserRouter as Router,
@@ -43,7 +42,16 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode={this.state.mode} />
+                  <Tool {...props} isNew={this.state.isNew} mode='data-graph' />
+                </>
+              )}
+            />
+            <Route
+              exact
+              path={`/tool/:dataset/:graph/model`}
+              render={props => (
+                <>
+                  <Tool {...props} isNew={true} mode='model-graph' />
                 </>
               )}
             />
