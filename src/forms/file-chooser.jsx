@@ -57,7 +57,7 @@ export default class FileChooser extends React.Component {
       <div>
         <div className='file-chooser-wrapper'>
         <div className="title">Welcome to FAT Forensics inspect tool
-        <p>by AnthropocentricAI</p>
+        <p>AnthropocentricAI</p>
         </div>
           <Form onSubmit={this.openGraph.bind(this)}>
             <div className="form-label-wrapper">
