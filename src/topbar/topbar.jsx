@@ -49,7 +49,7 @@ export default class Topbar extends PureComponent {
           variant="dark"
           fixed="top"
         >
-          <Navbar.Brand>FAT Forensics</Navbar.Brand>
+          <Navbar.Brand>{this.props.dataset}: {this.props.graph}</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
@@ -89,6 +89,7 @@ export default class Topbar extends PureComponent {
               >
                 About
               </Nav.Link>
+              <Navbar.Brand className="brand">FAT Forensics</Navbar.Brand>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

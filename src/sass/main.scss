@@ -9,11 +9,11 @@
 @import 'charts';
 
 .mainwrapper {
-  background-color: #c0d6df;
+  background-color: linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));;
 }
 
 body {
-  // background-color: #578396;
+   background-color: linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));
 }
 
 .topbar {

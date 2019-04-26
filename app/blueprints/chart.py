@@ -14,14 +14,25 @@ from fatd.holders import csv_loader
 
 bp = Blueprint('chart', __name__, url_prefix='/chart')
 
-
 # (d/m/p, f/a/t) -> { type -> (title, args, (func :: dataset -> args -> string -> svg)) }
 all_charts = {
     ('data', 'accountability'): {
-        'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'args_default': [], 'func': charts.pieChart }
+        'class_count': {
+            'id': 'class_count',
+            'title': 'Class Count',
+            'args': [],
+            'args_default': [],
+            'func': charts.pieChart
+        }
     },
     ('data', 'fairness'): {
-        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'args_default': [0], 'func': charts.histogram }
+        'histogram': {
+            'id': 'histogram',
+            'title': 'Histogram',
+            'args': ['col'],
+            'args_default': [0],
+            'func': charts.histogram
+        }
     }
 }
 
@@ -29,7 +40,11 @@ all_charts = {
 # filters out the func. key
 # from {(mode, tab) -> {}}
 def filter_func(d):
-    return { k: { k: v for k, v in v.items() if k != 'func' } for k, v in d.items()}
+    return {
+        k: {k: v
+            for k, v in v.items() if k != 'func'}
+        for k, v in d.items()
+    }
 
 
 # returns all {tab -> chart_type, title, [args]}
@@ -70,7 +85,8 @@ def svg(dataset, graph, node, mode, tab, chart_type):
             name = f'{dataset}_{graph}_tree.pickle'
             # TODO: proper error if dataset doesn't exist?
             try:
-                file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', name)
+                file_path = os.path.join(current_app.config['ASSETS_DIR'],
+                                         'pickles', name)
                 t = load_tree(file_path)
                 dataset = t.node_of(node).data
 
@@ -80,12 +96,17 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                 if request.args:
                     # try parsing any potential integer args.
                     # doesn't work with negative - but probably OK
-                    parsedArgs = { k: (int(v) if v.isdigit() else v) for k, v in request.args.items() }
+                    parsedArgs = {
+                        k: (int(v) if v.isdigit() else v)
+                        for k, v in request.args.items()
+                    }
 
                     try:
                         svg = toRender.get('func')(dataset, **parsedArgs)
                     except TypeError as e:
-                        abort(400, 'Invalid arguments {} for {}.'.format(parsedArgs, chart_type))
+                        abort(
+                            400, 'Invalid arguments {} for {}.'.format(
+                                parsedArgs, chart_type))
                         print(e)
                 else:
                     svg = toRender.get('func')(dataset)
