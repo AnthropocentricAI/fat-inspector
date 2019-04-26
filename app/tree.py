@@ -1,15 +1,16 @@
 """"""
 
 import os
-import pickle
 from typing import Any, Dict, List, Union
 
-from app.functions import funcs
+import dill as pickle
 from fatd.holders.data import Data
 from fatd.holders.models import Models
 from fatd.holders.predictions import Predictions
-from fatd.holders import csv_loader
+
+from app.exceptions import TreeBuildError
 from app.exceptions import TreeComputationError
+from app.functions import funcs
 
 NodeData = Union[Data, Models, Predictions]
 NodeFunction = (Any, List, int)
@@ -27,17 +28,21 @@ class Node:
 
     func: NodeFunction
     data: NodeData
+    indices: list
+    axis: int
     dirty: bool
 
-    def __init__(self, func: NodeFunction, data: NodeData = None):
+    def __init__(self, func: NodeFunction, indices: list = None, axis: int = 0, data: NodeData = None):
         self.func = func
+        self.indices = indices or []
+        self.axis = axis
         self.data = data
         self.dirty = False
 
     def apply(self):
         """Apply the node's function to its data. If self.dirty then it is skipped."""
         if not (self.func is None or self.dirty):
-            self.data = self.data.apply(self.func)
+            self.data = self.data.apply(self.func, self.indices, self.axis)
             self.dirty = True
 
     def __eq__(self, other: 'Node') -> bool:
@@ -71,15 +76,21 @@ class Tree:
     d3: dict
 
     def __init__(self, nodes: [dict], links: [dict], data: NodeData):
-        # assuming that the first node is the root!!
-        self.root = nodes[0]['id']
-        self.nodes = {n['id']: Node(n.get('function')) for n in nodes}
-        self.nodes[self.root].data = data
+        self.nodes = {n['id']: Node(*n['function']) for n in nodes}
         self.children = {key: [] for key in self.nodes}
+        possible_roots = list(self.nodes.keys())
         for link in links:
             source = link['source']
             target = link['target']
             self.children[source].append(target)
+            try:
+                possible_roots.remove(target)
+            except ValueError:
+                pass
+        if len(possible_roots) != 1:
+            raise TreeBuildError(f'Expected ONE root node in the tree, got {len(possible_roots)}.')
+        self.root = possible_roots[0]
+        self.nodes[self.root].data = data
 
     def node_of(self, key) -> Node:
         return self.nodes[key]
@@ -128,13 +139,21 @@ def load_tree(path: str) -> Tree:
 
 
 def build_tree(dataset: NodeData, d3_graph: Dict) -> Tree:
-    nodes = d3_graph['nodes']
-    links = d3_graph['links']
+    try:
+        nodes = d3_graph['nodes']
+        links = d3_graph['links']
 
-    # map the node functions to the REAL functions
-    for n in nodes:
-        if 'function' in n:
-            n['function'] = funcs.get(n['function'], None)
+        # map the node functions to the REAL functions and unpack the name, indices and axis
+        for n in nodes:
+            if 'function' in n:
+                func_data = n['function']
+                func, indices, axis = funcs[func_data['name']], func_data['indices'], func_data['axis']
+                n['function'] = (func, indices, axis)
+            else:
+                n['function'] = (None,)
+
+    except Exception:
+        raise TreeBuildError('Failed to build tree! Expected a dict of shape: { nodes: [], links: [] }.')
 
     tree = Tree(nodes, links, dataset)
     # keep a handle on the d3 graph for later
