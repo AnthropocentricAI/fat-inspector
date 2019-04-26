@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
 import { jsonWithStatus } from '../util';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import BackButton from './back-button.jsx';
 
 library.add(faBolt);
 
@@ -35,6 +36,8 @@ export default class Tool extends React.Component {
     this.editNodeLabelDesc = this.editNodeLabelDesc.bind(this);
     this.getNodeData = this.getNodeData.bind(this);
     this.executeFunctions = this.executeFunctions.bind(this);
+    this.convertToModel = this.convertToModel.bind(this);
+    this.backToData = this.backToData.bind(this);
   }
 
   // upon first mount, we need to populate the graph and fetch relevant data
@@ -108,14 +111,25 @@ export default class Tool extends React.Component {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-                ...x,
-                label: label || x.label,
-                desc: desc || x.desc,
-              }
+              ...x,
+              label: label || x.label,
+              desc: desc || x.desc,
+            }
             : x
         ),
         links: this.state.data.links,
       },
+    });
+  }
+
+  convertToModel(nodeID) {
+
+    this.props.history.push({
+      pathname: `/tool/${this.props.match.params.dataset}/${
+        this.props.match.params.graph
+        }/${
+        this.props.match.params.model
+        }`,
     });
   }
 
@@ -171,10 +185,18 @@ export default class Tool extends React.Component {
     });
   }
 
+  backToData() {
+    this.props.history.push({
+      pathname: `/tool/${this.props.match.params.dataset}/${
+        this.props.match.params.graph
+        }`,
+    });
+  }
+
   executeFunctions() {
     fetch(
       `/execute/${this.props.match.params.dataset}/${
-        this.props.match.params.graph
+      this.props.match.params.graph
       }`,
       { method: 'POST' }
     );
@@ -203,21 +225,20 @@ export default class Tool extends React.Component {
       <div>
         <Topbar graph={this.props.match.params.graph} data={this.state.data} />
         <div className="data-info">
-          <h3>Dataset: {this.props.match.params.dataset}</h3>
-          <h3>Graph: {this.props.match.params.graph}</h3>
+          <h4>Dataset: {this.props.match.params.dataset}</h4>
+          <h4>Graph: {this.props.match.params.graph}</h4>
         </div>
         <button className="apply-functions" onClick={this.executeFunctions}>
           <FontAwesomeIcon icon="bolt" size="lg" />
-          <h6>Execute</h6>
-          <h6>Functions</h6>
+          <h5>Execute Functions</h5>
         </button>
         {this.state.data ? (
           <Graph ref="graph" {...graphProps} />
         ) : (
-          <div className="graph-loading">
-            <Spinner animation="border" role="status" />
-          </div>
-        )}
+            <div className="graph-loading">
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
 
         {/* display popup */}
         {node && (
@@ -237,9 +258,13 @@ export default class Tool extends React.Component {
                 onDelete={this.deleteNode}
                 dataset={this.props.match.params.dataset}
                 mode={this.props.mode}
+                convert={this.convertToModel}
               />
             </foreignObject>
           </Portal>
+        )}
+        {(this.props.mode == 'model-graph') && (
+          <BackButton mode={this.props.mode} backFunction={this.backToData} />
         )}
       </div>
     );

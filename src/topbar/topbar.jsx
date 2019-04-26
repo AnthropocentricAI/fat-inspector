@@ -49,7 +49,7 @@ export default class Topbar extends PureComponent {
           variant="dark"
           fixed="top"
         >
-          <Navbar.Brand href="#home">FAT Forensics</Navbar.Brand>
+          <Navbar.Brand>FAT Forensics</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">

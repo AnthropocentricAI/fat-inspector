@@ -38,7 +38,7 @@ export default class NodePopover extends React.Component {
       {
         name: 'Convert to Model',
         icon: 'dice-d6',
-        action: () => {},
+        action: () => { this.props.convert() },
       },
       {
         name: 'Apply Function',
@@ -73,9 +73,9 @@ export default class NodePopover extends React.Component {
   render() {
     const confirmMessage = `Are you sure that you want to delete node '${
       this.props.node.label
-    }' and all of its children? This change is permanent cannot be undone. ${
+      }' and all of its children? This change is permanent cannot be undone. ${
       this.props.node.desc ? <p>Description: {this.props.node.desc}</p> : ''
-    }`;
+      }`;
     return (
       <>
         <NodeModalInspect
