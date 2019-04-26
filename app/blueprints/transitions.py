@@ -1,4 +1,3 @@
- 
 import json
 import os
 from json.decoder import JSONDecodeError
@@ -20,14 +19,17 @@ import uuid
 
 bp = Blueprint('transition', __name__, url_prefix='/transition')
 
-@bp.route('<graphName>/<nodeID>/model')
-def findModel(graphName, nodeID):
-    file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', graphName)
+
+@bp.route('/<dataset>/<graph>/<nodeID>/model')
+def findModel(dataset, graph, nodeID):
+    #print('wdaefsgrdtf')
+    name = f'{dataset}_{graph}_tree.pickle'
+    file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', name)
     tree = load_tree(file_path)
-    
-    graph_id = tree.node_of(nodeId).graph_id_model
+
+    graph_id = tree.node_of(nodeID).graph_id_model
     if not graph_id:
         graph_id = uuid.uuid4()
         tree.node_of(nodeId).graph_id_model = graph_id
         save_tree(tree, file_path)
-    fetch(graph_id)
+    return fetch(graph_id)

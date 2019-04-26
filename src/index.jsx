@@ -39,19 +39,20 @@ class App extends React.Component {
           <Switch>
             <Route
               exact
-              path={`/tool/:dataset/:graph`}
+              path={`/tool/:dataset/:graph/:model`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode='data-graph' />
+                  <Tool {...props} mode='model-graph' />
                 </>
               )}
             />
             <Route
               exact
-              path={`/tool/:dataset/:graph/model`}
+              path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={true} mode='model-graph' />
+
+                  <Tool {...props} isNew={this.state.isNew} mode='data-graph' />
                 </>
               )}
             />

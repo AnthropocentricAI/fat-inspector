@@ -50,7 +50,7 @@ export default class Tool extends React.Component {
   // upon first mount, we need to populate the graph and fetch relevant data
   componentDidMount() {
     this.fetchFunctions();
-    this.populateGraph(this.props.isNew);
+    this.populateGraph(this.props.isNew, this.props.mode);
   }
 
   fetchFunctions() {
@@ -81,14 +81,29 @@ export default class Tool extends React.Component {
     });
   }
 
-  populateGraph(isNew) {
-    if (isNew) {
-      this.initEmptyGraph();
-    } else {
-      fetch(`/graph/${this.props.match.params.graph}/fetch`)
+  populateGraph(isNew, mode) {
+    if (mode === 'data-graph') {
+      if (isNew) {
+        this.initEmptyGraph();
+      } else {
+        fetch(`/graph/${this.props.match.params.graph}/fetch`)
+          .then(jsonWithStatus)
+          .then(r => {
+            if (!r.ok) this.props.history.push('/');
+            else {
+              this.setState({
+                data: {
+                  ...r.json,
+                },
+              });
+            }
+          });
+      }
+    } else if (mode === 'model-graph') {
+      fetch(`/transition/${this.props.match.params.dataset}/${this.props.match.params.graph}/${this.props.match.params.model}/model`)
         .then(jsonWithStatus)
         .then(r => {
-          if (!r.ok) this.props.history.push('/');
+          if (!r.ok) this.props.history.push(`/tool/${this.props.match.params.dataset}/${this.props.match.params.graph}`);
           else {
             this.setState({
               data: {
@@ -136,13 +151,12 @@ export default class Tool extends React.Component {
     });
   }
 
-  convertToModel(nodeID) {
-
+  convertToModel(nodeId) {
     this.props.history.push({
       pathname: `/tool/${this.props.match.params.dataset}/${
         this.props.match.params.graph
         }/${
-        this.props.match.params.model
+        nodeId
         }`,
     });
   }
@@ -255,15 +269,18 @@ export default class Tool extends React.Component {
 
     return (
       <div>
-        <Topbar graph={this.props.match.params.graph} data={this.state.data} />
-        <div className="data-info">
-          <h4>Dataset: {this.props.match.params.dataset}</h4>
-          <h4>Graph: {this.props.match.params.graph}</h4>
-        </div>
+        <Topbar graph={this.props.match.params.graph} dataset={this.props.match.params.dataset} data={this.state.data} />
+
         <button className="apply-functions" onClick={this.executeFunctions}>
-          <FontAwesomeIcon icon="bolt" size="lg" />
-          <h5>Execute Functions</h5>
+          <div className='exlogo'><FontAwesomeIcon icon="bolt" size="lg" /></div>
+          <h5 className='executer'>Execute Functions</h5>
         </button>
+        {(this.props.mode === 'data-graph') && (
+          <h1 className='mode-label'>Data Graph</h1>
+        )}
+        {(this.props.mode === 'model-graph') && (
+          <h1 className='mode-label'>Model Graph</h1>
+        )}
         {this.state.data ? (
           <Graph ref={this.graph} {...graphProps} />
         ) : (

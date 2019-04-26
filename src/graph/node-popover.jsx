@@ -37,7 +37,7 @@ export default class NodePopover extends React.Component {
       {
         name: 'Convert to Model',
         icon: 'dice-d6',
-        action: () => { this.props.convert() },
+        action: () => { this.props.convert(this.props.node.id) },
       },
       {
         name: 'Add Child',
@@ -148,4 +148,5 @@ NodePopover.propTypes = {
   onApply: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  convert: PropTypes.func
 };
