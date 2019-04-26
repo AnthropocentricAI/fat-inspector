@@ -318,7 +318,7 @@ export default class Tool extends React.Component {
             <foreignObject
               x="30"
               y="-15"
-              width="225px"
+              width="100%"
               height="100%"
               className="click-through"
             >

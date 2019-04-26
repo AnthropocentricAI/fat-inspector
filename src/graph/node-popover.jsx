@@ -9,7 +9,6 @@ import {
   faSitemap,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import NodeModalEdit from '../modals/node-modal-edit.jsx';
 import ModalConfirmation from '../modals/modal-confirmation.jsx';
@@ -77,6 +76,23 @@ export default class NodePopover extends React.Component {
     }' and all of its children? This change is permanent cannot be undone. ${
       this.props.node.desc ? <p>Description: {this.props.node.desc}</p> : ''
     }`;
+    const popoverInfo = [
+      { attr: 'Description', content: this.props.node.desc },
+      {
+        attr: 'Function',
+        content: this.props.node.function && this.props.node.function.name,
+      },
+      {
+        attr: 'Indices',
+        content:
+          this.props.node.function &&
+          `[${this.props.node.function.indices.toString()}]`,
+      },
+      {
+        attr: 'Axis',
+        content: this.props.node.function && this.props.node.function.axis,
+      },
+    ];
     return (
       <>
         <NodeModalInspect
@@ -113,35 +129,38 @@ export default class NodePopover extends React.Component {
           id="popover-basic"
           title={this.props.node.label}
         >
-          <div>
-            {this.props.node.desc && <p>Description: {this.props.node.desc}</p>}
-            {this.props.node.function && (
-              <>
-                <p>
-                  Function: {this.props.node.function.name.toString()} <br />
-                  Indices: [{this.props.node.function.indices.toString()}]<br />
-                  Axis: {this.props.node.function.axis}
-                </p>
-              </>
-            )}
-            <ButtonGroup className="node-popover-buttongroup" vertical>
-              {this.optionsList.map(option => (
-                <Button
-                  style={{ textAlign: 'center' }}
-                  key={`popover-option-${option.name}`}
-                  onClick={option.action}
-                  variant="outline-secondary"
-                  className="node-popover-button"
-                >
-                  <FontAwesomeIcon
-                    fixedWidth
-                    className="node-popover-icon"
-                    icon={option.icon}
-                  />
-                  <span className="node-popover-text">{option.name}</span>
-                </Button>
-              ))}
-            </ButtonGroup>
+          <div className="node-popover-wrapper">
+            <div className="node-popover-info-wrapper">
+              {popoverInfo.map(
+                ({ attr, content }) =>
+                  content && (
+                    <p key={`node-popover-${attr}`}>
+                      <span className="node-popover-info-attr">{attr}</span>:{' '}
+                      {content}
+                    </p>
+                  )
+              )}
+            </div>
+            <div className="node-popover-button-wrapper">
+              <ButtonGroup className="node-popover-buttongroup" vertical>
+                {this.optionsList.map(option => (
+                  <Button
+                    style={{ textAlign: 'center' }}
+                    key={`popover-option-${option.name}`}
+                    onClick={option.action}
+                    variant="outline-secondary"
+                    className="node-popover-button"
+                  >
+                    <FontAwesomeIcon
+                      fixedWidth
+                      className="node-popover-icon"
+                      icon={option.icon}
+                    />
+                    <span className="node-popover-text">{option.name}</span>
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </div>
           </div>
         </Popover>
       </>
