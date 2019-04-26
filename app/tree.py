@@ -32,7 +32,8 @@ class Node:
     axis: int
     dirty: bool
 
-    def __init__(self, func: NodeFunction, indices: list = None, axis: int = 0, data: NodeData = None):
+    def __init__(self, graph_id_model: String, func: NodeFunction, indices: list = None, axis: int = 0, data: NodeData = None):
+        self.graph_id_model = graph_id_model
         self.func = func
         self.indices = indices or []
         self.axis = axis
@@ -76,7 +77,7 @@ class Tree:
     d3: dict
 
     def __init__(self, nodes: [dict], links: [dict], data: NodeData):
-        self.nodes = {n['id']: Node(*n['function']) for n in nodes}
+        self.nodes = {n['id']: Node(n['graphIdModel'], *n['function']) for n in nodes}
         self.children = {key: [] for key in self.nodes}
         possible_roots = list(self.nodes.keys())
         for link in links:
