@@ -28,7 +28,7 @@ def pieChart(dataset):
         
         fig.savefig(tmpfile, format='svg')
         plt.close(fig)
-    return base64.b64encode(tmpfile.getvalue()).decode()
+    return ('', base64.b64encode(tmpfile.getvalue()).decode())
 
 def histogram(dataset, col=0):
     with lock:
@@ -44,4 +44,4 @@ def histogram(dataset, col=0):
         tmpfile = BytesIO()
         fig.savefig(tmpfile, format='svg')
         plt.close(fig)
-    return base64.b64encode(tmpfile.getvalue()).decode()
+    return ('', base64.b64encode(tmpfile.getvalue()).decode())

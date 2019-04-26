@@ -4,7 +4,7 @@ import os
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    ASSETS_DIR = 'assets'
+    ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
 
 
 class DevelopmentConfig(Config):
