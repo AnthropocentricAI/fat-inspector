@@ -10,7 +10,8 @@ import Topbar from '../topbar/topbar.jsx';
 import { jsonOkRequired, jsonWithStatus } from '../util';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import Alert from 'react-bootstrap/Alert';
-import { Prompt } from 'react-router';
+import NodePopover from './node-popover.jsx';
+import { Prompt } from 'react-router-dom';
 import loadable from '@loadable/component';
 
 library.add(faBolt);
@@ -21,6 +22,7 @@ const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
     </div>
   ),
 });
+
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
