@@ -66,7 +66,6 @@ export default class NodeModalInspect extends React.Component {
               </Tab>
             ) }
           </Tabs>
-          some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words some words 
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.onHide}>

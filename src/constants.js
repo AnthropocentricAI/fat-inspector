@@ -1,1 +1,1 @@
-export const MODES = { DATA: 'data', MODEL: 'model', PREDICTIONS: 'predictions' }
+export const MODES = { DATA: 'data', MODELS: 'models', PREDICTIONS: 'predictions' }
