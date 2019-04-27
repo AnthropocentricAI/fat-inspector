@@ -13,6 +13,8 @@ import Alert from 'react-bootstrap/Alert';
 import NodePopover from './node-popover.jsx';
 import { Prompt } from 'react-router-dom';
 import loadable from '@loadable/component';
+import Modal from 'react-bootstrap/Modal';
+import Rename from '../modals/modal-rename.jsx';
 
 library.add(faBolt);
 const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
@@ -87,15 +89,12 @@ export default class Tool extends React.Component {
         .then(({ ok, json }) => {
           if (!ok) this.props.history.push('/');
           else {
-            this.setState(
-              {
-                root: this.findRoot(json),
-                data: {
-                  ...json,
-                },
+            this.setState({
+              root: this.findRoot(json),
+              data: {
+                ...json,
               },
-              () => console.log(this.state)
-            );
+            });
           }
         });
     }
@@ -246,6 +245,21 @@ export default class Tool extends React.Component {
     this.setState({ showDuplicate: true });
   };
 
+  renameGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/rename`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
+  };
+
   render() {
     // set up the "Are you sure?" prompt if the graph hasn't been saved
     window.onbeforeunload = this.state.blockUnload ? () => true : null;
@@ -338,6 +352,11 @@ export default class Tool extends React.Component {
             </foreignObject>
           </Portal>
         )}
+        <Rename
+          onSubmit={this.renameGraph}
+          onHide={() => this.setState({ showRename: false })}
+          show={this.state.showRename}
+        />
       </div>
     );
   }
