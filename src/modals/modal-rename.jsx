@@ -30,7 +30,9 @@ export default class Rename extends React.Component {
             <Button type="submit" className="btn btn-primary">
               Submit
             </Button>
-            <Button className="btn btn-secondary">Close</Button>
+            <Button className="btn btn-secondary" onClick={this.props.onHide}>
+              Close
+            </Button>
           </Modal.Footer>
         </Form>
       </Modal>
