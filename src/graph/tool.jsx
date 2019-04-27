@@ -10,11 +10,12 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Topbar from '../topbar/topbar.jsx';
 import { jsonOkRequired, jsonWithStatus } from '../util';
-import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import BackButton from './back-button.jsx';
 import Alert from 'react-bootstrap/Alert';
 
 library.add(faBolt);
+library.add(faArrowLeft);
 
 export default class Tool extends React.Component {
   constructor(props) {
@@ -159,6 +160,7 @@ export default class Tool extends React.Component {
         nodeId
         }`,
     });
+    window.location.reload();
   }
 
   deleteNode(nodeId) {
@@ -216,6 +218,7 @@ export default class Tool extends React.Component {
         this.props.match.params.graph
         }`,
     });
+    window.location.reload();
   }
 
   executeFunctions() {
@@ -297,7 +300,6 @@ export default class Tool extends React.Component {
         >
           {this.state.message.text}
         </Alert>
-        )}
         {/* display popup */}
         {node && (
           <Portal>
@@ -322,9 +324,7 @@ export default class Tool extends React.Component {
             </foreignObject>
           </Portal>
         )}
-        {(this.props.mode == 'model-graph') && (
-          <BackButton mode={this.props.mode} backFunction={this.backToData} />
-        )}
+        <BackButton mode={this.props.mode} backFunction={this.backToData} />
       </div>
     );
   }
