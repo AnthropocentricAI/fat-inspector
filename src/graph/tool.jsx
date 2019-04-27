@@ -29,6 +29,7 @@ export default class Tool extends React.Component {
     this.state = {
       config: defaultConfig,
       blockUnload: false,
+      displayMessage: false,
       functions: [],
       message: { variant: '', text: '' },
     };
@@ -71,20 +72,30 @@ export default class Tool extends React.Component {
     });
   };
 
+  findRoot = graph => {
+    const targets = graph.links.map(({ source, target }) => target);
+    const roots = graph.nodes.filter(x => !targets.includes(x));
+    return roots[0].id;
+  };
+
   populateGraph = isNew => {
     if (isNew) {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
         .then(jsonWithStatus)
-        .then(r => {
-          if (!r.ok) this.props.history.push('/');
+        .then(({ ok, json }) => {
+          if (!ok) this.props.history.push('/');
           else {
-            this.setState({
-              data: {
-                ...r.json,
+            this.setState(
+              {
+                root: this.findRoot(json),
+                data: {
+                  ...json,
+                },
               },
-            });
+              () => console.log(this.state)
+            );
           }
         });
     }
