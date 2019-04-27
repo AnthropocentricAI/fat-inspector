@@ -15,7 +15,7 @@ export default class Rename extends React.Component {
     return (
       <Modal show={this.props.show} onHide={this.props.onHide} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Rename Graph</Modal.Title>
+          <Modal.Title>{this.props.title}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={this.onSubmit}>
           <Modal.Body>
