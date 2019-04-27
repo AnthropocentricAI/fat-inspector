@@ -93,6 +93,10 @@ export default class NodePopover extends React.Component {
         content: this.props.node.function && this.props.node.function.axis,
       },
     ];
+    const hasInfo = popoverInfo.reduce(
+      (acc, { attr, content }) => acc || content,
+      false
+    );
     return (
       <>
         <NodeModalInspect
@@ -130,17 +134,19 @@ export default class NodePopover extends React.Component {
           title={this.props.node.label}
         >
           <div className="node-popover-wrapper">
-            <div className="node-popover-info-wrapper">
-              {popoverInfo.map(
-                ({ attr, content }) =>
-                  content && (
-                    <p key={`node-popover-${attr}`}>
-                      <span className="node-popover-info-attr">{attr}</span>:{' '}
-                      {content}
-                    </p>
-                  )
-              )}
-            </div>
+            {hasInfo && (
+              <div className="node-popover-info-wrapper">
+                {popoverInfo.map(
+                  ({ attr, content }) =>
+                    content && (
+                      <p key={`node-popover-${attr}`}>
+                        <span className="node-popover-info-attr">{attr}</span>:{' '}
+                        {content}
+                      </p>
+                    )
+                )}
+              </div>
+            )}
             <div className="node-popover-button-wrapper">
               <ButtonGroup className="node-popover-buttongroup" vertical>
                 {this.optionsList.map(option => (
