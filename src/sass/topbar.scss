@@ -1,35 +1,7 @@
-.topbar {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  z-index: 101;
-  display: flex;
-  height: 100px;
-}
-
-.topbar-button {
-  font-size: 1.2rem;
-}
-
-.menu {
-  position: absolute;
-  display: grid;
-  width: 25%;
-  top: 60px;
-  height: 180px;
-}
-
-.menubutton {
-  background-color: #5d0000;
-  color: white;
-
-  &:hover {
-    background-color: darkslategray;
-  }
-}
 
 .main-navbar {
   display: flex;
+  box-shadow: 0 0 70px 0 rgb(53, 110, 91);
 }
 
 .brand {

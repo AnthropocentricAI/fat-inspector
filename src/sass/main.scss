@@ -8,179 +8,171 @@
 @import 'graph-name';
 @import 'charts';
 
-.mainwrapper {
-  background-color: linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));;
-}
+// .topbar {
+//   width: 100%;
+//   position: fixed;
+//   top: 0;
+//   height: 60px;
+//   z-index: 101;
+//   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+//   left: 0;
+// }
 
-body {
-   background-color: linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));
-}
+// .topbar__wrapper {
+//   position: relative;
+//   display: flex;
+//   height: 60px;
+// }
 
-.topbar {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  height: 60px;
-  z-index: 101;
-  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
-  left: 0;
-}
+// .topbarbutton {
+//   font-size: 100%;
+//   margin: 100;
+//   background-color: #911800;
+//   flex-grow: 1;
+//   color: #eaeaea;
+// }
 
-.topbar__wrapper {
-  position: relative;
-  display: flex;
-  height: 60px;
-}
+// .topbarbutton:hover {
+//   background-color: maroon;
+// }
 
-.topbarbutton {
-  font-size: 100%;
-  margin: 100;
-  background-color: #911800;
-  flex-grow: 1;
-  color: #eaeaea;
-}
+// .infowrap {
+//   bottom: 0;
+//   position: fixed;
+// }
 
-.topbarbutton:hover {
-  background-color: maroon;
-}
+// .switch {
+//   width: 100%;
+//   position: absolute;
+//   top: 5px;
+//   left: 0;
+// }
 
-.infowrap {
-  bottom: 0;
-  position: fixed;
-}
+// .wrap {
+//   position: relative;
+//   display: flex;
+//   height: 40px;
+//   top: 60px;
+// }
 
-.switch {
-  width: 100%;
-  position: absolute;
-  top: 5px;
-  left: 0;
-}
+// .topswitchbutton {
+//   flex-grow: 1;
+//   z-index: 1;
+//   height: 30px;
+//   border-radius: 9em;
+//   text-align: center;
+//   font-size: 20;
+//   background-color: #e8dab2;
+// }
 
-.wrap {
-  position: relative;
-  display: flex;
-  height: 40px;
-  top: 60px;
-}
+// .topswitchbutton:hover {
+//   height: 40px;
+//   transition: background 0.2s, height 0.2s;
+// }
 
-.topswitchbutton {
-  flex-grow: 1;
-  z-index: 1;
-  height: 30px;
-  border-radius: 9em;
-  text-align: center;
-  font-size: 20;
-  background-color: #e8dab2;
-}
+// /*# sourceMappingURL=../css/app.scss.css.map */
 
-.topswitchbutton:hover {
-  height: 40px;
-  transition: background 0.2s, height 0.2s;
-}
+// .topbarbutton:hover {
+//   background-color: darkslategray;
+// }
 
-/*# sourceMappingURL=../css/app.scss.css.map */
+// /*# sourceMappingURL=../css/app.scss.css.map */
 
-.topbarbutton:hover {
-  background-color: darkslategray;
-}
+// .left {
+//   border-right: 1px solid lightgray;
+//   background-color: lightgray;
+//   position: fixed;
+//   margin-top: 20px;
+//   width: 200px;
+//   height: 100%;
+//   left: 0;
+// }
 
-/*# sourceMappingURL=../css/app.scss.css.map */
+// .wrap {
+//   display: grid;
+//   height: 100%;
+//   justify-items: center;
+//   align-items: center;
+//   top: 60px;
+// }
 
-.left {
-  border-right: 1px solid lightgray;
-  background-color: lightgray;
-  position: fixed;
-  margin-top: 20px;
-  width: 200px;
-  height: 100%;
-  left: 0;
-}
+// .sidebarbutton {
+//   z-index: 1;
+//   height: 12em;
+//   width: 12em;
+//   border-radius: 9em;
+//   line-height: 9em;
+//   text-align: center;
+//   font-weight: bold;
+//   background-color: #965050;
+//   transition: background 0.5s, width 0.5s, height 0.5s, line-height 0.25s;
+//   border: solid 2px grey;
+// }
 
-.wrap {
-  display: grid;
-  height: 100%;
-  justify-items: center;
-  align-items: center;
-  top: 60px;
-}
+// .sidebarbutton:hover {
+//   background-color: #b16c6cb8;
+// }
 
-.sidebarbutton {
-  z-index: 1;
-  height: 12em;
-  width: 12em;
-  border-radius: 9em;
-  line-height: 9em;
-  text-align: center;
-  font-weight: bold;
-  background-color: #965050;
-  transition: background 0.5s, width 0.5s, height 0.5s, line-height 0.25s;
-  border: solid 2px grey;
-}
+// .topbar {
+//   width: 100%;
+//   position: fixed;
+//   top: 0;
+//   height: 50px;
+//   z-index: 101;
+//   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+//   left: 0;
+//   background-color: red;
+// }
 
-.sidebarbutton:hover {
-  background-color: #b16c6cb8;
-}
+// .topbar__wrapper {
+//   position: relative;
+//   display: flex;
+//   height: 60px;
+// }
 
-.topbar {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  height: 50px;
-  z-index: 101;
-  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
-  left: 0;
-  background-color: red;
-}
+// .topbarbutton {
+//   font-size: 100%;
+//   margin: 100;
+//   background-color: maroon;
+//   flex-grow: 1;
+//   color: whitesmoke;
+// }
 
-.topbar__wrapper {
-  position: relative;
-  display: flex;
-  height: 60px;
-}
+// .topbarbutton:hover {
+//   background-color: darkslategray;
+// }
 
-.topbarbutton {
-  font-size: 100%;
-  margin: 100;
-  background-color: maroon;
-  flex-grow: 1;
-  color: whitesmoke;
-}
+// .left {
+//   /* // grid-area: 2 / 1 / 3 / 2; */
+//   border-right: 1px solid lightgray;
+//   background-color: lightgray;
+//   position: absolute;
+//   width: 200px;
+//   height: calc(100% - 60px);
+//   /* // top: 60px; */
+//   left: 0;
+// }
 
-.topbarbutton:hover {
-  background-color: darkslategray;
-}
+// .wrap {
+//   display: grid;
+//   height: 100%;
+//   justify-items: center;
+//   align-items: center;
+//   top: 60px;
+// }
 
-.left {
-  /* // grid-area: 2 / 1 / 3 / 2; */
-  border-right: 1px solid lightgray;
-  background-color: lightgray;
-  position: absolute;
-  width: 200px;
-  height: calc(100% - 60px);
-  /* // top: 60px; */
-  left: 0;
-}
-
-.wrap {
-  display: grid;
-  height: 100%;
-  justify-items: center;
-  align-items: center;
-  top: 60px;
-}
-
-.sidebarbutton {
-  z-index: 1;
-  height: 12em;
-  width: 12em;
-  border-radius: 9em;
-  line-height: 9em;
-  text-align: center;
-  font-weight: bold;
-  background-color: #965050;
-  transition: background 0.5s, width 0.5s, height 0.5s, line-height 0.25s;
-  border: solid 2px grey;
-}
+// .sidebarbutton {
+//   z-index: 1;
+//   height: 12em;
+//   width: 12em;
+//   border-radius: 9em;
+//   line-height: 9em;
+//   text-align: center;
+//   font-weight: bold;
+//   background-color: #965050;
+//   transition: background 0.5s, width 0.5s, height 0.5s, line-height 0.25s;
+//   border: solid 2px grey;
+// }
 
 label.uploadLabel input[type='file'] {
   display: none;
