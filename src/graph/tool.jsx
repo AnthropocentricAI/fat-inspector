@@ -14,6 +14,8 @@ import Alert from 'react-bootstrap/Alert';
 import NodePopover from './node-popover.jsx';
 import { Prompt } from 'react-router-dom';
 import loadable from '@loadable/component';
+import Modal from 'react-bootstrap/Modal';
+import Rename from '../modals/modal-rename.jsx';
 
 library.add(faBolt);
 const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
@@ -30,6 +32,7 @@ export default class Tool extends React.Component {
     this.state = {
       config: defaultConfig,
       blockUnload: false,
+      displayMessage: false,
       functions: [],
       message: { variant: '', text: '' },
     };
@@ -72,18 +75,25 @@ export default class Tool extends React.Component {
     });
   };
 
+  findRoot = graph => {
+    const targets = graph.links.map(({ source, target }) => target);
+    const roots = graph.nodes.filter(x => !targets.includes(x));
+    return roots[0].id;
+  };
+
   populateGraph = isNew => {
     if (isNew) {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
         .then(jsonWithStatus)
-        .then(r => {
-          if (!r.ok) this.props.history.push('/');
+        .then(({ ok, json }) => {
+          if (!ok) this.props.history.push('/');
           else {
             this.setState({
+              root: this.findRoot(json),
               data: {
-                ...r.json,
+                ...json,
               },
             });
           }
@@ -106,6 +116,11 @@ export default class Tool extends React.Component {
   };
 
   editNode = (nodeId, node) => {
+    const func = node.function && {
+      name: node.function.name || x.function.name,
+      indices: node.function.indices || x.function.indices,
+      axis: node.function.axis || x.function.axis,
+    };
     this.setState({
       blockUnload: true,
       data: {
@@ -114,12 +129,8 @@ export default class Tool extends React.Component {
             ? {
                 ...x,
                 label: node.label || x.label,
-                desc: node.desc || x.desc,
-                function: {
-                  name: node.function.name || x.function.name,
-                  indices: node.function.indices || x.function.indices,
-                  axis: node.function.axis || x.function.axis,
-                },
+                desc: node.desc,
+                function: func,
               }
             : x
         ),
@@ -247,8 +258,38 @@ export default class Tool extends React.Component {
     this.setState({ showRename: true });
   };
 
-  duplicateGraph = () => {
+  showDuplicate = () => {
     this.setState({ showDuplicate: true });
+  };
+
+  renameGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/rename`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
+  };
+
+  duplicateGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/duplicate`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
   };
 
   render() {
@@ -273,7 +314,7 @@ export default class Tool extends React.Component {
         target: '_blank',
       },
       { text: 'Rename', onClick: this.showRename },
-      { text: 'Duplicate', onClick: this.duplicateGraph },
+      { text: 'Duplicate', onClick: this.showDuplicate },
     ];
 
     const popoverProps = {
@@ -342,6 +383,18 @@ export default class Tool extends React.Component {
             </foreignObject>
           </Portal>
         )}
+        <Rename
+          title="Rename Graph"
+          onSubmit={this.renameGraph}
+          onHide={() => this.setState({ showRename: false })}
+          show={this.state.showRename}
+        />
+        <Rename
+          title="Duplicate Graph"
+          onSubmit={this.duplicateGraph}
+          onHide={() => this.setState({ showDuplicate: false })}
+          show={this.state.showDuplicate}
+        />
         {this.props.mode === 'model-graph' && (
           <BackButton mode={this.props.mode} backFunction={this.backToData} />
         )}
