@@ -241,12 +241,27 @@ export default class Tool extends React.Component {
     this.setState({ showRename: true });
   };
 
-  duplicateGraph = () => {
+  showDuplicate = () => {
     this.setState({ showDuplicate: true });
   };
 
   renameGraph = name => {
     fetch(`/graph/${this.props.match.params.graph}/rename`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
+  };
+
+  duplicateGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/duplicate`, {
       method: 'POST',
       body: `new_name=${name}`,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -282,7 +297,7 @@ export default class Tool extends React.Component {
         target: '_blank',
       },
       { text: 'Rename', onClick: this.showRename },
-      { text: 'Duplicate', onClick: this.duplicateGraph },
+      { text: 'Duplicate', onClick: this.showDuplicate },
     ];
 
     const popoverProps = {
@@ -353,9 +368,16 @@ export default class Tool extends React.Component {
           </Portal>
         )}
         <Rename
+          title="Rename Graph"
           onSubmit={this.renameGraph}
           onHide={() => this.setState({ showRename: false })}
           show={this.state.showRename}
+        />
+        <Rename
+          title="Duplicate Graph"
+          onSubmit={this.duplicateGraph}
+          onHide={() => this.setState({ showDuplicate: false })}
+          show={this.state.showDuplicate}
         />
       </div>
     );
