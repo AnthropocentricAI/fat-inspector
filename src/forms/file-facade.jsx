@@ -45,4 +45,5 @@ export default class FileFacade extends React.Component {
 
 FileFacade.propTypes = {
   inputName: PropTypes.string,
+  accept: PropTypes.string,
 };
