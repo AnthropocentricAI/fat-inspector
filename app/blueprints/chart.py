@@ -17,11 +17,25 @@ bp = Blueprint('chart', __name__, url_prefix='/chart')
 
 # (d/m/p, f/a/t) -> { type -> (title, args, (func :: dataset -> args -> string -> svg)) }
 all_charts = {
+    ('data', 'fairness'): {
+        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'args_default': [0], 'func': charts.histogram }
+    },
     ('data', 'accountability'): {
         'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'args_default': [], 'func': charts.pieChart }
     },
-    ('data', 'fairness'): {
-        'histogram': { 'id': 'histogram', 'title': 'Histogram', 'args': ['col'], 'args_default': [0], 'func': charts.histogram }
+    ('models', 'fairness'): {
+        'train_accuracy': { 'id': 'train_accuracy', 'title': 'Train Accuracy', 'args': [], 'args_default': [], 'func': charts.train_accuracy },
+        'data_accuracy': { 'id': 'data_accuracy', 'title': 'Data Accuracy', 'args': [], 'args_default': [], 'func': charts.data_accuracy }
+    },
+    ('models', 'accountability'): {
+        'training_confusion_matrix' : { 'id': 'training_confusion_matrix', 'title': 'Training Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.training_confusion_matrix },
+        'data_confusion_matrix' : { 'id': 'data_confusion_matrix', 'title': 'Data Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.data_confusion_matrix }
+    },
+    ('predictions', 'fairness'): {
+        'prediction_accuracy': { 'id': 'data_accuracy', 'title': 'Data Accuracy', 'args': [], 'args_default': [], 'func': charts.prediction_accuracy }
+    },
+    ('predictions', 'accountability'): {
+        'prediction_confusion_matrix' : { 'id': 'prediction_confusion_matrix', 'title': 'Prediction Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.prediction_confusion_matrix }
     }
 }
 
@@ -52,6 +66,7 @@ def all_chart_types_combo(mode, tab):
     if combo in all_charts:
         return jsonify(filter_func(all_charts.get(combo)))
     else:
+        # TODO: replace these aborts
         abort(400, 'Invalid mode & tab combination.')
 
 

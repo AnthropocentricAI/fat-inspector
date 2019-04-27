@@ -16,6 +16,12 @@ import fatd.measure.accountability.data
 import fatd.measure.fairness.data
 
 
+def encodeFig(fig):
+    tmpfile = BytesIO()
+    fig.savefig(tmpfile, format='svg')
+    return base64.b64encode(tmpfile.getvalue()).decode()
+
+
 def pieChart(dataset):
     with lock:
         names, values = fatd.measure.accountability.data.class_count(dataset)
@@ -24,11 +30,10 @@ def pieChart(dataset):
         ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
         ax.pie(values, labels=names)
 
-        tmpfile = BytesIO()
-        
-        fig.savefig(tmpfile, format='svg')
+        svg = encodeFig(fig)
         plt.close(fig)
-    return ('', base64.b64encode(tmpfile.getvalue()).decode())
+    return ('', svg)
+
 
 def histogram(dataset, col=0):
     with lock:
@@ -41,7 +46,44 @@ def histogram(dataset, col=0):
         
         ax.bar(bins_centres, counts, bin_width)
 
-        tmpfile = BytesIO()
-        fig.savefig(tmpfile, format='svg')
+        svg = encodeFig(fig)
         plt.close(fig)
-    return ('', base64.b64encode(tmpfile.getvalue()).decode())
+    return ('', svg)
+
+
+def train_accuracy(model_obj, data_to_model_obj, data_obj):
+    acc = fatd.measure.fairness.models.train_accuracy(model_obj, data_to_model_obj, data_obj)
+    return (acc, None)
+
+
+def data_accuracy(model_obj, data_obj):
+    acc = fatd.measure.fairness.models.data_accuracy(model_obj, data_obj)
+    return (acc, None)
+
+
+def prediction_accuracy(prediction_obj):
+    acc = fatd.measure.fairness.predictions.prediction_accuracy(prediction_obj)
+    return (acc, None)
+
+
+def confusion_matrix(matrix):
+    with lock:
+        handle = plt.imshow(matrix, cmap=plt.get_cmap('summer'))
+        plt.colorbar(handle)
+        svg = None
+    return svg
+
+
+def training_confusion_matrix(model_obj, data_to_model_obj, data_obj):
+    matrix = fatd.measure.accountability.models.training_confusion_matrix(model_obj, data_to_model_obj, data_obj)
+    return (confusion_matrix(matrix), None)
+
+
+def data_confusion_matrix(model_obj, data_obj):
+    matrix = fatd.measure.accountability.models.data_confusion_matrix(model_obj, data_obj)
+    return (confusion_matrix(matrix), None)
+
+
+def prediction_confusion_matrix(predictions_obj):
+    matrix = fatd.measure.accountability.models.prediction_confusion_matrix(predictions_obj)
+    return (confusion_matrix(matrix), None)
