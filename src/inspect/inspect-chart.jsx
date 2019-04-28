@@ -7,7 +7,7 @@ import ChartArgs from './inspect-chart-args.jsx';
 class Chart extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { svgData: {} };
+    this.state = { svgData: null };
   }
 
   // where args :: String
@@ -16,7 +16,7 @@ class Chart extends React.Component {
       if (r.status !== 200)
         console.error(`Error when attempting to download chart svg for ${ chartType }!`);
       r.json().then(data => {
-          let decodedSvg = data.svg ? atob(data.svg) : null;
+          let decodedSvg = data.svg === 'None' ? null : atob(data.svg);
 
           this.setState(prev => ({
             svgData: {
@@ -52,7 +52,6 @@ class Chart extends React.Component {
 
         {this.state.svgData ? (
           <>
-
             { this.state.svgData.svg && (  
               <div className="chart__cont"
                   dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
@@ -84,9 +83,11 @@ class Chart extends React.Component {
             )}
           </>
         ) : (
-          <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
+          <>
+            <Spinner animation="border" role="status">
+              <span className="sr-only">Loading...</span>
+            </Spinner>
+          </>
         )}
       </>
     );

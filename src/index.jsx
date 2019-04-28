@@ -23,7 +23,7 @@ class App extends React.Component {
     this.state = {
       isNew: false,
       openGraph: false,
-      mode: 'data'
+      mode: 'models'
     };
   }
 
