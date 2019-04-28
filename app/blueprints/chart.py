@@ -11,6 +11,9 @@ from app import charts
 from app.tree import load_tree
 
 from fatd.holders import csv_loader
+from fatd.holders.transitions import Data2Model, Model2Predictions
+from fatd.holders.models import KNN
+from fatd.transform.tools.training import train_test_split
 
 bp = Blueprint('chart', __name__, url_prefix='/chart')
 
@@ -88,6 +91,17 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                 file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', name)
                 t = load_tree(file_path)
                 dataset = t.node_of(node).data
+                data_2_model = None
+                model = None
+
+                if mode == 'models':
+                    data_2_model = Data2Model(splitting_function=train_test_split)
+                    model = data_2_model.transform(dataset, KNN())
+                
+                funcArgs = {}
+                funcArgs['data_obj'] = dataset
+                funcArgs['data_to_model_obj'] = data_2_model
+                funcArgs['model_obj'] = model
 
                 svg = None
 
@@ -97,13 +111,13 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                     # doesn't work with negative - but probably OK
                     parsedArgs = { k: (int(v) if v.isdigit() else v) for k, v in request.args.items() }
 
-                    try:
-                        svg = toRender.get('func')(dataset, **parsedArgs)
+                    try: 
+                        svg = charts.applyArgs(toRender.get('func'), funcArgs, parsedArgs)
                     except TypeError as e:
                         abort(400, 'Invalid arguments {} for {}.'.format(parsedArgs, chart_type))
                         print(e)
                 else:
-                    svg = toRender.get('func')(dataset)
+                    svg = charts.applyArgs(toRender.get('func'), funcArgs)
 
                 #ret = { k: v for k, v in toRender.items() if k not in ['func', 'args', 'title'] }
                 ret = dict()
