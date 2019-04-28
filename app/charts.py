@@ -14,9 +14,10 @@ mpl.use('Svg')
 mpl.rcParams['svg.image_inline'] = False
 plt.ioff()
 
-import fatd.measure.accountability.data
 import fatd.measure.fairness.data
+import fatd.measure.accountability.data
 import fatd.measure.fairness.models
+import fatd.measure.accountability.models
 
 
 # args :: {data_obj: ..., data_to_model_obj: ..., model_obj: ...}
@@ -78,22 +79,30 @@ def prediction_accuracy(prediction_obj):
 
 def confusion_matrix(matrix):
     with lock:
-        handle = plt.imshow(matrix, cmap=plt.get_cmap('summer'))
-        plt.colorbar(handle)
-        svg = None
+        #fig = plt.figure(1, figsize=(6,6))
+        fig, ax = plt.subplots()
+
+        handle = ax.imshow(matrix, cmap=plt.get_cmap('summer'))
+        ax.figure.colorbar(handle)
+
+        it = np.nditer(matrix, flags=['multi_index'])
+        while not it.finished:
+            plt.text(it.multi_index[1], it.multi_index[0], it[0])
+            it.iternext()
+        svg = encodeFig(fig)
     return svg
 
 
 def training_confusion_matrix(data_obj, data_to_model_obj, model_obj):
     matrix = fatd.measure.accountability.models.training_confusion_matrix(model_obj, data_to_model_obj, data_obj)
-    return (confusion_matrix(matrix), None)
+    return ('', confusion_matrix(matrix))
 
 
 def data_confusion_matrix(data_obj, model_obj):
     matrix = fatd.measure.accountability.models.data_confusion_matrix(model_obj, data_obj)
-    return (confusion_matrix(matrix), None)
+    return ('', confusion_matrix(matrix))
 
 
 def prediction_confusion_matrix(predictions_obj):
     matrix = fatd.measure.accountability.models.prediction_confusion_matrix(predictions_obj)
-    return (confusion_matrix(matrix), None)
+    return ('', confusion_matrix(matrix))
