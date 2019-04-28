@@ -1,6 +1,8 @@
 import base64
 from io import BytesIO
 
+import inspect
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +16,14 @@ plt.ioff()
 
 import fatd.measure.accountability.data
 import fatd.measure.fairness.data
+import fatd.measure.fairness.models
+
+
+# args :: {data_obj: ..., data_to_model_obj: ..., model_obj: ...}
+def applyArgs(func, args, extraArgs={}):
+    required = inspect.getargspec(func).args
+    toApply = [ args[x] for x in required if x in args ]
+    return func(*toApply, **extraArgs)
 
 
 def encodeFig(fig):
@@ -22,9 +32,9 @@ def encodeFig(fig):
     return base64.b64encode(tmpfile.getvalue()).decode()
 
 
-def pieChart(dataset):
+def pieChart(data_obj):
     with lock:
-        names, values = fatd.measure.accountability.data.class_count(dataset)
+        names, values = fatd.measure.accountability.data.class_count(data_obj)
         
         fig = plt.figure(1, figsize=(6,6))
         ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
@@ -35,9 +45,9 @@ def pieChart(dataset):
     return ('', svg)
 
 
-def histogram(dataset, col=0):
+def histogram(data_obj, col=0):
     with lock:
-        bins, counts = fatd.measure.fairness.data.feature_histogram(dataset, col)
+        bins, counts = fatd.measure.fairness.data.feature_histogram(data_obj, col)
         bin_width = bins[1]-bins[0]
         bins_centres = [bins[i]+(bins[i+1]-bins[i]/2) for i in range(len(bins)-1)]
 
@@ -51,12 +61,12 @@ def histogram(dataset, col=0):
     return ('', svg)
 
 
-def train_accuracy(model_obj, data_to_model_obj, data_obj):
-    acc = fatd.measure.fairness.models.train_accuracy(model_obj, data_to_model_obj, data_obj)
+def train_accuracy(data_obj, data_to_model_obj, model_obj):
+    acc = fatd.measure.fairness.models.training_accuracy(model_obj, data_to_model_obj, data_obj)
     return (acc, None)
 
 
-def data_accuracy(model_obj, data_obj):
+def data_accuracy(data_obj, model_obj):
     acc = fatd.measure.fairness.models.data_accuracy(model_obj, data_obj)
     return (acc, None)
 
@@ -74,12 +84,12 @@ def confusion_matrix(matrix):
     return svg
 
 
-def training_confusion_matrix(model_obj, data_to_model_obj, data_obj):
+def training_confusion_matrix(data_obj, data_to_model_obj, model_obj):
     matrix = fatd.measure.accountability.models.training_confusion_matrix(model_obj, data_to_model_obj, data_obj)
     return (confusion_matrix(matrix), None)
 
 
-def data_confusion_matrix(model_obj, data_obj):
+def data_confusion_matrix(data_obj, model_obj):
     matrix = fatd.measure.accountability.models.data_confusion_matrix(model_obj, data_obj)
     return (confusion_matrix(matrix), None)
 
