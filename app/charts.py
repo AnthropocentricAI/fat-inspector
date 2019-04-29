@@ -88,9 +88,9 @@ def confusion_matrix(matrix):
 
         it = np.nditer(matrix, flags=['multi_index'])
         while not it.finished:
-            plt.text(it.multi_index[1], it.multi_index[0], it[0])
+            ax.text(it.multi_index[1], it.multi_index[0], it[0])
             it.iternext()
-        svg = encodeFig(ax.figure)
+        svg = encodeFig(fig)
         plt.close(fig)
     return svg
 
