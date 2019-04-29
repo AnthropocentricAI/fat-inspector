@@ -187,6 +187,9 @@ def fetch(name):
     except IOError as e:
         print(e)
         raise APIArgumentError(f'Graph {name} does not exist!')
+    except JSONDecodeError as e:
+        print(e)
+        raise APIArgumentError(f'Graph {name} is invalid!')
 
 
 @bp.route('/<name>/createAndFetch')
