@@ -41,7 +41,7 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode="data-graph" />
+                  <Tool {...props} isNew={this.state.isNew} mode="data" />
                 </>
               )}
             />
