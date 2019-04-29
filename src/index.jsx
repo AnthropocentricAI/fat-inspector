@@ -16,21 +16,6 @@ import constants, { MODES } from './constants';
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isNew: false,
-      openGraph: false,
-      mode: 'data',
-    };
-  }
-
-  onSelect(dataset, graph, isNew) {
-    this.setState({
-      isNew: isNew,
-    });
-  }
-
   render() {
     return (
       <>
@@ -38,19 +23,10 @@ class App extends React.Component {
           <Switch>
             <Route
               exact
-              path={`/tool/:dataset/:graph`}
+              path={`/tool/:dataset/:graph/:model?/:prediction?`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode="data" />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={`/tool/:dataset/:graph/model`}
-              render={props => (
-                <>
-                  <Tool {...props} isNew={true} mode="model-graph" />
+                  <Tool {...props} />
                 </>
               )}
             />
@@ -60,7 +36,7 @@ class App extends React.Component {
               render={props => (
                 <>
                   <Particles className="particles" config={ParticlesConfig} />
-                  <FileChooser {...props} onSubmit={this.onSelect.bind(this)} />
+                  <FileChooser {...props} />
                 </>
               )}
             />

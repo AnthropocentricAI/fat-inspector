@@ -18,6 +18,18 @@ export default class Topbar extends PureComponent {
       uploadShow: false,
       showMenu: false,
     };
+
+    this.chooseColourObject = this.chooseColourObject.bind(this);
+  }
+
+  chooseColourObject() {
+    if (this.props.mode === 'data') {
+      return { boxShadow: '0 0 70px 0 #DD6E42' };
+    } else if (this.props.mode === 'model') {
+      return { boxShadow: '0 0 70px 0 #3CB371' };
+    } else if (this.props.mode === 'prediction') {
+      return { boxShadow: '0 0 70px 0 #C71585' };
+    }
   }
 
   render() {
@@ -29,8 +41,11 @@ export default class Topbar extends PureComponent {
           bg="dark"
           variant="dark"
           fixed="top"
+          style={this.chooseColourObject()}
         >
-          <Navbar.Brand>FAT Forensics</Navbar.Brand>
+          <Navbar.Brand>
+            {this.props.dataset}: {this.props.graph}
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
@@ -66,6 +81,7 @@ export default class Topbar extends PureComponent {
               >
                 About
               </Nav.Link>
+              <Navbar.Brand className="brand">FAT Forensics</Navbar.Brand>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
