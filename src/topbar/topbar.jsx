@@ -6,6 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { jsonOkRequired } from '../util';
+import PropTypes from 'prop-types';
 
 export default class Topbar extends PureComponent {
   constructor(args) {
@@ -19,27 +20,7 @@ export default class Topbar extends PureComponent {
     };
   }
 
-  saveGraph() {
-    fetch(`/graph/${this.props.graph}/save`, {
-      method: 'POST',
-      body: JSON.stringify(this.props.data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(jsonOkRequired)
-      .then(j => {
-        console.log(j.message);
-      })
-      .catch(console.error);
-  }
-
   render() {
-    // attach the graph data to the Export button, see this for why
-    // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
-    const exportData = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(this.props.data)
-    )}`;
     return (
       <div>
         <Navbar
@@ -49,7 +30,7 @@ export default class Topbar extends PureComponent {
           variant="dark"
           fixed="top"
         >
-          <Navbar.Brand href="#home">FAT Forensics</Navbar.Brand>
+          <Navbar.Brand>FAT Forensics</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
@@ -58,18 +39,14 @@ export default class Topbar extends PureComponent {
                 title="Graph Settings"
                 id="collasible-nav-dropdown"
               >
-                <NavDropdown.Item onClick={() => this.saveGraph()}>
-                  Save
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as="a"
-                  download={`${this.props.graph}.json`}
-                  href={exportData}
-                >
-                  Export
-                </NavDropdown.Item>
-                <NavDropdown.Item>Rename</NavDropdown.Item>
-                <NavDropdown.Item>Duplicate</NavDropdown.Item>
+                {this.props.items.map(({ text, ...data }) => (
+                  <NavDropdown.Item
+                    key={`topbar-dropdown-item-${text}`}
+                    {...data}
+                  >
+                    {text}
+                  </NavDropdown.Item>
+                ))}
               </NavDropdown>
               <Nav.Link
                 className="topbar-button"
@@ -109,3 +86,11 @@ export default class Topbar extends PureComponent {
     );
   }
 }
+
+Topbar.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string.isRequired,
+    })
+  ),
+};

@@ -6,35 +6,79 @@
   font: 400;
 }
 
+.popover {
+  max-width: initial;
+}
+
 .node-popover {
-  pointer-events: auto;
-  &-nav {
-    &-link {
-      display: inline !important;
+  &-wrapper {
+    display: flex;
+    align-items: center;
+    & > div {
+      max-width: 200px;
+      padding-right: 0.5rem;
+      &:last-child {
+        padding-right: 0;
+      }
     }
   }
+  &-info-attr {
+    font-weight: bold;
+  }
+  pointer-events: auto;
+  &-text {
+    padding-left: 0.5rem;
+  }
+  &-button {
+    text-align: center;
+    border-color: #ddd;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    color: black;
+    font-size: 14px;
+    &:hover, &:active {
+      background-color: #ccc;
+      border-color: #ccc;
+      color: #fff;
+    }
+  }
+  &-buttongroup {
+    width: 100%;
+  }
+}
+
+.back-button {
+  position: fixed;
+  top: 70px;
+  left: 10px;
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+  transition: 0.3s;
+  padding-top: 8px;
+}
+
+.back-button:hover {
+  background-color: #DD6E42;
 }
 
 .apply-functions {
-  position: fixed;
-  bottom: 2%;
-  right: 2%;
-  font: bold;
-  font: 30;
-  display: inline;
-  text-align: center;
-  background-color: transparent;
-  border-color: black;
-  color: black;
-  border-width: 1px;
-  vertical-align: middle;
-  border-radius: 2em;
-  transition: 0.3s;
-
-  &:hover {
-    background-color: orangered;
-  }
+   position: fixed;
+   bottom: 2%;
+   right: 2%;
+    transition: 0.3s;
+    text-align: center;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    padding-top: 8px;
 }
+
+.apply-functions:hover {
+  background-color: #DD6E42;
+}
+
 
 svg[name='svg-container-graph'] {
   position: fixed;
@@ -43,6 +87,8 @@ svg[name='svg-container-graph'] {
   height: 100% !important;
   width: 100% !important;
   z-index: -1;
+  padding-top: 60px;
+  padding-bottom: 100px;
 }
 
 .click-through {
@@ -76,7 +122,7 @@ svg[name='svg-container-graph'] {
 
 .bottom-popup {
   position: absolute;
-  bottom: 2%;
+  bottom: calc(100px + 2%);
   left: 50%;
   transform: translateX(-50%);
 }

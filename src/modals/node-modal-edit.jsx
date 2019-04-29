@@ -34,11 +34,13 @@ export default class NodeModalEdit extends React.Component {
   createNode(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const func = this.state.functionSelected && {
-      name: formData.get('func'),
-      indices: JSON.parse(formData.get('indices')),
-      axis: Number(formData.get('axis')),
-    };
+    const func = this.state.functionSelected
+      ? {
+          name: formData.get('func'),
+          indices: JSON.parse(formData.get('indices')),
+          axis: Number(formData.get('axis')),
+        }
+      : undefined;
     const node = {
       label: formData.get('name'),
       desc: formData.get('desc'),
