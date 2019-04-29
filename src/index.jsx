@@ -1,19 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileChooser from './forms/file-chooser.jsx';
-import Topbar from './topbar/topbar.jsx';
 import loadable from '@loadable/component';
 import {
   BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
-  withRouter,
 } from 'react-router-dom';
 import ParticlesConfig from './particles-config.js';
-import Particles from 'react-particles-js';
+import Particles from './particles.jsx';
 
-import constants, { MODES } from './constants'
+import constants, { MODES } from './constants';
 
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
@@ -23,7 +21,7 @@ class App extends React.Component {
     this.state = {
       isNew: false,
       openGraph: false,
-      mode: 'models'
+      mode: 'data',
     };
   }
 
@@ -43,7 +41,16 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode={this.state.mode} />
+                  <Tool {...props} isNew={this.state.isNew} mode="data-graph" />
+                </>
+              )}
+            />
+            <Route
+              exact
+              path={`/tool/:dataset/:graph/model`}
+              render={props => (
+                <>
+                  <Tool {...props} isNew={true} mode="model-graph" />
                 </>
               )}
             />
@@ -52,7 +59,7 @@ class App extends React.Component {
               path="/"
               render={props => (
                 <>
-                  <Particles className="particles" params={ParticlesConfig} />
+                  <Particles className="particles" config={ParticlesConfig} />
                   <FileChooser {...props} onSubmit={this.onSelect.bind(this)} />
                 </>
               )}
