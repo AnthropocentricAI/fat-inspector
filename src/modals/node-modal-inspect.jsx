@@ -42,7 +42,7 @@ export default class NodeModalInspect extends React.Component {
 
   render() {
     return (
-      <Modal show={this.props.show} onHide={this.props.onHide} centered>
+      <Modal show={this.props.show} onHide={this.props.onHide} centered dialogClassName="modal__inspect">
         <Modal.Header closeButton>
           <Modal.Title>Inspect {this.props.node.label}</Modal.Title>
         </Modal.Header>
