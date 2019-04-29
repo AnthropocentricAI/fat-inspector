@@ -26,7 +26,7 @@ export default class NodePopover extends React.Component {
   constructor(props) {
     super(props);
 
-    this.optionsList = [
+    this.optionsListData = [
       {
         name: 'Inspect',
         icon: 'search',
@@ -37,7 +37,7 @@ export default class NodePopover extends React.Component {
       {
         name: 'Convert to Model',
         icon: 'dice-d6',
-        action: () => { this.props.convert(this.props.node.id) },
+        action: () => { this.props.models(this.props.node.id) },
       },
       {
         name: 'Add Child',
@@ -61,12 +61,91 @@ export default class NodePopover extends React.Component {
         },
       },
     ];
+
+    this.optionsListModel = [
+      {
+        name: 'Inspect',
+        icon: 'search',
+        action: () => {
+          this.setState({ showInspector: true });
+        },
+      },
+      {
+        name: 'See Predictions',
+        icon: 'dice-d6',
+        action: () => { this.props.predictions(this.props.node.id) },
+      },
+      {
+        name: 'Apply Function',
+        icon: 'sitemap',
+        action: () => {
+          this.setState({ showApply: true });
+        },
+      },
+      {
+        name: 'Edit',
+        icon: 'edit',
+        action: () => {
+          this.setState({ showEdit: true });
+        },
+      },
+      {
+        name: 'Delete',
+        icon: 'trash-alt',
+        action: () => {
+          this.setState({ showDelete: true });
+        },
+      },
+    ];
+
+    this.optionsListPrediction = [
+      {
+        name: 'Inspect',
+        icon: 'search',
+        action: () => {
+          this.setState({ showInspector: true });
+        },
+      },
+      {
+        name: 'Apply Function',
+        icon: 'sitemap',
+        action: () => {
+          this.setState({ showApply: true });
+        },
+      },
+      {
+        name: 'Edit',
+        icon: 'edit',
+        action: () => {
+          this.setState({ showEdit: true });
+        },
+      },
+      {
+        name: 'Delete',
+        icon: 'trash-alt',
+        action: () => {
+          this.setState({ showDelete: true });
+        },
+      },
+    ];
+
     this.state = {
       showApply: false,
       showEdit: false,
       showDelete: false,
       showInspector: false,
     };
+  }
+
+  chooseOptions() {
+    if (this.props.mode === 'data') {
+      return this.optionsListData;
+    } else if (this.props.mode === 'model') {
+      return this.optionsListModel;
+    } else if (this.props.mode === 'prediction') {
+      return this.optionsListPrediction;
+    }
+
   }
 
   render() {
@@ -122,7 +201,7 @@ export default class NodePopover extends React.Component {
                 </p>
               </>
             )}
-            {this.optionsList.map(option => (
+            {this.chooseOptions().map(option => (
               <Nav.Item key={option.name} onClick={option.action}>
                 <FontAwesomeIcon fixedWidth icon={option.icon} />
                 <Nav.Link className="node-popover-nav-link">

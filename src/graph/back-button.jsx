@@ -14,8 +14,14 @@ export default class BackButton extends React.Component {
     render() {
         return (
             <div>
-                {(this.props.mode == 'model-graph') && (
-                    <button className="back-button" onClick={this.props.backFunction}>
+                {(this.props.mode == 'model') && (
+                    <button className="back-button" onClick={this.props.backFunctionData}>
+                        <FontAwesomeIcon icon="arrow-left" size="3x" />
+                        {/* <h5 className='backword'>Back to Data Graph</h5> */}
+                    </button>
+                )}
+                {(this.props.mode == 'prediction') && (
+                    <button className="back-button" onClick={this.props.backFunctionModel}>
                         <FontAwesomeIcon icon="arrow-left" size="3x" />
                         {/* <h5 className='backword'>Back to Data Graph</h5> */}
                     </button>
