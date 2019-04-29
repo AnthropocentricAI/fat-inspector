@@ -138,7 +138,9 @@ export default class NodePopover extends React.Component {
               <div className="node-popover-info-wrapper">
                 {popoverInfo.map(
                   ({ attr, content }) =>
-                    content && (
+                    content !== undefined &&
+                    content !== null &&
+                    content !== '' && (
                       <p key={`node-popover-${attr}`}>
                         <span className="node-popover-info-attr">{attr}</span>:{' '}
                         {content}
