@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import config1 from './config';
-import config2 from './config';
-import config3 from './config';
+import config2 from './config1';
+import config3 from './config2';
 import uuid from 'uuid/v4';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
@@ -449,7 +449,12 @@ export default class Tool extends React.Component {
           when={this.state.blockUnload}
           message="Are you sure? Changes that you made may not be saved."
         />
-        <Topbar mode={this.state.mode} items={topbarGraphItems} />
+        <Topbar
+          graph={this.props.match.params.graph}
+          dataset={this.props.match.params.dataset}
+          mode={this.state.mode}
+          items={topbarGraphItems}
+        />
         {this.state.mode === 'data' && (
           <h1 className="mode-label">Data Graph</h1>
         )}
