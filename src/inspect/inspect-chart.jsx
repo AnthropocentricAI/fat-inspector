@@ -13,8 +13,14 @@ class Chart extends React.Component {
   // where args :: String
   downloadChartSvg = (mode, tab, chartType, dataset, graph, node, args) => {
     return fetch(`/chart/${ mode }/${ tab }/${ chartType }/${ dataset }/${ graph }/${ node }/svg?${ args }`).then(r => {
-      if (r.status !== 200)
+      if (r.status !== 200){
         console.error(`Error when attempting to download chart svg for ${ chartType }!`);
+        this.setState({
+          svgData: {
+            text: 'ERROR: Could not download!'
+          }
+        });
+      }
       r.json().then(data => {
           let decodedSvg = data.svg === 'None' ? null : atob(data.svg);
 
@@ -48,38 +54,46 @@ class Chart extends React.Component {
   render() {
     return (
       <>
-        <h4>{this.props.chartData.title}:</h4>
+        <h4>{ this.props.chartData.title }:</h4>
 
-        {this.state.svgData ? (
+        { this.state.svgData ? (
           <>
-            { this.state.svgData.svg && (  
-              <div className="chart__cont"
-                  dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
-              </div>
-            ) }
-
-            { this.state.svgData.text && (  
-              <div className="chart__text">
-                  { this.state.svgData.text }
-              </div>
-            ) }
-
-            {this.props.chartData.args.length != 0 && (
-              <ChartArgs
-                args={this.props.chartData.args}
-                argsDefault={this.props.chartData.args_default}
-                redownload={args => {
-                  this.downloadChartSvg(
-                    this.props.mode,
-                    this.props.tab,
-                    this.props.chartData.id,
-                    this.props.dataset,
-                    this.props.graph,
-                    this.props.node,
-                    args
-                  );
-                }}
-              />
+            { (this.state.svgData.text === 'ERROR') ? (
+              <>
+                error!!
+              </>
+            ) : (
+              <>
+              { this.state.svgData.svg && (  
+                <div className="chart__cont"
+                    dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
+                </div>
+              ) }
+  
+              { this.state.svgData.text && (  
+                <div className="chart__text">
+                    { this.state.svgData.text }
+                </div>
+              ) }
+  
+              {this.props.chartData.args.length != 0 && (
+                <ChartArgs
+                  args={this.props.chartData.args}
+                  argsDefault={this.props.chartData.args_default}
+                  redownload={args => {
+                    this.downloadChartSvg(
+                      this.props.mode,
+                      this.props.tab,
+                      this.props.chartData.id,
+                      this.props.dataset,
+                      this.props.graph,
+                      this.props.node,
+                      args
+                    );
+                  }}
+                  />
+                  )}
+              </>
             )}
           </>
         ) : (
