@@ -69,8 +69,7 @@ def all_chart_types_combo(mode, tab):
     if combo in all_charts:
         return jsonify(filter_func(all_charts.get(combo)))
     else:
-        # TODO: replace these aborts
-        abort(400, 'Invalid mode & tab combination.')
+        raise APIArgumentError(f'{mode} & {tab} is an invalid mode & tab combination!')
 
 
 # also takes a query string of argsfunc
@@ -114,8 +113,8 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                     try: 
                         svg = charts.applyArgs(toRender.get('func'), funcArgs, parsedArgs)
                     except TypeError as e:
-                        abort(400, 'Invalid arguments {} for {}.'.format(parsedArgs, chart_type))
                         print(e)
+                        raise APIArgumentError(f'Invalid arguments {parsedArgs} for {chart_type}!')
                 else:
                     svg = charts.applyArgs(toRender.get('func'), funcArgs)
 
@@ -128,9 +127,9 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                 if parsedArgs: ret['args'] = parsedArgs
                 return jsonify(ret)
             except IOError as e:
-                abort(400, 'Invalid dataset name.')
                 print(e)
+                raise APIArgumentError(f'{name} is an invalid dataset name!')
         else:
-            abort(400, 'Invalid chart type for {}.'.format(combo))
+            raise APIArgumentError(f'{chart_type} is an invalid chart type for {combo}!')
     else:
-        abort(400, 'Invalid mode & tab combination.')
+        raise APIArgumentError(f'{mode} & {tab} is an invalid mode & tab combination!')
