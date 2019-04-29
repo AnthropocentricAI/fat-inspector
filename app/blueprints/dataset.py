@@ -80,3 +80,15 @@ def download(name):
     except IOError as e:
         print(e)
         raise APIArgumentError(f'Dataset {name} does not exist!')
+
+
+@bp.route('/<name>/info')
+def info(name):
+    name = util.normalise_path_to_file(name) + '.csv'
+    file_path = os.path.join(current_app.config['ASSETS_DIR'], name)
+    try:
+        data = csv_loader(file_path)
+        return jsonify({'noOfAxes': len(data.data.shape), 'noOfIndices': data.data.shape[1]})
+    except IOError as e:
+        print(e)
+        raise APIArgumentError(f'Dataset {name} does not exist!')

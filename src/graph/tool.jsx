@@ -15,6 +15,7 @@ import { Prompt } from 'react-router-dom';
 import loadable from '@loadable/component';
 import Modal from 'react-bootstrap/Modal';
 import Rename from '../modals/modal-rename.jsx';
+import Button from 'react-bootstrap/Button';
 
 library.add(faBolt);
 const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
@@ -85,18 +86,20 @@ export default class Tool extends React.Component {
       this.initEmptyGraph();
     } else {
       fetch(`/graph/${this.props.match.params.graph}/fetch`)
-        .then(jsonWithStatus)
-        .then(({ ok, json }) => {
-          if (!ok) this.props.history.push('/');
-          else {
-            this.setState({
-              root: this.findRoot(json),
-              data: {
-                ...json,
-              },
-            });
-          }
-        });
+        .then(jsonOkRequired)
+        .then(json => {
+          this.setState({
+            data: json,
+          });
+        })
+        .then(() => fetch(`/dataset/${this.props.match.params.dataset}/info`))
+        .then(jsonOkRequired)
+        .then(json => {
+          this.setState({
+            datasetInfo: json,
+          });
+        })
+        .catch(e => !console.log(e) && this.props.history.push('/'));
     }
   };
 
@@ -190,12 +193,28 @@ export default class Tool extends React.Component {
   };
 
   executeFunctions = () => {
-    fetch(
-      `/execute/${this.props.match.params.dataset}/${
-        this.props.match.params.graph
-      }`,
-      { method: 'POST' }
-    )
+    fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(({ message }) => {
+        console.log(message);
+        this.setState({
+          blockUnload: false,
+        });
+      })
+      .then(() =>
+        fetch(
+          `/execute/${this.props.match.params.dataset}/${
+            this.props.match.params.graph
+          }`,
+          { method: 'POST' }
+        )
+      )
       .then(jsonWithStatus)
       .then(({ ok, json }) => {
         this.setState(
@@ -319,6 +338,17 @@ export default class Tool extends React.Component {
       );
     };
 
+    const info = this.state.datasetInfo
+      ? [
+          { attr: 'Title', content: this.props.match.params.dataset },
+          { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
+          {
+            attr: '# of Indices',
+            content: this.state.datasetInfo.noOfIndices,
+          },
+        ]
+      : [];
+
     return (
       // TODO: look at bundle sizes
       <div>
@@ -327,31 +357,24 @@ export default class Tool extends React.Component {
           message="Are you sure? Changes that you made may not be saved."
         />
         <Topbar items={topbarGraphItems} />
-        <div className="data-info">
-          <h3>Dataset: {this.props.match.params.dataset}</h3>
-          <h3>Graph: {this.props.match.params.graph}</h3>
+        <div className="graph-wrapper">
+          {this.state.data ? (
+            <Graph ref={this.graph} {...graphProps} />
+          ) : (
+            <div className="graph-loading">
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
+          <Alert
+            variant={this.state.message.variant}
+            dismissible
+            show={this.state.displayMessage}
+            className="bottom-popup"
+            onClose={() => this.setState({ displayMessage: false })}
+          >
+            {this.state.message.text}
+          </Alert>
         </div>
-        <button className="apply-functions" onClick={this.executeFunctions}>
-          <FontAwesomeIcon icon="bolt" size="lg" />
-          <h6>Execute</h6>
-          <h6>Functions</h6>
-        </button>
-        {this.state.data ? (
-          <Graph ref={this.graph} {...graphProps} />
-        ) : (
-          <div className="graph-loading">
-            <Spinner animation="border" role="status" />
-          </div>
-        )}
-        <Alert
-          variant={this.state.message.variant}
-          dismissible
-          show={this.state.displayMessage}
-          className="bottom-popup"
-          onClose={() => this.setState({ displayMessage: false })}
-        >
-          {this.state.message.text}
-        </Alert>
 
         {/* display popup */}
         {node && (
@@ -379,6 +402,26 @@ export default class Tool extends React.Component {
           onHide={() => this.setState({ showDuplicate: false })}
           show={this.state.showDuplicate}
         />
+        <div className="information-banner">
+          <div>
+            {info.map(({ attr, content }) => (
+              <p key={`dataset-info-${attr}`} className="dataset-info">
+                <span className="dataset-info-attr">{attr}</span>: {content}
+              </p>
+            ))}
+          </div>
+          <div className="banner-button-wrapper">
+            <Button
+              className="execute-function-button"
+              variant="primary"
+              onClick={this.executeFunctions}
+            >
+              <FontAwesomeIcon icon="bolt" size="lg" />
+              <span className="banner-button-text">Execute Functions</span>
+            </Button>
+          </div>
+          <div>Placeholder</div>
+        </div>
       </div>
     );
   }
