@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Graph } from 'react-d3-graph';
 import config1 from './config';
-import config2 from './config1';
-import config3 from './config2';
+import config2 from './config';
+import config3 from './config';
 import uuid from 'uuid/v4';
-import NodePopover from './node-popover.jsx';
 import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -15,39 +13,37 @@ import { jsonOkRequired, jsonWithStatus } from '../util';
 import { faBolt, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import BackButton from './back-button.jsx';
 import Alert from 'react-bootstrap/Alert';
+import NodePopover from './node-popover.jsx';
+import { Prompt } from 'react-router-dom';
+import loadable from '@loadable/component';
+import Modal from 'react-bootstrap/Modal';
+import Rename from '../modals/modal-rename.jsx';
+import Button from 'react-bootstrap/Button';
 
 library.add(faBolt);
 library.add(faArrowLeft);
+const Graph = loadable(() => import('react-d3-graph').then(m => m.Graph), {
+  fallback: (
+    <div className="graph-loading">
+      <Spinner animation="border" role="status" />
+    </div>
+  ),
+});
 
 export default class Tool extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      edit: false,
-      functions: [],
-      nodeClickedId: false,
-      showApply: false,
+      blockUnload: false,
       displayMessage: false,
+      functions: [],
       message: { variant: '', text: '' },
-      mode: ''
+      mode: '',
     };
-
     // NOTE: https://github.com/danielcaldas/react-d3-graph/issues/138
     // we need this ref to highlight a particular node in the graph
     this.graph = React.createRef();
-
-    this.onClickNode = this.onClickNode.bind(this);
-    this.onClickGraph = this.onClickGraph.bind(this);
-    this.createChild = this.createChild.bind(this);
-    this.deleteNode = this.deleteNode.bind(this);
-    this.editNode = this.editNode.bind(this);
-    this.getNodeData = this.getNodeData.bind(this);
-    this.executeFunctions = this.executeFunctions.bind(this);
-    this.convertToModel = this.convertToModel.bind(this);
-    this.backToData = this.backToData.bind(this);
-    this.backToModel = this.backToModel.bind(this);
-    this.convertToPrediction = this.convertToPrediction.bind(this);
   }
 
   // upon first mount, we need to populate the graph and fetch relevant data
@@ -62,48 +58,37 @@ export default class Tool extends React.Component {
     } else if (this.props.match.params.graph) {
       parsedMode = 'data';
     }
-    console.log(this.props.match.params)
+    console.log(this.props.match.params);
     console.log('uhhhhhhhh ', parsedMode);
 
     this.setState({ mode: parsedMode }, () => this.populateGraph());
   }
 
-  fetchFunctions() {
+  fetchFunctions = () => {
     fetch('/graph/functions')
-      .then(jsonWithStatus)
-      .then(r => {
-        if (!r.ok) throw new Error('Failed to get functions!');
+      .then(jsonOkRequired)
+      .then(data => {
         this.setState({
-          functions: r.json,
+          functions: data,
         });
       })
       .catch(console.error);
-  }
+  };
 
-  // initEmptyGraph() {
-  //   const rootNode = {
-  //     id: uuid(),
-  //     label: 'root',
-  //     x: this.state.config.width / 2,
-  //     y: this.state.config.height / 2,
-  //   };
-  //   this.setState({
-  //     root: rootNode.id,
-  //     data: {
-  //       nodes: [rootNode],
-  //       links: [],
-  //     },
-  //   });
-  // }
+  findRoot = graph => {
+    const targets = graph.links.map(({ source, target }) => target);
+    const roots = graph.nodes.filter(x => !targets.includes(x));
+    return roots[0].id;
+  };
 
-  populateGraph() {
-    let graphId = ''
+  populateGraph = () => {
+    let graphId = '';
     if (this.state.mode === 'data') {
-      graphId = this.props.match.params.graph
+      graphId = this.props.match.params.graph;
     } else if (this.state.mode === 'model') {
-      graphId = this.props.match.params.model
+      graphId = this.props.match.params.model;
     } else if (this.state.mode === 'prediction') {
-      graphId = this.props.match.params.prediction
+      graphId = this.props.match.params.prediction;
     }
 
     fetch(`/graph/${graphId}/createAndFetch`)
@@ -118,45 +103,47 @@ export default class Tool extends React.Component {
           });
         }
       });
-  }
+  };
 
-  onClickNode(id) {
+  onClickNode = id => {
     this.setState({
       nodeClickedId: id,
     });
     // set node to front of svg
     let nodeElement = document.getElementById(id);
     nodeElement.parentNode.appendChild(nodeElement);
-  }
+  };
 
-  onClickGraph() {
+  onClickGraph = () => {
     // deselect popup if open
     if (this.state.nodeClickedId) this.setState({ nodeClickedId: null });
-  }
+  };
 
-  editNode(nodeId, node) {
+  editNode = (nodeId, node) => {
+    const func = node.function && {
+      name: node.function.name || x.function.name,
+      indices: node.function.indices || x.function.indices,
+      axis: node.function.axis >= 0 ? node.function.axis : x.function.axis,
+    };
     this.setState({
+      blockUnload: true,
       data: {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-              ...x,
-              label: node.label || x.label,
-              desc: node.desc || x.desc,
-              function: {
-                name: node.function.name || x.function.name,
-                indices: node.function.indices || x.function.indices,
-                axis: node.function.axis || x.function.axis,
-              },
-            }
+                ...x,
+                label: node.label || x.label,
+                desc: node.desc,
+                function: func,
+              }
             : x
         ),
         links: this.state.data.links,
       },
     });
-  }
+  };
 
-  convertToModel(nodeId) {
+  convertToModel = nodeId => {
     fetch(`/graph/${this.props.match.params.graph}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
@@ -170,20 +157,15 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${
-            nodeId
-            }`,
+          }/${nodeId}`,
         });
         window.location.reload();
       })
       .catch(console.error);
+  };
 
-
-
-  }
-
-  convertToPrediction(nodeId) {
-    fetch(`/graph/${this.state.data}/save`, {
+  convertToPrediction = nodeId => {
+    fetch(`/graph/${this.props.match.params.model}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -196,18 +178,14 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${this.props.match.params.model}/${
-            nodeId
-            }`,
+          }/${this.props.match.params.model}/${nodeId}`,
         });
         window.location.reload();
       })
       .catch(console.error);
+  };
 
-
-  }
-
-  deleteNode(nodeId) {
+  deleteNode = nodeId => {
     if (nodeId === this.state.root) return;
     let toDelete = [nodeId];
     // shallow copy the arrays
@@ -228,25 +206,27 @@ export default class Tool extends React.Component {
       );
     }
     this.setState({
+      blockUnload: true,
       data: {
         nodes: nodes,
         links: links,
       },
     });
-  }
+  };
 
   // gets data in payload for a given node
   // gross but the only way :(
-  getNodeData(nodeId) {
+  getNodeData = nodeId => {
     if (!this.state.data) return null;
     for (let x of this.state.data.nodes) if (x.id === nodeId) return x;
     return null;
-  }
+  };
 
-  createChild(parent, node) {
+  createChild = (parent, node) => {
     const child_id = uuid();
     this.setState((prev, props) => {
       return {
+        blockUnload: true,
         showApply: false,
         data: {
           nodes: [...prev.data.nodes, { id: child_id, ...node }],
@@ -254,10 +234,10 @@ export default class Tool extends React.Component {
         },
       };
     });
-  }
+  };
 
-  backToData() {
-    fetch(`/graph/${this.state.data}/save`, {
+  backToData = () => {
+    fetch(`/graph/${this.props.match.params.model}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -270,17 +250,15 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }`,
+          }`,
         });
         window.location.reload();
       })
       .catch(console.error);
+  };
 
-
-  }
-
-  backToModel() {
-    fetch(`/graph/${this.state.data}/save`, {
+  backToModel = () => {
+    fetch(`/graph/${this.props.match.params.prediction}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -293,24 +271,36 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${
-            this.props.match.params.model
-            }`,
+          }/${this.props.match.params.model}`,
         });
         window.location.reload();
       })
       .catch(console.error);
+  };
 
-
-  }
-
-  executeFunctions() {
-    fetch(
-      `/execute/${this.props.match.params.dataset}/${
-      this.props.match.params.graph
-      }`,
-      { method: 'POST' }
-    )
+  executeFunctions = () => {
+    fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(({ message }) => {
+        console.log(message);
+        this.setState({
+          blockUnload: false,
+        });
+      })
+      .then(() =>
+        fetch(
+          `/execute/${this.props.match.params.dataset}/${
+            this.props.match.params.graph
+          }`,
+          { method: 'POST' }
+        )
+      )
       .then(jsonWithStatus)
       .then(({ ok, json }) => {
         this.setState(
@@ -332,14 +322,97 @@ export default class Tool extends React.Component {
           }
         );
       });
-  }
+  };
+
+  saveGraph = () => {
+    return fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(({ message }) => {
+        console.log(message);
+        this.setState({
+          blockUnload: false,
+        });
+      })
+      .catch(console.error);
+  };
+
+  showRename = () => {
+    this.setState({ showRename: true });
+  };
+
+  showDuplicate = () => {
+    this.setState({ showDuplicate: true });
+  };
+
+  renameGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/rename`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
+  };
+
+  duplicateGraph = name => {
+    fetch(`/graph/${this.props.match.params.graph}/duplicate`, {
+      method: 'POST',
+      body: `new_name=${name}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+      .then(jsonOkRequired)
+      .then(data => {
+        console.log(data);
+        this.props.history.replace(
+          `/tool/${this.props.match.params.dataset}/${name}`
+        );
+      });
+  };
 
   render() {
+    // set up the "Are you sure?" prompt if the graph hasn't been saved
+    window.onbeforeunload = this.state.blockUnload ? () => true : null;
+    const node = this.getNodeData(this.state.nodeClickedId);
     const graphProps = {
       id: 'graph',
       data: this.state.data,
       onClickNode: this.onClickNode,
       onClickGraph: this.onClickGraph,
+    };
+
+    const topbarGraphItems = [
+      { text: 'Save', onClick: this.saveGraph },
+      {
+        text: 'Download',
+        href: `/graph/${this.props.match.params.graph}/download`,
+        target: '_blank',
+      },
+      { text: 'Rename', onClick: this.showRename },
+      { text: 'Duplicate', onClick: this.showDuplicate },
+    ];
+
+    const popoverProps = {
+      dataset: this.props.match.params.dataset,
+      graph: this.props.match.params.graph,
+      functions: this.state.functions,
+      node: node,
+      mode: this.state.mode,
+      models: this.convertToModel,
+      predictions: this.convertToPrediction,
+      onApply: this.createChild,
+      onEdit: this.editNode,
+      onDelete: this.deleteNode,
     };
 
     // portal from children of node  element
@@ -358,67 +431,104 @@ export default class Tool extends React.Component {
       graphProps['config'] = config3;
     }
 
-    const node = this.getNodeData(this.state.nodeClickedId);
+    const info = this.state.datasetInfo
+      ? [
+          { attr: 'Title', content: this.props.match.params.dataset },
+          { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
+          {
+            attr: '# of Indices',
+            content: this.state.datasetInfo.noOfIndices,
+          },
+        ]
+      : [];
 
     return (
+      // TODO: look at bundle sizes
       <div>
-        <Topbar graph={this.props.match.params.graph} dataset={this.props.match.params.dataset} data={this.state.data} mode={this.state.mode} />
-
-        <button className="apply-functions" onClick={this.executeFunctions}>
-          <div className='exlogo'><FontAwesomeIcon icon="bolt" size="lg" /></div>
-          <h5 className='executer'>Execute Functions</h5>
-        </button>
-        {(this.state.mode === 'data') && (
-          <h1 className='mode-label'>Data Graph</h1>
+        <Prompt
+          when={this.state.blockUnload}
+          message="Are you sure? Changes that you made may not be saved."
+        />
+        <Topbar mode={this.state.mode} items={topbarGraphItems} />
+        {this.state.mode === 'data' && (
+          <h1 className="mode-label">Data Graph</h1>
         )}
-        {(this.state.mode === 'model') && (
-          <h1 className='mode-label'>Model Graph</h1>
+        {this.state.mode === 'model' && (
+          <h1 className="mode-label">Model Graph</h1>
         )}
-        {(this.state.mode === 'prediction') && (
-          <h1 className='mode-label'>Predictions Graph</h1>
+        {this.state.mode === 'prediction' && (
+          <h1 className="mode-label">Predictions Graph</h1>
         )}
-        {this.state.data ? (
-          <Graph ref={this.graph} {...graphProps} />
-        ) : (
+        <div className="graph-wrapper">
+          {this.state.data ? (
+            <Graph ref={this.graph} {...graphProps} />
+          ) : (
             <div className="graph-loading">
               <Spinner animation="border" role="status" />
             </div>
           )}
-        <Alert
-          variant={this.state.message.variant}
-          dismissible
-          show={this.state.displayMessage}
-          className="bottom-popup"
-          onClose={() => this.setState({ displayMessage: false })}
-        >
-          {this.state.message.text}
-        </Alert>
+          <Alert
+            variant={this.state.message.variant}
+            dismissible
+            show={this.state.displayMessage}
+            className="bottom-popup"
+            onClose={() => this.setState({ displayMessage: false })}
+          >
+            {this.state.message.text}
+          </Alert>
+        </div>
+
         {/* display popup */}
         {node && (
           <Portal>
             <foreignObject
               x="30"
               y="-15"
-              width="225px"
+              width="100%"
               height="100%"
               className="click-through"
             >
-              <NodePopover
-                functions={this.state.functions}
-                node={node}
-                onApply={this.createChild}
-                onEdit={this.editNode}
-                onDelete={this.deleteNode}
-                dataset={this.props.match.params.dataset}
-                mode={this.state.mode}
-                models={this.convertToModel}
-                predictions={this.convertToPrediction}
-                graph={this.props.match.params.graph}
-              />
+              <NodePopover {...popoverProps} />
             </foreignObject>
           </Portal>
         )}
-        <BackButton mode={this.state.mode} backFunctionData={this.backToData} backFunctionModel={this.backToModel} />
+        <Rename
+          title="Rename Graph"
+          onSubmit={this.renameGraph}
+          onHide={() => this.setState({ showRename: false })}
+          show={this.state.showRename}
+        />
+        <Rename
+          title="Duplicate Graph"
+          onSubmit={this.duplicateGraph}
+          onHide={() => this.setState({ showDuplicate: false })}
+          show={this.state.showDuplicate}
+        />
+        <div className="information-banner">
+          <div>
+            {info.map(({ attr, content }) => (
+              <p key={`dataset-info-${attr}`} className="dataset-info">
+                <span className="dataset-info-attr">{attr}</span>: {content}
+              </p>
+            ))}
+          </div>
+          <div className="banner-button-wrapper">
+            <Button
+              className="execute-function-button"
+              variant="primary"
+              onClick={this.executeFunctions}
+            >
+              <FontAwesomeIcon icon="bolt" size="lg" />
+              <span className="banner-button-text">Execute Functions</span>
+            </Button>
+          </div>
+          <div>Placeholder</div>
+        </div>
+        <BackButton
+          mode={this.state.mode}
+          backFunctionData={this.backToData}
+          backFunctionModel={this.backToModel}
+        />
       </div>
     );
   }

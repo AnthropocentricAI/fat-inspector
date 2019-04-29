@@ -7,12 +7,11 @@ import {
   Redirect,
   Route,
   Switch,
-  withRouter,
 } from 'react-router-dom';
 import ParticlesConfig from './particles-config.js';
-import Particles from 'react-particles-js';
+import Particles from './particles.jsx';
 
-import constants, { MODES } from './constants'
+import constants, { MODES } from './constants';
 
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
@@ -21,7 +20,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       isNew: false,
-      openGraph: false
+      openGraph: false,
     };
   }
 
@@ -50,7 +49,7 @@ class App extends React.Component {
               path="/"
               render={props => (
                 <>
-                  <Particles className="particles" params={ParticlesConfig} />
+                  <Particles className="particles" config={ParticlesConfig} />
                   <FileChooser {...props} onSubmit={this.onSelect.bind(this)} />
                 </>
               )}
