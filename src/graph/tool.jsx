@@ -131,11 +131,11 @@ export default class Tool extends React.Component {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-                ...x,
-                label: node.label || x.label,
-                desc: node.desc,
-                function: func,
-              }
+              ...x,
+              label: node.label || x.label,
+              desc: node.desc,
+              function: func,
+            }
             : x
         ),
         links: this.state.data.links,
@@ -157,7 +157,7 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-          }/${nodeId}`,
+            }/${nodeId}`,
         });
         window.location.reload();
       })
@@ -178,7 +178,7 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-          }/${this.props.match.params.model}/${nodeId}`,
+            }/${this.props.match.params.model}/${nodeId}`,
         });
         window.location.reload();
       })
@@ -250,7 +250,7 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-          }`,
+            }`,
         });
         window.location.reload();
       })
@@ -271,7 +271,7 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-          }/${this.props.match.params.model}`,
+            }/${this.props.match.params.model}`,
         });
         window.location.reload();
       })
@@ -296,7 +296,7 @@ export default class Tool extends React.Component {
       .then(() =>
         fetch(
           `/execute/${this.props.match.params.dataset}/${
-            this.props.match.params.graph
+          this.props.match.params.graph
           }`,
           { method: 'POST' }
         )
@@ -433,13 +433,13 @@ export default class Tool extends React.Component {
 
     const info = this.state.datasetInfo
       ? [
-          { attr: 'Title', content: this.props.match.params.dataset },
-          { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
-          {
-            attr: '# of Indices',
-            content: this.state.datasetInfo.noOfIndices,
-          },
-        ]
+        { attr: 'Title', content: this.props.match.params.dataset },
+        { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
+        {
+          attr: '# of Indices',
+          content: this.state.datasetInfo.noOfIndices,
+        },
+      ]
       : [];
 
     return (
@@ -468,10 +468,10 @@ export default class Tool extends React.Component {
           {this.state.data ? (
             <Graph ref={this.graph} {...graphProps} />
           ) : (
-            <div className="graph-loading">
-              <Spinner animation="border" role="status" />
-            </div>
-          )}
+              <div className="graph-loading">
+                <Spinner animation="border" role="status" />
+              </div>
+            )}
           <Alert
             variant={this.state.message.variant}
             dismissible
@@ -518,16 +518,38 @@ export default class Tool extends React.Component {
             ))}
           </div>
           <div className="banner-button-wrapper">
-            <Button
-              className="execute-function-button"
-              variant="primary"
-              onClick={this.executeFunctions}
-            >
-              <FontAwesomeIcon icon="bolt" size="lg" />
-              <span className="banner-button-text">Execute Functions</span>
-            </Button>
+            {this.state.mode === 'data' && (
+              <Button
+                className="execute-function-button-data"
+                variant="primary"
+                onClick={this.executeFunctions}
+              >
+                <FontAwesomeIcon icon="bolt" size="lg" />
+                <span className="banner-button-text">Execute Functions</span>
+              </Button>
+            )}
+            {this.state.mode === 'model' && (
+              <Button
+                className="execute-function-button-model"
+                variant="primary"
+                onClick={this.executeFunctions}
+              >
+                <FontAwesomeIcon icon="bolt" size="lg" />
+                <span className="banner-button-text">Execute Functions</span>
+              </Button>
+            )}
+            {this.state.mode === 'prediction' && (
+              <Button
+                className="execute-function-button-prediction"
+                variant="primary"
+                onClick={this.executeFunctions}
+              >
+                <FontAwesomeIcon icon="bolt" size="lg" />
+                <span className="banner-button-text">Execute Functions</span>
+              </Button>
+            )}
           </div>
-          <div>Placeholder</div>
+          <div></div>
         </div>
         <BackButton
           mode={this.state.mode}

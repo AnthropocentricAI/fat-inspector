@@ -242,7 +242,7 @@ label.uploadLabel input[type='file'] {
 .information-banner {
   position: fixed;
   bottom: 0;
-  border-top: #ddd 1px solid;
+  border-top: rgb(34, 34, 34) 4px solid;
   height: 100px;
   width: 100%;
   display: flex;
@@ -252,13 +252,33 @@ label.uploadLabel input[type='file'] {
   }
 }
 
-.execute-function-button {
+.execute-function-button-data {
   padding: 0.75rem 6rem;
   background-color: #6c757d;
   border-color: #6c757d;
   &:hover {
-    background-color: rgb(221, 110, 66);
-    border-color: rgb(221, 110, 66);
+    background-color: #DD6E42;
+    border-color: #DD6E42;
+  }
+}
+
+.execute-function-button-model {
+  padding: 0.75rem 6rem;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  &:hover {
+    background-color: #3CB371;
+    border-color: #3CB371;
+  }
+}
+
+.execute-function-button-prediction {
+  padding: 0.75rem 6rem;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  &:hover {
+    background-color: #C71585;
+    border-color: #C71585;
   }
 }
 
