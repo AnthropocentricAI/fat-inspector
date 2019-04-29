@@ -11,18 +11,26 @@ export default class NodeModalEdit extends React.Component {
     const functionSelected = !this.props.add && !!this.props.node.function;
     this.state = {
       validIndices: functionSelected,
-      validAxis: functionSelected,
+      validAxis: true,
       validLabel: !this.props.add,
       validFunc: functionSelected,
       functionSelected: functionSelected,
     };
+    this.baseState = this.state;
   }
+
+  onHide = () => {
+    this.setState(this.baseState, () => this.props.onHide());
+  };
 
   validateIndices(e) {
     try {
       const indices = JSON.parse(e.target.value);
+      const isValid =
+        indices instanceof Array &&
+        indices.reduce((valid, item) => valid && Number.isInteger(item), true);
       this.setState({
-        validIndices: indices instanceof Array,
+        validIndices: isValid,
       });
     } catch {
       this.setState({
@@ -52,7 +60,7 @@ export default class NodeModalEdit extends React.Component {
   // TODO: refactor this horrible validation
   render() {
     return (
-      <Modal show={this.props.show} onHide={this.props.onHide} centered>
+      <Modal show={this.props.show} onHide={this.onHide} centered>
         <Modal.Header closeButton>
           <Modal.Title>
             {this.props.add ? 'Add Child To' : 'Edit'} '{this.props.node.label}'
@@ -164,7 +172,7 @@ export default class NodeModalEdit extends React.Component {
             >
               Save
             </Button>
-            <Button variant="secondary" onClick={this.props.onHide}>
+            <Button variant="secondary" onClick={this.onHide}>
               Cancel
             </Button>
           </Modal.Footer>
