@@ -3,10 +3,29 @@
   height: 500px;
 }
 
-.chart__cont svg {
-  height: 50%;
-  width: 50%;
+.chart__title {
+  text-align: center;
+}
+
+.chart__svg svg {
+  height: 90%;
+  width: 90%;
   border: 1px solid lightgrey;
   margin: auto;
   display: block;
+}
+
+.chart__cont {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid lightgrey;
+}
+
+.chart__args-title {
+  margin-top: 10px;
+}
+
+.chart__args-submit {
+  display: block;
+  margin: auto;
 }

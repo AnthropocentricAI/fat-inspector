@@ -16,7 +16,7 @@ class ChartArgs extends React.Component {
 
     let argString = ''
     for(var pair of data.entries()) {
-      argString += `${ pair[0] }=${ pair[1] }`;
+      argString += `${ pair[0] }=${ Number(pair[1]) }`;
     }
 
     // redownload
@@ -26,7 +26,7 @@ class ChartArgs extends React.Component {
 	render() {
     return (
       <>
-        <h5>Arguments:</h5>
+        <h6 className="chart__args-title">Arguments:</h6>
 
         <Form onSubmit={(e) => this.submitArgs(e) }>
           { this.props.args.map((arg, arg_i) =>
@@ -44,7 +44,7 @@ class ChartArgs extends React.Component {
             </Form.Group>
           ) }
           
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" className="chart__args-submit">
             Apply Arguments
           </Button>
         </Form>   
