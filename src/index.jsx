@@ -21,8 +21,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       isNew: false,
-      openGraph: false,
-      mode: 'data'
+      openGraph: false
     };
   }
 
@@ -39,20 +38,10 @@ class App extends React.Component {
           <Switch>
             <Route
               exact
-              path={`/tool/:dataset/:graph/:model`}
+              path={`/tool/:dataset/:graph/:model?/:prediction?`}
               render={props => (
                 <>
-                  <Tool {...props} isNew={this.state.isNew} mode='model-graph' />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={`/tool/:dataset/:graph`}
-              render={props => (
-                <>
-
-                  <Tool {...props} isNew={this.state.isNew} mode='data-graph' />
+                  <Tool {...props} isNew={this.state.isNew} />
                 </>
               )}
             />

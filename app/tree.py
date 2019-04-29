@@ -31,15 +31,12 @@ class Node:
     indices: list
     axis: int
     dirty: bool
-    graph_id_model: str
 
     def __init__(self,
-                 graph_id_model: str,
                  func: NodeFunction,
                  indices: list = None,
                  axis: int = 0,
                  data: NodeData = None):
-        self.graph_id_model = graph_id_model
         self.func = func
         self.indices = indices or []
         self.axis = axis
@@ -83,13 +80,7 @@ class Tree:
     d3: dict
 
     def __init__(self, nodes: [dict], links: [dict], data: NodeData):
-        graph_id_model = ((None
-                           if 'graphIdModel' not in n else n['graphIdModel'])
-                          for n in nodes)
-        self.nodes = {
-            n['id']: Node(n['graph_id_model'], *n['function'])
-            for n in nodes
-        }
+        self.nodes = {n['id']: Node(*n['function']) for n in nodes}
         self.children = {key: [] for key in self.nodes}
         possible_roots = list(self.nodes.keys())
         for link in links:

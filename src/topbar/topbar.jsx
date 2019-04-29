@@ -17,6 +17,8 @@ export default class Topbar extends PureComponent {
       uploadShow: false,
       showMenu: false,
     };
+
+    this.chooseColourObject = this.chooseColourObject.bind(this);
   }
 
   saveGraph() {
@@ -34,6 +36,16 @@ export default class Topbar extends PureComponent {
       .catch(console.error);
   }
 
+  chooseColourObject() {
+    if (this.props.mode === 'data') {
+      return { boxShadow: '0 0 70px 0 #DD6E42' }
+    } else if (this.props.mode === 'model') {
+      return { boxShadow: '0 0 70px 0 #3CB371' }
+    } else if (this.props.mode === 'prediction') {
+      return { boxShadow: '0 0 70px 0 #C71585' }
+    }
+  }
+
   render() {
     // attach the graph data to the Export button, see this for why
     // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
@@ -48,6 +60,7 @@ export default class Topbar extends PureComponent {
           bg="dark"
           variant="dark"
           fixed="top"
+          style={this.chooseColourObject()}
         >
           <Navbar.Brand>{this.props.dataset}: {this.props.graph}</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
