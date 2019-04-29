@@ -50,11 +50,10 @@ class Chart extends React.Component {
     );
   }
 
-  // TODO: error if unable to download
   render() {
     return (
-      <>
-        <h4>{ this.props.chartData.title }:</h4>
+      <div className="chart__cont">
+        <h4 className="chart__title">{ this.props.chartData.title }</h4>
 
         { this.state.svgData ? (
           <>
@@ -65,7 +64,7 @@ class Chart extends React.Component {
             ) : (
               <>
               { this.state.svgData.svg && (  
-                <div className="chart__cont"
+                <div className="chart__svg"
                     dangerouslySetInnerHTML={{ __html: this.state.svgData.svg }}>
                 </div>
               ) }
@@ -103,7 +102,7 @@ class Chart extends React.Component {
             </Spinner>
           </>
         )}
-      </>
+      </div>
     );
   }
 }

@@ -37,7 +37,7 @@ def pieChart(data_obj):
     with lock:
         names, values = fatd.measure.accountability.data.class_count(data_obj)
         
-        fig = plt.figure(1, figsize=(6,6))
+        fig = plt.figure(1, figsize=(10,5))
         ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
         ax.pie(values, labels=names)
 
@@ -52,7 +52,7 @@ def histogram(data_obj, col=0):
         bin_width = bins[1]-bins[0]
         bins_centres = [bins[i]+(bins[i+1]-bins[i]/2) for i in range(len(bins)-1)]
 
-        fig = plt.figure(1, figsize=(6,6))
+        fig = plt.figure(1, figsize=(10,5))
         ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
         
         ax.bar(bins_centres, counts, bin_width)
@@ -79,7 +79,7 @@ def prediction_accuracy(prediction_obj):
 
 def confusion_matrix(matrix):
     with lock:
-        fig = plt.figure(1, figsize=(6,6))
+        fig = plt.figure(1, figsize=(10,5))
         ax = fig.add_axes([0.1, 0.1, 0.9, 0.9])
 
         handle = ax.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)#cmap=plt.get_cmap('summer'))
