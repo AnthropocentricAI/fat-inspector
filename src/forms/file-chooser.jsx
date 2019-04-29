@@ -39,7 +39,6 @@ export default class FileChooser extends React.Component {
     let graph = this.state.newGraph
       ? formData.get('graphName')
       : formData.get('graph');
-    this.props.onSubmit(dataset, graph, this.state.newGraph);
     this.props.history.push({
       pathname: `/tool/${dataset}/${graph}`,
     });
@@ -158,7 +157,3 @@ export default class FileChooser extends React.Component {
     );
   }
 }
-
-FileChooser.propTypes = {
-  onSubmit: PropTypes.func,
-};

@@ -32,7 +32,11 @@ class Node:
     axis: int
     dirty: bool
 
-    def __init__(self, func: NodeFunction, indices: list = None, axis: int = 0, data: NodeData = None):
+    def __init__(self,
+                 func: NodeFunction,
+                 indices: list = None,
+                 axis: int = 0,
+                 data: NodeData = None):
         self.func = func
         self.indices = indices or []
         self.axis = axis
@@ -88,7 +92,9 @@ class Tree:
             except ValueError:
                 pass
         if len(possible_roots) != 1:
-            raise TreeBuildError(f'Expected ONE root node in the tree, got {len(possible_roots)}.')
+            raise TreeBuildError(
+                f'Expected ONE root node in the tree, got {len(possible_roots)}.'
+            )
         self.root = possible_roots[0]
         self.nodes[self.root].data = data
 
@@ -108,7 +114,8 @@ class Tree:
             try:
                 current_node.apply()
             except Exception:
-                raise TreeComputationError(current_id, f'Computation failed at node {current_id}.')
+                raise TreeComputationError(
+                    current_id, f'Computation failed at node {current_id}.')
 
             children = self.children_of(current_id)
             for child_id in children:
@@ -147,13 +154,16 @@ def build_tree(dataset: NodeData, d3_graph: Dict) -> Tree:
         for n in nodes:
             if 'function' in n:
                 func_data = n['function']
-                func, indices, axis = funcs[func_data['name']], func_data['indices'], func_data['axis']
+                func, indices, axis = funcs[
+                    func_data['name']], func_data['indices'], func_data['axis']
                 n['function'] = (func, indices, axis)
             else:
-                n['function'] = (None,)
+                n['function'] = (None, )
 
     except Exception:
-        raise TreeBuildError('Failed to build tree! Expected a dict of shape: { nodes: [], links: [] }.')
+        raise TreeBuildError(
+            'Failed to build tree! Expected a dict of shape: { nodes: [], links: [] }.'
+        )
 
     tree = Tree(nodes, links, dataset)
     # keep a handle on the d3 graph for later

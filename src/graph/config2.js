@@ -11,7 +11,7 @@ module.exports = {
   minZoom: 0.75,
   staticGraph: false,
   node: {
-    color: '#DD6E42',
+    color: '#C71585',
     //color: '#65201D',
     //color: '#FF4500',
     //size: 4096,
