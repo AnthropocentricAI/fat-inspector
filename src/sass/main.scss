@@ -288,3 +288,18 @@ label.uploadLabel input[type='file'] {
 .dataset-info-attr {
   font-weight: bold;
 }
+
+.title {
+  border-radius: 25px;
+  text-align: center;
+  text-shadow: #eab38c 2px 2px 0px, #f1913f 4px 4px 0px;
+  font-size: -webkit-xxx-large;
+  font-family: cursive;
+}
+
+.title p {
+  text-align: center;
+  font-size: x-large;
+  text-shadow: none;
+  font-family: sans-serif;
+}
