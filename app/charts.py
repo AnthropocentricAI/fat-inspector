@@ -79,17 +79,19 @@ def prediction_accuracy(prediction_obj):
 
 def confusion_matrix(matrix):
     with lock:
-        #fig = plt.figure(1, figsize=(6,6))
-        fig, ax = plt.subplots()
+        fig = plt.figure(1, figsize=(6,6))
+        ax = fig.add_axes([0.1, 0.1, 0.9, 0.9])
 
-        handle = ax.imshow(matrix, cmap=plt.get_cmap('summer'))
-        ax.figure.colorbar(handle)
+        handle = ax.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)#cmap=plt.get_cmap('summer'))
+        handle.set_cmap('gray')
+        ax.figure.colorbar(handle, ax=ax)
 
         it = np.nditer(matrix, flags=['multi_index'])
         while not it.finished:
             plt.text(it.multi_index[1], it.multi_index[0], it[0])
             it.iternext()
-        svg = encodeFig(fig)
+        svg = encodeFig(ax.figure)
+        plt.close(fig)
     return svg
 
 
