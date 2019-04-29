@@ -122,7 +122,7 @@ export default class Tool extends React.Component {
     const func = node.function && {
       name: node.function.name || x.function.name,
       indices: node.function.indices || x.function.indices,
-      axis: node.function.axis || x.function.axis,
+      axis: node.function.axis >= 0 ? node.function.axis : x.function.axis,
     };
     this.setState({
       blockUnload: true,
