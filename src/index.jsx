@@ -26,7 +26,7 @@ class App extends React.Component {
               path={`/tool/:dataset/:graph/:model?/:prediction?`}
               render={props => (
                 <>
-                  <Tool {...props} />
+                  <Tool {...props} key={`tool-${props.match.url}`} />
                 </>
               )}
             />

@@ -8,7 +8,7 @@ module.exports = {
       },
     },
     color: {
-      value: '#65201D',
+      value: '#DD6E42',
     },
     shape: {
       type: 'circle',
@@ -37,7 +37,7 @@ module.exports = {
     },
     size: {
       //value: 8.017060304327615,
-      value: 13,
+      value: 10,
       random: false,
       anim: {
         enable: false,
@@ -49,7 +49,7 @@ module.exports = {
     line_linked: {
       enable: true,
       distance: 150,
-      color: '#65201D',
+      color: '#A9A9A9',
       opacity: 1,
       width: 3.687847739990702,
     },

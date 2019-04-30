@@ -16,7 +16,7 @@ import Alert from 'react-bootstrap/Alert';
 import NodePopover from './node-popover.jsx';
 import { Prompt } from 'react-router-dom';
 import loadable from '@loadable/component';
-import Modal from 'react-bootstrap/Modal';
+import moment from 'moment';
 import Rename from '../modals/modal-rename.jsx';
 import Button from 'react-bootstrap/Button';
 
@@ -58,8 +58,6 @@ export default class Tool extends React.Component {
     } else if (this.props.match.params.graph) {
       parsedMode = 'data';
     }
-    console.log(this.props.match.params);
-    console.log('uhhhhhhhh ', parsedMode);
 
     this.setState({ mode: parsedMode }, () => this.populateGraph());
   }
@@ -131,11 +129,11 @@ export default class Tool extends React.Component {
         nodes: this.state.data.nodes.map(x =>
           x.id === nodeId
             ? {
-              ...x,
-              label: node.label || x.label,
-              desc: node.desc,
-              function: func,
-            }
+                ...x,
+                label: node.label || x.label,
+                desc: node.desc,
+                function: func,
+              }
             : x
         ),
         links: this.state.data.links,
@@ -157,9 +155,8 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${nodeId}`,
+          }/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -178,9 +175,8 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${this.props.match.params.model}/${nodeId}`,
+          }/${this.props.match.params.model}/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -250,9 +246,8 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }`,
+          }`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -271,9 +266,8 @@ export default class Tool extends React.Component {
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
-            }/${this.props.match.params.model}`,
+          }/${this.props.match.params.model}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -296,7 +290,7 @@ export default class Tool extends React.Component {
       .then(() =>
         fetch(
           `/execute/${this.props.match.params.dataset}/${
-          this.props.match.params.graph
+            this.props.match.params.graph
           }`,
           { method: 'POST' }
         )
@@ -336,6 +330,7 @@ export default class Tool extends React.Component {
       .then(({ message }) => {
         console.log(message);
         this.setState({
+          lastSaved: moment(),
           blockUnload: false,
         });
       })
@@ -433,13 +428,13 @@ export default class Tool extends React.Component {
 
     const info = this.state.datasetInfo
       ? [
-        { attr: 'Title', content: this.props.match.params.dataset },
-        { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
-        {
-          attr: '# of Indices',
-          content: this.state.datasetInfo.noOfIndices,
-        },
-      ]
+          { attr: 'Title', content: this.props.match.params.dataset },
+          { attr: '# of Axes', content: this.state.datasetInfo.noOfAxes },
+          {
+            attr: '# of Indices',
+            content: this.state.datasetInfo.noOfIndices,
+          },
+        ]
       : [];
 
     return (
@@ -468,10 +463,10 @@ export default class Tool extends React.Component {
           {this.state.data ? (
             <Graph ref={this.graph} {...graphProps} />
           ) : (
-              <div className="graph-loading">
-                <Spinner animation="border" role="status" />
-              </div>
-            )}
+            <div className="graph-loading">
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
           <Alert
             variant={this.state.message.variant}
             dismissible
@@ -549,7 +544,9 @@ export default class Tool extends React.Component {
               </Button>
             )}
           </div>
-          <div></div>
+          <div className="timer">
+            {this.state.lastSaved && `Saved ${this.state.lastSaved.fromNow()}`}
+          </div>
         </div>
         <BackButton
           mode={this.state.mode}
