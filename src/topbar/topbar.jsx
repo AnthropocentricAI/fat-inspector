@@ -81,7 +81,7 @@ export default class Topbar extends PureComponent {
               >
                 About
               </Nav.Link>
-              <Navbar.Brand className="brand">FAT Forensics</Navbar.Brand>
+              <Navbar.Brand className="brand" href="/">FAT Forensics</Navbar.Brand>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
