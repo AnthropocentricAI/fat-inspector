@@ -49,19 +49,7 @@ export default class Tool extends React.Component {
   // upon first mount, we need to populate the graph and fetch relevant data
   componentDidMount() {
     this.fetchFunctions();
-
-    let parsedMode = '';
-    if (this.props.match.params.prediction) {
-      parsedMode = 'prediction';
-    } else if (this.props.match.params.model) {
-      parsedMode = 'model';
-    } else if (this.props.match.params.graph) {
-      parsedMode = 'data';
-    }
-    console.log(this.props.match.params);
-    console.log('uhhhhhhhh ', parsedMode);
-
-    this.setState({ mode: parsedMode }, () => this.populateGraph());
+    this.populateGraph();
   }
 
   fetchFunctions = () => {
@@ -91,11 +79,12 @@ export default class Tool extends React.Component {
       graphId = this.props.match.params.prediction;
     }
 
-    fetch(`/graph/${graphId}/createAndFetch`)
+    fetch(`/graph/${this.props.currentGraph}/createAndFetch`)
       .then(jsonWithStatus)
       .then(r => {
         if (!r.ok) this.props.history.push('/');
         else {
+          console.log(r.json);
           this.setState({
             data: {
               ...r.json,
@@ -143,6 +132,33 @@ export default class Tool extends React.Component {
     });
   };
 
+  convertToModelOrPrediction = nodeId => {
+    fetch(`/graph/${this.props.currentGraph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(j => {
+        this.props.history.push(`${this.props.match.url}/${nodeId}`);
+      })
+      .catch(console.error);
+  };
+
+  goBack = () => {
+    fetch(`/graph/${this.props.match.params.graph}/save`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(jsonOkRequired)
+      .then(j => this.props.history.goBack());
+  };
+
   convertToModel = nodeId => {
     fetch(`/graph/${this.props.match.params.graph}/save`, {
       method: 'POST',
@@ -159,7 +175,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
           }/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -180,7 +195,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
           }/${this.props.match.params.model}/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -246,13 +260,11 @@ export default class Tool extends React.Component {
     })
       .then(jsonOkRequired)
       .then(j => {
-        console.log(j.message);
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
           }`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -267,19 +279,17 @@ export default class Tool extends React.Component {
     })
       .then(jsonOkRequired)
       .then(j => {
-        console.log(j.message);
         this.props.history.push({
           pathname: `/tool/${this.props.match.params.dataset}/${
             this.props.match.params.graph
           }/${this.props.match.params.model}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
 
   executeFunctions = () => {
-    fetch(`/graph/${this.props.match.params.graph}/save`, {
+    fetch(`/graph/${this.props.currentGraph}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -296,7 +306,7 @@ export default class Tool extends React.Component {
       .then(() =>
         fetch(
           `/execute/${this.props.match.params.dataset}/${
-            this.props.match.params.graph
+            this.props.match.params.dataGraph
           }`,
           { method: 'POST' }
         )
@@ -318,14 +328,14 @@ export default class Tool extends React.Component {
               this.graph.current._setNodeHighlightedValue(json.node, true);
             setTimeout(() => {
               this.setState({ displayMessage: false });
-            }, 2500);
+            }, 2000);
           }
         );
       });
   };
 
   saveGraph = () => {
-    return fetch(`/graph/${this.props.match.params.graph}/save`, {
+    return fetch(`/graph/${this.props.currentGraph}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -352,7 +362,7 @@ export default class Tool extends React.Component {
   };
 
   renameGraph = name => {
-    fetch(`/graph/${this.props.match.params.graph}/rename`, {
+    fetch(`/graph/${this.props.currentGraph}/rename`, {
       method: 'POST',
       body: `new_name=${name}`,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -367,14 +377,13 @@ export default class Tool extends React.Component {
   };
 
   duplicateGraph = name => {
-    fetch(`/graph/${this.props.match.params.graph}/duplicate`, {
+    fetch(`/graph/${this.props.currentGraph}/duplicate`, {
       method: 'POST',
       body: `new_name=${name}`,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
       .then(jsonOkRequired)
       .then(data => {
-        console.log(data);
         this.props.history.replace(
           `/tool/${this.props.match.params.dataset}/${name}`
         );
@@ -383,7 +392,7 @@ export default class Tool extends React.Component {
 
   render() {
     // set up the "Are you sure?" prompt if the graph hasn't been saved
-    window.onbeforeunload = this.state.blockUnload ? () => true : null;
+    window.onbeforeunload = this.state.blockUnload ? () => true : undefined;
     const node = this.getNodeData(this.state.nodeClickedId);
     const graphProps = {
       id: 'graph',
@@ -408,8 +417,8 @@ export default class Tool extends React.Component {
       graph: this.props.match.params.graph,
       functions: this.state.functions,
       node: node,
-      mode: this.state.mode,
-      models: this.convertToModel,
+      mode: this.props.mode,
+      models: this.convertToModelOrPrediction,
       predictions: this.convertToPrediction,
       onApply: this.createChild,
       onEdit: this.editNode,
@@ -424,11 +433,11 @@ export default class Tool extends React.Component {
       );
     };
 
-    if (this.state.mode === 'data') {
+    if (this.props.mode === 'data') {
       graphProps['config'] = config1;
-    } else if (this.state.mode === 'model') {
+    } else if (this.props.mode === 'model') {
       graphProps['config'] = config2;
-    } else if (this.state.mode === 'prediction') {
+    } else if (this.props.mode === 'prediction') {
       graphProps['config'] = config3;
     }
 
@@ -451,7 +460,7 @@ export default class Tool extends React.Component {
           message="Are you sure? Changes that you made may not be saved."
         />
         <Topbar
-          graph={this.props.match.params.graph}
+          graph={this.props.currentGraph}
           dataset={this.props.match.params.dataset}
           mode={this.state.mode}
           items={topbarGraphItems}
@@ -519,7 +528,7 @@ export default class Tool extends React.Component {
             ))}
           </div>
           <div className="banner-button-wrapper">
-            {this.state.mode === 'data' && (
+            {this.props.mode === 'data' && (
               <Button
                 className="execute-function-button-data"
                 variant="primary"
@@ -529,7 +538,7 @@ export default class Tool extends React.Component {
                 <span className="banner-button-text">Execute Functions</span>
               </Button>
             )}
-            {this.state.mode === 'model' && (
+            {this.props.mode === 'model' && (
               <Button
                 className="execute-function-button-model"
                 variant="primary"
@@ -539,7 +548,7 @@ export default class Tool extends React.Component {
                 <span className="banner-button-text">Execute Functions</span>
               </Button>
             )}
-            {this.state.mode === 'prediction' && (
+            {this.props.mode === 'prediction' && (
               <Button
                 className="execute-function-button-prediction"
                 variant="primary"
@@ -555,15 +564,11 @@ export default class Tool extends React.Component {
           </div>
         </div>
         <BackButton
-          mode={this.state.mode}
-          backFunctionData={this.backToData}
-          backFunctionModel={this.backToModel}
+          mode={this.props.mode}
+          backFunctionData={this.goBack}
+          backFunctionModel={this.goBack}
         />
       </div>
     );
   }
 }
-
-Tool.propTypes = {
-  isNew: PropTypes.bool,
-};

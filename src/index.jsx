@@ -15,6 +15,14 @@ import constants, { MODES } from './constants';
 
 const Tool = loadable(() => import('./graph/tool.jsx'));
 
+function getMode({ dataGraph, modelGraph, predictionGraph }) {
+  console.log({ dataGraph, modelGraph, predictionGraph });
+  if (predictionGraph)
+    return { mode: 'prediction', currentGraph: predictionGraph };
+  if (modelGraph) return { mode: 'model', currentGraph: modelGraph };
+  if (dataGraph) return { mode: 'data', currentGraph: dataGraph };
+}
+
 class App extends React.Component {
   render() {
     return (
@@ -23,10 +31,14 @@ class App extends React.Component {
           <Switch>
             <Route
               exact
-              path={`/tool/:dataset/:graph/:model?/:prediction?`}
+              path={`/tool/:dataset/:dataGraph/:modelGraph?/:predictionGraph?`}
               render={props => (
                 <>
-                  <Tool {...props} />
+                  <Tool
+                    key={`tool-mode-${getMode(props.match.params).mode}`}
+                    {...getMode(props.match.params)}
+                    {...props}
+                  />
                 </>
               )}
             />
