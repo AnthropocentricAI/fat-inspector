@@ -19,6 +19,7 @@ import loadable from '@loadable/component';
 import Modal from 'react-bootstrap/Modal';
 import Rename from '../modals/modal-rename.jsx';
 import Button from 'react-bootstrap/Button';
+import moment from 'moment';
 
 library.add(faBolt);
 library.add(faArrowLeft);
@@ -58,8 +59,6 @@ export default class Tool extends React.Component {
     } else if (this.props.match.params.graph) {
       parsedMode = 'data';
     }
-    console.log(this.props.match.params);
-    console.log('uhhhhhhhh ', parsedMode);
 
     this.setState({ mode: parsedMode }, () => this.populateGraph());
   }
@@ -159,7 +158,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
             }/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -180,7 +178,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
             }/${this.props.match.params.model}/${nodeId}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -252,7 +249,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
             }`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -273,7 +269,6 @@ export default class Tool extends React.Component {
             this.props.match.params.graph
             }/${this.props.match.params.model}`,
         });
-        window.location.reload();
       })
       .catch(console.error);
   };
@@ -337,6 +332,7 @@ export default class Tool extends React.Component {
         console.log(message);
         this.setState({
           blockUnload: false,
+          lastSaved: moment()
         });
       })
       .catch(console.error);
@@ -549,7 +545,9 @@ export default class Tool extends React.Component {
               </Button>
             )}
           </div>
-          <div></div>
+          <div className="timer">
+            {this.state.lastSaved && `Saved ${this.state.lastSaved.fromNow()}`}
+          </div>
         </div>
         <BackButton
           mode={this.state.mode}

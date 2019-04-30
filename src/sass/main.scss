@@ -242,7 +242,7 @@ label.uploadLabel input[type='file'] {
 .information-banner {
   position: fixed;
   bottom: 0;
-  border-top: rgb(34, 34, 34) 3px solid;
+  border-top: rgb(34, 34, 34) 2px solid;
   height: 100px;
   width: 100%;
   display: flex;
@@ -306,7 +306,7 @@ label.uploadLabel input[type='file'] {
   text-align: center;
   text-shadow: #eab38c 2px 2px 0px, #f1913f 4px 4px 0px;
   font-size: -webkit-xxx-large;
-  font-family: cursive;
+  font-family: roboto;
 }
 
 .title p {
@@ -314,4 +314,10 @@ label.uploadLabel input[type='file'] {
   font-size: x-large;
   text-shadow: none;
   font-family: sans-serif;
+}
+
+.timer {
+  text-align: right;
+  margin-right: 20px;
+  color: darkslategray;
 }
