@@ -163,11 +163,20 @@ export default class Tool extends React.Component {
       .then(jsonOkRequired)
       .then(j => {
         console.log(j.message);
-        this.props.history.push({
-          pathname: `/tool/${this.props.match.params.dataset}/${
-            this.props.match.params.graph
-          }/${nodeId}`,
-        });
+
+        // pickle model on server side
+        fetch(`/model/${this.props.match.params.dataset}/${this.props.match.params.graph}/${nodeId}/save`, {
+          method: 'POST'
+        })
+          .then(j => {
+            // TODO: should prob put error checking at sometime lol
+            // change page
+            this.props.history.push({
+              pathname: `/tool/${this.props.match.params.dataset}/${
+                this.props.match.params.graph
+              }/${nodeId}`,
+            });
+        })
       })
       .catch(console.error);
   };

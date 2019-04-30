@@ -42,7 +42,7 @@ def save_model(dataset, graph, node):
         for k, v in d.items():
             path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', k)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, 'wb') as f:
+            with open(path + '.pickle', 'wb') as f:
                 pickle.dump(v, f)
         
         return jsonify({'message': f'Saved model for {node} in {graph} successfully.'})
@@ -62,7 +62,7 @@ def load_model_pickles(dataset, graph, node):
     paths = [ f'{node}_model', f'{node}_data_2_model' ]
     model, data_2_model = None, None
     for p in paths:
-        path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', p)
+        path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', p, '.pickle')
 
         if p.endswith('data_2_model'): data_2_model = pickle.load(open(path, 'rb'))
         if p.endswith('model'): model = pickle.load(open(path, 'rb'))
