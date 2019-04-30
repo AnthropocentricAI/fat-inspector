@@ -102,6 +102,17 @@ export default class Tool extends React.Component {
         }
       });
   };
+  
+  // returns graph id based on data/model/prediction
+  getGraphId = () => {
+    if (this.state.mode === 'data') {
+      return this.props.match.params.graph;
+    } else if (this.state.mode === 'model') {
+      return this.props.match.params.model;
+    } else if (this.state.mode === 'prediction') {
+      return this.props.match.params.prediction;
+    }
+  }
 
   onClickNode = id => {
     this.setState({
@@ -273,7 +284,7 @@ export default class Tool extends React.Component {
   };
 
   executeFunctions = () => {
-    fetch(`/graph/${this.props.match.params.graph}/save`, {
+    fetch(`/graph/${this.getGraphId()}/save`, {
       method: 'POST',
       body: JSON.stringify(this.state.data),
       headers: {
@@ -290,7 +301,7 @@ export default class Tool extends React.Component {
       .then(() =>
         fetch(
           `/execute/${this.props.match.params.dataset}/${
-            this.props.match.params.graph
+            this.getGraphId()
           }`,
           { method: 'POST' }
         )
@@ -399,7 +410,8 @@ export default class Tool extends React.Component {
 
     const popoverProps = {
       dataset: this.props.match.params.dataset,
-      graph: this.props.match.params.graph,
+      //graph: this.props.match.params.graph,
+      graph: this.getGraphId(),
       functions: this.state.functions,
       node: node,
       mode: this.state.mode,

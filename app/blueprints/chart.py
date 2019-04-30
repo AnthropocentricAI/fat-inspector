@@ -26,18 +26,18 @@ all_charts = {
     ('data', 'accountability'): {
         'class_count': { 'id': 'class_count', 'title': 'Class Count', 'args': [], 'args_default': [], 'func': charts.pieChart }
     },
-    ('models', 'fairness'): {
+    ('model', 'fairness'): {
         'train_accuracy': { 'id': 'train_accuracy', 'title': 'Train Accuracy', 'args': [], 'args_default': [], 'func': charts.train_accuracy },
         'data_accuracy': { 'id': 'data_accuracy', 'title': 'Data Accuracy', 'args': [], 'args_default': [], 'func': charts.data_accuracy }
     },
-    ('models', 'accountability'): {
+    ('model', 'accountability'): {
         'training_confusion_matrix' : { 'id': 'training_confusion_matrix', 'title': 'Training Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.training_confusion_matrix },
         'data_confusion_matrix' : { 'id': 'data_confusion_matrix', 'title': 'Data Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.data_confusion_matrix }
     },
-    ('predictions', 'fairness'): {
+    ('prediction', 'fairness'): {
         'prediction_accuracy': { 'id': 'data_accuracy', 'title': 'Data Accuracy', 'args': [], 'args_default': [], 'func': charts.prediction_accuracy }
     },
-    ('predictions', 'accountability'): {
+    ('prediction', 'accountability'): {
         'prediction_confusion_matrix' : { 'id': 'prediction_confusion_matrix', 'title': 'Prediction Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.prediction_confusion_matrix }
     }
 }
