@@ -9,6 +9,7 @@ from app.exceptions import APIArgumentError
 from app import utilities as util
 from app import charts
 from app.tree import load_tree
+from app.blueprints.model import load_model_pickles
 
 from fatd.holders import csv_loader
 from fatd.holders.transitions import Data2Model, Model2Predictions
@@ -94,8 +95,7 @@ def svg(dataset, graph, node, mode, tab, chart_type):
                 model = None
 
                 if mode == 'models':
-                    data_2_model = Data2Model(splitting_function=train_test_split)
-                    model = data_2_model.transform(dataset, KNN())
+                    model, data_2_model = load_model_pickles(dataset, graph, node)
                 
                 funcArgs = {}
                 funcArgs['data_obj'] = dataset
