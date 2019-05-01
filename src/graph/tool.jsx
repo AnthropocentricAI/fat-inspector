@@ -432,9 +432,12 @@ export default class Tool extends React.Component {
       { text: 'Duplicate', onClick: this.showDuplicate },
     ];
 
+    //console.log(this.props.match.params.model);
+
     const popoverProps = {
       dataset: this.props.match.params.dataset,
       graph: this.props.match.params.graph,
+      model: this.props.match.params.model,
       //graph: this.getGraphId(),
       functions: this.state.functions,
       node: node,

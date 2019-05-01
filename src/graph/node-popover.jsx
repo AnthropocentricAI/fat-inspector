@@ -179,6 +179,7 @@ export default class NodePopover extends React.Component {
       (acc, { attr, content }) => acc || content,
       false
     );
+    //console.log(this.props.model);
     return (
       <>
         <NodeModalInspect
@@ -188,6 +189,7 @@ export default class NodePopover extends React.Component {
           dataset={this.props.dataset}
           mode={this.props.mode}
           graph={this.props.graph}
+          model={this.props.model}
         />
         <NodeModalEdit
           functions={this.props.functions}
@@ -269,4 +271,5 @@ NodePopover.propTypes = {
   onApply: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  model: PropTypes.string,
 };

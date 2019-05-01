@@ -28,7 +28,8 @@ bp = Blueprint('model', __name__, url_prefix='/model')
 def save_model(dataset, graph, node):
     # load dataset from node
     try:
-        file_path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', f'{dataset}_{graph}_tree.pickle')
+        file_path = os.path.join(
+            current_app.config['ASSETS_DIR'], 'pickles', f'{dataset}_{graph}_tree.pickle')
         t = load_tree(file_path)
         dataset = t.node_of(node).data
 
@@ -37,14 +38,14 @@ def save_model(dataset, graph, node):
         model = data_2_model.transform(dataset, KNN())
 
         # pickle data2model and model
-        d = { f'{node}_model': model,
-              f'{node}_data_2_model': data_2_model }
+        d = {f'{node}_model': model,
+             f'{node}_data_2_model': data_2_model}
         for k, v in d.items():
             path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', k)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path + '.pickle', 'wb') as f:
                 pickle.dump(v, f)
-        
+
         return jsonify({'message': f'Saved model for {node} in {graph} successfully.'})
     except IOError as e:
         print(e)
@@ -52,6 +53,8 @@ def save_model(dataset, graph, node):
 
 # returns model, data_2_model
 # TODO: some sort of error lol
+
+
 def load_model_pickles(dataset, graph, node):
     """ to_load = { f'{node}_model': None, f'{node}_data_2_model': None }
 
@@ -59,12 +62,14 @@ def load_model_pickles(dataset, graph, node):
         path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', p)
         to_load[p] = pickle.load(open(path, 'rb')) """
 
-    paths = [ f'{node}_model', f'{node}_data_2_model' ]
+    paths = [f'{node}_model.pickle', f'{node}_data_2_model.pickle']
     model, data_2_model = None, None
-    for p in paths:
-        path = os.path.join(current_app.config['ASSETS_DIR'], 'pickles', p, '.pickle')
+    for i, p in enumerate(paths):
+        path = os.path.join(
+            current_app.config['ASSETS_DIR'], 'pickles', p)
 
-        if p.endswith('data_2_model'): data_2_model = pickle.load(open(path, 'rb'))
-        if p.endswith('model'): model = pickle.load(open(path, 'rb'))
-    
+        if i == 1:
+            data_2_model = pickle.load(open(path, 'rb'))
+        if i == 0:
+            model = pickle.load(open(path, 'rb'))
     return model, data_2_model

@@ -1,1 +1,1 @@
-{"links": [], "nodes": [{"id": "d0365980-f371-4425-a370-980894e1d818", "label": "root"}]}
+{"nodes": [{"id": "20c3afee-cf08-4b31-a393-3d89f98f58cf", "label": "root"}, {"id": "60da6b36-2433-4939-b23f-f950ad71981e", "label": "afdsg", "desc": "dfsg"}], "links": [{"source": "20c3afee-cf08-4b31-a393-3d89f98f58cf", "target": "60da6b36-2433-4939-b23f-f950ad71981e"}]}
