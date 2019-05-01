@@ -69,11 +69,10 @@ label.uploadLabel input[type='file'] {
   height: 100%;
 }
 
-
 .information-banner {
   position: fixed;
   bottom: 0;
-  border-top: rgb(34, 34, 34) 2px solid;
+  border-top: lightgray 1px solid;
   height: 100px;
   width: 100%;
   display: flex;
@@ -88,8 +87,8 @@ label.uploadLabel input[type='file'] {
   background-color: #6c757d;
   border-color: #6c757d;
   &:hover {
-    background-color: #DD6E42;
-    border-color: #DD6E42;
+    background-color: #dd6e42;
+    border-color: #dd6e42;
   }
 }
 
@@ -98,8 +97,8 @@ label.uploadLabel input[type='file'] {
   background-color: #6c757d;
   border-color: #6c757d;
   &:hover {
-    background-color: #3CB371;
-    border-color: #3CB371;
+    background-color: #3cb371;
+    border-color: #3cb371;
   }
 }
 
@@ -108,8 +107,8 @@ label.uploadLabel input[type='file'] {
   background-color: #6c757d;
   border-color: #6c757d;
   &:hover {
-    background-color: #C71585;
-    border-color: #C71585;
+    background-color: #c71585;
+    border-color: #c71585;
   }
 }
 
@@ -147,7 +146,7 @@ label.uploadLabel input[type='file'] {
   font-family: sans-serif;
 }
 
-.timer{
+.timer {
   text-align: right;
   margin-right: 20px;
   color: darkslategray;
