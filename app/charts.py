@@ -2,6 +2,9 @@ import fatd.measure.accountability.models
 import fatd.measure.fairness.models
 import fatd.measure.accountability.data
 import fatd.measure.fairness.data
+import fatd.measure.accountability.predictions
+import fatd.measure.fairness.predictions
+
 import base64
 from io import BytesIO
 
@@ -74,8 +77,9 @@ def data_accuracy(data_obj, model_obj):
     return (acc, None)
 
 
-def prediction_accuracy(prediction_obj):
-    acc = fatd.measure.fairness.predictions.prediction_accuracy(prediction_obj)
+def prediction_accuracy(predictions_obj):
+    acc = fatd.measure.fairness.predictions.prediction_accuracy(
+        predictions_obj)
     return (acc, None)
 
 
@@ -111,6 +115,6 @@ def data_confusion_matrix(data_obj, model_obj):
 
 
 def prediction_confusion_matrix(predictions_obj):
-    matrix = fatd.measure.accountability.models.prediction_confusion_matrix(
+    matrix = fatd.measure.accountability.predictions.prediction_confusion_matrix(
         predictions_obj)
     return ('', confusion_matrix(matrix))

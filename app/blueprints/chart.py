@@ -36,7 +36,7 @@ all_charts = {
         'data_confusion_matrix': {'id': 'data_confusion_matrix', 'title': 'Data Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.data_confusion_matrix}
     },
     ('prediction', 'fairness'): {
-        'prediction_accuracy': {'id': 'data_accuracy', 'title': 'Data Accuracy', 'args': [], 'args_default': [], 'func': charts.prediction_accuracy}
+        'prediction_accuracy': {'id': 'prediction_accuracy', 'title': 'Prediction Accuracy', 'args': [], 'args_default': [], 'func': charts.prediction_accuracy}
     },
     ('prediction', 'accountability'): {
         'prediction_confusion_matrix': {'id': 'prediction_confusion_matrix', 'title': 'Prediction Confusion Matrix', 'args': [], 'args_default': [], 'func': charts.prediction_confusion_matrix}
@@ -100,15 +100,19 @@ def svg(dataset, graph, graph_model, node, mode, tab, chart_type):
                     dataset = t.node_of(graph_model).data
                 data_2_model = None
                 model = None
+                prediction = None
 
-                if mode == 'model':
+                if mode == 'model' or mode == 'prediction':
                     model, data_2_model = load_model_pickles(
                         dataset, graph_model, graph_model)
+                if mode == 'prediction':
+                    prediction = Model2Predictions().transform(model, dataset, data_2_model)
 
                 funcArgs = {}
                 funcArgs['data_obj'] = dataset
                 funcArgs['data_to_model_obj'] = data_2_model
                 funcArgs['model_obj'] = model
+                funcArgs['predictions_obj'] = prediction
 
                 svg = None
 
