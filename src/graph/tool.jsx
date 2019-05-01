@@ -102,7 +102,7 @@ export default class Tool extends React.Component {
         }
       });
   };
-  
+
   // returns graph id based on data/model/prediction
   getGraphId = () => {
     if (this.state.mode === 'data') {
@@ -112,7 +112,7 @@ export default class Tool extends React.Component {
     } else if (this.state.mode === 'prediction') {
       return this.props.match.params.prediction;
     }
-  }
+  };
 
   onClickNode = id => {
     this.setState({
@@ -165,18 +165,22 @@ export default class Tool extends React.Component {
         console.log(j.message);
 
         // pickle model on server side
-        fetch(`/model/${this.props.match.params.dataset}/${this.props.match.params.graph}/${nodeId}/save`, {
-          method: 'POST'
-        })
-          .then(j => {
-            // TODO: should prob put error checking at sometime lol
-            // change page
-            this.props.history.push({
-              pathname: `/tool/${this.props.match.params.dataset}/${
-                this.props.match.params.graph
-              }/${nodeId}`,
-            });
-        })
+        fetch(
+          `/model/${this.props.match.params.dataset}/${
+            this.props.match.params.graph
+          }/${nodeId}/save`,
+          {
+            method: 'POST',
+          }
+        ).then(j => {
+          // TODO: should prob put error checking at sometime lol
+          // change page
+          this.props.history.push({
+            pathname: `/tool/${this.props.match.params.dataset}/${
+              this.props.match.params.graph
+            }/${nodeId}`,
+          });
+        });
       })
       .catch(console.error);
   };
@@ -307,14 +311,25 @@ export default class Tool extends React.Component {
           blockUnload: false,
         });
       })
-      .then(() =>
-        fetch(
-          `/execute/${this.props.match.params.dataset}/${
-            this.getGraphId()
-          }`,
-          { method: 'POST' }
-        )
-      )
+      .then(() => {
+        if (this.state.mode === 'data') {
+          return fetch(
+            `/execute/${this.props.match.params.dataset}/${
+              this.props.match.params.graph
+            }/data`,
+            { method: 'POST' }
+          );
+        } else if (this.state.mode === 'model') {
+          return fetch(
+            `/execute/${this.props.match.params.dataset}/${
+              this.props.match.params.graph
+            }/${this.props.match.params.model}/model`,
+            { method: 'POST' }
+          );
+        } else if (this.state.mode === 'prediction') {
+          // uhh
+        }
+      })
       .then(jsonWithStatus)
       .then(({ ok, json }) => {
         this.setState(
@@ -419,8 +434,8 @@ export default class Tool extends React.Component {
 
     const popoverProps = {
       dataset: this.props.match.params.dataset,
-      //graph: this.props.match.params.graph,
-      graph: this.getGraphId(),
+      graph: this.props.match.params.graph,
+      //graph: this.getGraphId(),
       functions: this.state.functions,
       node: node,
       mode: this.state.mode,
