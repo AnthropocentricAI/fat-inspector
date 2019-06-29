@@ -7,6 +7,8 @@ Built as a part of Software Product Engineering at the University of Bristol.
 
 ## Usage
 
+Make sure you have npm/node & python installed.
+
 ```
 $ npm install
 $ npm start (OR) npm build
@@ -14,9 +16,13 @@ $ npm start (OR) npm build
 To run in development mode:
 $ export FLASK_ENV=development
 
+---
+
 $ pip install -r requirements.txt
 $ flask run
 
-Navigate to locahost:5000
+---
+
+Navigate to 127.0.0.1:5000
 ```
 
