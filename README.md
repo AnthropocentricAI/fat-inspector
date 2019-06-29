@@ -10,11 +10,11 @@ Built as a part of Software Product Engineering at the University of Bristol.
 ```
 $ npm install
 $ npm start (OR) npm build
-$ export DATABASE_URL=<url>
 
 To run in development mode:
 $ export FLASK_ENV=development
 
+$ pip install -r requirements.txt
 $ flask run
 
 Navigate to locahost:5000
