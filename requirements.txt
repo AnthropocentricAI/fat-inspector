@@ -2,7 +2,7 @@ Flask==1.0.2
 gunicorn==19.9.0
 pytest==3.10.0
 libsass==0.16.1
-numpy==1.16.1
+numpy==1.22.0
 matplotlib==3.0.3
 dill==0.2.9
 git+git://github.com/AnthropocentricAI/fat-dummy@dev#fatd
